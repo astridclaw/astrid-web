@@ -1,0 +1,72 @@
+# Dependencies and package management
+node_modules/
+**/*.lock
+pnpm-lock.yaml
+
+# Build outputs and cache
+.next/
+out/
+build/
+dist/
+.turbo/
+.vercel/
+coverage/
+tsconfig.tsbuildinfo
+
+# Environment and secrets
+.env
+.env.*
+.env.local
+.env.production
+.env.development
+secrets/**
+
+# Database files
+prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+prisma/migrations/**/*.sql
+
+# Generated and compiled files
+**/*.min.*
+**/*.map
+**/*.bundle.*
+**/*.chunk.*
+
+# Media files (large binary assets)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.webm
+*.mp4
+*.mp3
+*.wav
+*.avi
+*.mov
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Claude AI settings (personal)
+.claude/
+
+# Test artifacts
+tests/screenshots/
+tests/coverage/
+*.test-results/
+*.playwright-report/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

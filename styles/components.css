@@ -1,0 +1,686 @@
+/* Themed Component Classes */
+
+/* ===== PRIORITY COLORS ===== */
+/* Consistent across all themes - matches iOS Theme.swift */
+/* None: Gray (107, 114, 128) */
+/* Low: Blue (59, 130, 246) */
+/* Medium: Yellow/Amber (251, 191, 36) */
+/* High: Red (239, 68, 68) */
+
+:root {
+  --priority-none: rgb(107, 114, 128);
+  --priority-low: rgb(59, 130, 246);
+  --priority-medium: rgb(251, 191, 36);
+  --priority-high: rgb(239, 68, 68);
+}
+
+/* Layout Components */
+.app-container {
+  @apply h-[100dvh] md:h-screen flex flex-col;
+  /* CSS custom properties for responsive layout calculations */
+  --sidebar-width: 320px;
+  --task-list-width: 450px; /* Wider task list for better readability */
+  --task-panel-min-width: 350px;
+  --task-panel-max-width: 500px;
+  /* Prevent iOS drawer from overshooting left edge */
+  overflow-x: hidden;
+}
+
+.app-header {
+  @apply px-4 py-2 flex items-center justify-between border-b;
+}
+
+/* Mobile Floating Header */
+.app-header-mobile-floating {
+  @apply fixed top-0 left-0 right-0 z-50;
+  margin: 8px;
+  margin-bottom: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border: none;
+  /* Override border-b from base app-header */
+  border-bottom: none !important;
+}
+
+/* iOS Drawer Header - not fixed so it slides with content */
+.app-header-ios-drawer {
+  @apply relative z-50;
+  margin: 8px;
+  margin-bottom: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border: none;
+  border-bottom: none !important;
+}
+
+/* Content offset when mobile floating header is active - not used since mobile content is absolute positioned */
+.app-body-with-floating-header {
+  /* padding doesn't work here because mobile content uses absolute inset-0 */
+}
+
+
+.app-main {
+  @apply flex-1 overflow-hidden;
+}
+
+/* Task Components */
+.task-row {
+  @apply flex items-center space-x-3 p-3 cursor-pointer transition-all duration-200;
+}
+
+/* Unified card styling for task rows - works on both mobile and desktop */
+.task-card {
+  @apply rounded-xl border shadow-sm;
+  min-height: 76px;
+  /* iOS-style spring physics: fast press, bouncy release */
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+  /* Optimize for animations */
+  will-change: transform;
+}
+
+/* iOS-style active/pressed state with spring physics */
+.task-card:active {
+  transform: scale(0.98);
+  /* Faster press-down timing */
+  transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Mobile: Stronger touch feedback with spring physics */
+@media (max-width: 768px) {
+  .task-card:active {
+    transform: scale(0.95);
+    /* Slightly faster on mobile for snappier feel */
+    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+}
+
+.task-row-selected {
+  @apply shadow-md;
+  /* iOS-style selection: 2pt blue border */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.task-row-completed {
+  @apply opacity-75;
+}
+
+.task-checkbox {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+.task-title {
+  @apply flex-1;
+}
+
+.task-title-completed {
+  @apply line-through;
+}
+
+/* Panel Components */
+.task-panel {
+  @apply w-80 border-l flex flex-col h-full relative;
+}
+
+.task-panel-fullscreen {
+  @apply fixed left-0 top-0 w-full h-full bg-gray-900 flex flex-col z-50;
+}
+
+.task-panel-arrow {
+  @apply absolute -left-3 w-6 h-6 border-l border-b transform rotate-45 transition-all duration-75;
+  z-index: 10;
+  border-right: none;
+  border-top: none;
+}
+
+.panel-header {
+  @apply p-4 border-b;
+}
+
+.panel-content {
+  @apply flex-1 overflow-y-auto;
+}
+
+.panel-footer {
+  @apply p-4 border-t space-y-2;
+}
+
+/* Input Components */
+.themed-input {
+  @apply rounded-lg px-3 py-2 border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.themed-button {
+  @apply rounded-lg px-3 py-2 border transition-colors hover:shadow-sm;
+}
+
+.themed-button-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white border-blue-600;
+}
+
+.themed-button-ghost {
+  @apply hover:shadow-none;
+}
+
+/* List Components */
+.list-header {
+  @apply flex items-center justify-center space-x-4 mb-4;
+}
+
+.list-content {
+  @apply text-left flex-1 max-w-md;
+}
+
+.list-title {
+  @apply text-3xl font-bold mb-1;
+}
+
+.list-description {
+  @apply text-sm max-w-none;
+}
+
+.list-image {
+  @apply w-16 h-16 rounded-xl object-cover;
+}
+
+/* Settings Components */
+.theme-selector {
+  @apply grid grid-cols-2 gap-3;
+}
+
+.theme-option {
+  @apply p-4 rounded-lg border-2 transition-colors cursor-pointer;
+}
+
+.theme-option-selected {
+  @apply border-blue-500;
+}
+
+.theme-option-unselected {
+  @apply border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500;
+}
+
+.theme-preview {
+  @apply p-4 rounded-lg border space-y-2;
+}
+
+/* Navigation Components */
+.nav-section {
+  @apply p-2 mt-4;
+}
+
+.nav-header {
+  @apply text-xs uppercase tracking-wide mb-2 px-2 flex items-center justify-between;
+}
+
+.nav-item {
+  @apply w-full justify-start space-y-1;
+}
+
+.nav-button {
+  @apply w-full justify-start px-3 py-2 rounded-lg transition-colors;
+}
+
+.nav-button-active {
+  @apply font-medium;
+}
+
+/* Comments Components */
+.comment-container {
+  @apply space-y-3 pr-2 mb-4;
+}
+
+.comment-item {
+  @apply space-y-2;
+}
+
+.comment-header {
+  @apply flex items-center justify-between;
+}
+
+.comment-content {
+  @apply text-sm rounded-lg p-3 max-w-none;
+}
+
+.comment-input {
+  @apply w-full rounded-lg px-3 py-2 pr-12 resize-none transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Form Components */
+.form-group {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply text-sm block;
+}
+
+.form-input-group {
+  @apply flex items-center space-x-3;
+}
+
+.form-input-spacer {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+/* Mobile Responsive Classes */
+.mobile-layout {
+  @apply flex-col;
+}
+
+.mobile-header {
+  @apply flex-shrink-0 z-50;
+}
+
+.mobile-content {
+  @apply flex-1 relative overflow-hidden;
+}
+
+.mobile-panel {
+  @apply absolute inset-0 z-10 transform transition-transform duration-300 ease-in-out;
+}
+
+.mobile-panel-hidden {
+  @apply -translate-x-full;
+}
+
+.mobile-panel-visible {
+  @apply translate-x-0;
+}
+
+.mobile-main {
+  @apply absolute inset-0 transform transition-transform duration-300 ease-in-out;
+}
+
+.mobile-main-shifted {
+  @apply translate-x-full;
+}
+
+.mobile-back-button {
+  @apply flex items-center space-x-2 p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+}
+
+.mobile-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+}
+
+/* Mobile Touch Optimizations */
+.mobile-touch-target {
+  @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+}
+
+.mobile-button {
+  @apply px-4 py-3 text-base font-medium rounded-lg transition-all active:scale-95;
+}
+
+.mobile-button-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+}
+
+.mobile-button-secondary {
+  @apply bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600 dark:active:bg-gray-500;
+}
+
+.mobile-input {
+  @apply px-4 py-3 text-base border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.mobile-task-item {
+  @apply p-4 transition-colors active:bg-gray-50 dark:active:bg-gray-800;
+}
+
+.mobile-task-list-container {
+  @apply h-full overflow-y-auto;
+  height: 100% !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  max-height: 100vh;
+  min-height: 0;
+}
+
+.mobile-list-item {
+  @apply p-3 rounded-lg;
+  /* iOS-style touch feedback */
+  transition: transform 0.1s ease-out, background-color 0.15s ease;
+}
+
+.mobile-list-item:active {
+  transform: scale(0.95);
+}
+
+/* Theme-aware active state backgrounds */
+.light .mobile-list-item:active,
+.lite .mobile-list-item:active {
+  background-color: rgba(243, 244, 246, 0.8);
+}
+
+.dark .mobile-list-item:active {
+  background-color: rgb(55, 65, 81);
+}
+
+.ocean .mobile-list-item:active {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Mobile Typography */
+.mobile-title {
+  @apply text-lg font-semibold;
+}
+
+.mobile-subtitle {
+  @apply text-sm text-gray-600 dark:text-gray-400;
+}
+
+.mobile-body {
+  @apply text-base leading-relaxed;
+}
+
+/* Mobile Spacing */
+.mobile-section {
+  @apply py-4 px-4;
+}
+
+.mobile-card {
+  @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mx-4 mb-4;
+}
+
+/* Mobile Loading States */
+.mobile-loading-overlay {
+  @apply fixed inset-0 bg-white dark:bg-gray-900 z-50 flex items-center justify-center;
+}
+
+.mobile-loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600;
+}
+
+.mobile-skeleton {
+  @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+}
+
+.mobile-skeleton-text {
+  @apply mobile-skeleton h-4 mb-2;
+}
+
+.mobile-skeleton-title {
+  @apply mobile-skeleton h-6 mb-3;
+}
+
+.mobile-skeleton-button {
+  @apply mobile-skeleton h-10 rounded-lg;
+}
+
+/* Mobile Transitions */
+.mobile-slide-enter {
+  @apply transform translate-x-full;
+}
+
+.mobile-slide-enter-active {
+  @apply transform translate-x-0 transition-transform duration-300 ease-out;
+}
+
+.mobile-slide-exit {
+  @apply transform translate-x-0;
+}
+
+.mobile-slide-exit-active {
+  @apply transform -translate-x-full transition-transform duration-300 ease-in;
+}
+
+.mobile-fade-enter {
+  @apply opacity-0;
+}
+
+.mobile-fade-enter-active {
+  @apply opacity-100 transition-opacity duration-200 ease-out;
+}
+
+.mobile-fade-exit {
+  @apply opacity-100;
+}
+
+.mobile-fade-exit-active {
+  @apply opacity-0 transition-opacity duration-200 ease-in;
+}
+
+/* Responsive Layout Classes */
+.app-sidebar {
+  @apply w-80 border-r flex flex-col h-full relative translate-x-0;
+}
+
+/* iOS-style drawer: sidebar is fixed underneath, content slides to reveal it */
+.app-sidebar-mobile {
+  @apply fixed left-0 top-0 h-full z-10;
+  width: 85vw;
+  max-width: 320px;
+  /* Sidebar starts slightly offset/scaled and animates to full */
+  transform: translateY(20px) scale(0.95);
+  opacity: 0.8;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.app-sidebar-mobile-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Content wrapper that slides right to reveal sidebar */
+.ios-drawer-content {
+  @apply relative z-20;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Solid background to cover sidebar when closed - theme files override this */
+  background-color: rgb(255, 255, 255);
+  /* Create containing block for fixed-position header so it moves with the drawer */
+  transform: translateX(0);
+  /* Optimize animation and prevent negative transforms */
+  will-change: transform;
+  min-width: 100%;
+}
+
+.ios-drawer-content-open {
+  transform: translateX(min(85vw, 320px));
+  /* Shadow on left edge when drawer is open */
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Overlay that appears on content when drawer is open */
+/* Only covers the content area (right side), not the sidebar */
+.ios-drawer-overlay {
+  @apply fixed top-0 bottom-0 right-0 z-30 bg-black pointer-events-none;
+  /* Start from where sidebar ends - matches ios-drawer-content-open transform */
+  left: min(85vw, 320px);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ios-drawer-overlay-visible {
+  opacity: 0.3;
+  pointer-events: auto;
+}
+
+.task-panel {
+  @apply w-96 border-l flex flex-col h-full relative md:relative md:translate-x-0;
+}
+
+.task-panel-desktop {
+  @apply fixed top-32 bottom-10 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col z-30 rounded-l-lg rounded-r-lg rounded-lg shadow-lg;
+  /* Responsive width that adapts to available space and layout configuration */
+  width: clamp(
+    var(--task-panel-min-width),
+    calc(100vw - var(--task-list-width) - 60px),
+    var(--task-panel-max-width)
+  );
+  min-width: var(--task-panel-min-width);
+  max-width: var(--task-panel-max-width);
+}
+
+/* For 3-column layouts with visible sidebar */
+@media (min-width: 1100px) {
+  .task-panel-desktop {
+    width: clamp(
+      var(--task-panel-min-width),
+      calc(100vw - var(--sidebar-width) - var(--task-list-width) - 60px),
+      var(--task-panel-max-width)
+    );
+  }
+}
+
+.task-panel-mobile {
+  /* Spring-like cubic-bezier for iOS-style natural animation */
+  @apply fixed left-0 w-full z-40 transform translate-x-full;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  top: 0;
+  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height on mobile */
+  /* Ensure proper mobile keyboard handling */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent blue screen overlay issues on iOS */
+  isolation: isolate;
+  /* Ensure keyboard compatibility */
+  overflow-y: auto;
+}
+
+/* Mobile-specific textarea styling to fix iOS blue screen issue */
+@media (max-width: 768px) {
+  .task-panel-mobile textarea {
+    /* Prevent iOS zoom and blue overlay issues */
+    font-size: 16px !important; /* Prevents iOS zoom */
+    -webkit-user-select: text;
+    -webkit-appearance: none;
+    /* Reduce focus ring intensity on mobile */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    /* Remove transforms that might interfere with keyboard */
+    transform: none !important;
+    -webkit-transform: none !important;
+    /* Ensure proper keyboard interaction */
+    position: relative;
+    z-index: 1;
+  }
+  
+  .task-panel-mobile textarea:focus {
+    /* Use a subtle focus state instead of blue ring */
+    outline: none !important;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+    /* Prevent iOS blue overlay */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Fix for mobile keyboard interaction */
+  .task-panel-mobile {
+    /* Simplify for better mobile keyboard compatibility */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    /* Start off-screen right for slide-in animation */
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    /* Allow proper touch interaction */
+    touch-action: manipulation;
+    /* Ensure proper stacking */
+    z-index: 50;
+  }
+  
+  /* Enable opening animation on mobile - slide in from right with spring physics */
+  .task-panel-mobile.task-panel-mobile-open {
+    transform: translateX(0) !important;
+    -webkit-transform: translateX(0) !important;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  }
+
+  /* Enable closing animation on mobile - slide out to the right with spring physics */
+  .task-panel-mobile.task-panel-mobile-closing {
+    transform: translateX(100%) !important;
+    -webkit-transform: translateX(100%) !important;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  }
+  
+  /* Ensure scrollable areas work properly on mobile */
+  .task-panel-mobile .overflow-y-auto,
+  .task-panel-mobile .overflow-auto {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y pinch-zoom;
+  }
+}
+
+.task-panel-mobile-open {
+  @apply translate-x-0;
+}
+
+.task-panel-mobile-closing {
+  @apply translate-x-full;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  @apply flex items-center justify-between p-4 border-b md:hidden;
+}
+
+.mobile-nav-title {
+  @apply text-lg font-semibold flex items-center space-x-2;
+}
+
+.mobile-nav-back {
+  @apply flex items-center space-x-2 text-blue-600 cursor-pointer hover:text-blue-800;
+}
+
+
+/* Task Details Pane Animation - Slides in from left to right */
+.task-panel-animate {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.task-panel-animate-out {
+  animation: slideOutToLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+
+/* Desktop Layout Classes */
+.desktop-layout {
+  @apply md:flex-row;
+}
+
+
+.desktop-sidebar {
+  @apply md:relative md:translate-x-0;
+}
+
+.desktop-main {
+  @apply md:flex-1;
+}
+
+.desktop-panel {
+  @apply md:relative md:translate-x-0;
+}
+
+/* Utility Classes for Theming */
+.transition-theme {
+  @apply transition-all duration-200;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+}

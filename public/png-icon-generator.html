@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PNG Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon { margin: 10px; display: inline-block; text-align: center; }
+        canvas { border: 1px solid #ccc; margin: 5px; }
+        .download-btn { margin: 5px; padding: 5px 10px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .download-btn:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <h1>Astrid PWA Icon Generator</h1>
+    <p>Click "Download" next to each icon to save as PNG:</p>
+    
+    
+        <div class="icon">
+            <h3>72×72</h3>
+            <canvas id="canvas-72" width="72" height="72"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(72)">Download icon-72x72.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>96×96</h3>
+            <canvas id="canvas-96" width="96" height="96"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(96)">Download icon-96x96.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>128×128</h3>
+            <canvas id="canvas-128" width="128" height="128"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(128)">Download icon-128x128.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>144×144</h3>
+            <canvas id="canvas-144" width="144" height="144"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(144)">Download icon-144x144.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>152×152</h3>
+            <canvas id="canvas-152" width="152" height="152"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(152)">Download icon-152x152.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>180×180</h3>
+            <canvas id="canvas-180" width="180" height="180"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(180)">Download icon-180x180.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>192×192</h3>
+            <canvas id="canvas-192" width="192" height="192"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(192)">Download icon-192x192.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>384×384</h3>
+            <canvas id="canvas-384" width="384" height="384"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(384)">Download icon-384x384.png</button>
+        </div>
+    
+        <div class="icon">
+            <h3>512×512</h3>
+            <canvas id="canvas-512" width="512" height="512"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon(512)">Download icon-512x512.png</button>
+        </div>
+    
+    
+    <script>
+        function createIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#3b82f6');
+            gradient.addColorStop(1, '#1d4ed8');
+            
+            // Draw rounded rectangle background
+            const radius = size * 0.2;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            
+            // Draw "A" text
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${Math.floor(size * 0.4)}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('A', size / 2, size / 2);
+        }
+        
+        function downloadIcon(size) {
+            const canvas = document.getElementById(`canvas-${size}`);
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Generate all icons on page load
+        
+            const canvas72 = document.getElementById('canvas-72');
+            createIcon(canvas72, 72);
+        
+            const canvas96 = document.getElementById('canvas-96');
+            createIcon(canvas96, 96);
+        
+            const canvas128 = document.getElementById('canvas-128');
+            createIcon(canvas128, 128);
+        
+            const canvas144 = document.getElementById('canvas-144');
+            createIcon(canvas144, 144);
+        
+            const canvas152 = document.getElementById('canvas-152');
+            createIcon(canvas152, 152);
+        
+            const canvas180 = document.getElementById('canvas-180');
+            createIcon(canvas180, 180);
+        
+            const canvas192 = document.getElementById('canvas-192');
+            createIcon(canvas192, 192);
+        
+            const canvas384 = document.getElementById('canvas-384');
+            createIcon(canvas384, 384);
+        
+            const canvas512 = document.getElementById('canvas-512');
+            createIcon(canvas512, 512);
+        
+    </script>
+</body>
+</html>

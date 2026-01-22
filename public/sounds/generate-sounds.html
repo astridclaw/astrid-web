@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Task Sounds</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .sound-generator {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button.play {
+      background: #10b981;
+    }
+    button.play:hover {
+      background: #059669;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #f0f9ff;
+      color: #0369a1;
+      font-size: 14px;
+    }
+    .instructions {
+      background: #fef3c7;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔊 Generate Task Action Sounds</h1>
+
+  <div class="instructions">
+    <strong>Instructions:</strong>
+    <ol>
+      <li>Click "Play" to preview each sound</li>
+      <li>Click "Download" to save the MP3 file</li>
+      <li>Place downloaded files in <code>/public/sounds/</code></li>
+    </ol>
+  </div>
+
+  <div class="sound-generator">
+    <h2>✅ Task Complete Sound</h2>
+    <p>Satisfying completion chime (ascending notes)</p>
+    <button class="play" onclick="playTaskComplete()">Play Preview</button>
+    <button onclick="downloadTaskComplete()">Download MP3</button>
+    <div class="status" id="status-complete"></div>
+  </div>
+
+  <div class="sound-generator">
+    <h2>➕ Task Create Sound</h2>
+    <p>Subtle creation sound (soft pop)</p>
+    <button class="play" onclick="playTaskCreate()">Play Preview</button>
+    <button onclick="downloadTaskCreate()">Download MP3</button>
+    <div class="status" id="status-create"></div>
+  </div>
+
+  <div class="sound-generator">
+    <h2>🗑️ Task Delete Sound</h2>
+    <p>Subtle deletion sound (descending tone)</p>
+    <button class="play" onclick="playTaskDelete()">Play Preview</button>
+    <button onclick="downloadTaskDelete()">Download MP3</button>
+    <div class="status" id="status-delete"></div>
+  </div>
+
+  <script>
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+
+    // Generate task complete sound (ascending chime)
+    function generateTaskCompleteSound() {
+      const sampleRate = audioContext.sampleRate
+      const duration = 0.4 // 400ms
+      const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate)
+      const data = buffer.getChannelData(0)
+
+      const frequencies = [523.25, 659.25, 783.99] // C5, E5, G5 (major chord)
+
+      for (let i = 0; i < data.length; i++) {
+        const t = i / sampleRate
+        let sample = 0
+
+        frequencies.forEach((freq, idx) => {
+          const startTime = idx * 0.05
+          if (t >= startTime) {
+            const localT = t - startTime
+            const envelope = Math.exp(-localT * 8) // Decay
+            sample += Math.sin(2 * Math.PI * freq * localT) * envelope * 0.2
+          }
+        })
+
+        data[i] = sample
+      }
+
+      return buffer
+    }
+
+    // Generate task create sound (soft pop)
+    function generateTaskCreateSound() {
+      const sampleRate = audioContext.sampleRate
+      const duration = 0.15 // 150ms
+      const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate)
+      const data = buffer.getChannelData(0)
+
+      const frequency = 800 // Hz
+
+      for (let i = 0; i < data.length; i++) {
+        const t = i / sampleRate
+        const envelope = Math.exp(-t * 25) // Fast decay
+        data[i] = Math.sin(2 * Math.PI * frequency * t) * envelope * 0.15
+      }
+
+      return buffer
+    }
+
+    // Generate task delete sound (descending tone)
+    function generateTaskDeleteSound() {
+      const sampleRate = audioContext.sampleRate
+      const duration = 0.2 // 200ms
+      const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate)
+      const data = buffer.getChannelData(0)
+
+      const startFreq = 600
+      const endFreq = 300
+
+      for (let i = 0; i < data.length; i++) {
+        const t = i / sampleRate
+        const progress = t / duration
+        const freq = startFreq + (endFreq - startFreq) * progress
+        const envelope = Math.exp(-t * 10) // Decay
+        data[i] = Math.sin(2 * Math.PI * freq * t) * envelope * 0.12
+      }
+
+      return buffer
+    }
+
+    // Play sound buffer
+    function playBuffer(buffer) {
+      const source = audioContext.createBufferSource()
+      source.buffer = buffer
+      source.connect(audioContext.destination)
+      source.start()
+    }
+
+    // Convert buffer to WAV blob (simplified, MP3 encoding would require additional library)
+    function bufferToWav(buffer) {
+      const length = buffer.length * buffer.numberOfChannels * 2
+      const arrayBuffer = new ArrayBuffer(44 + length)
+      const view = new DataView(arrayBuffer)
+
+      // WAV header
+      const writeString = (offset, string) => {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i))
+        }
+      }
+
+      writeString(0, 'RIFF')
+      view.setUint32(4, 36 + length, true)
+      writeString(8, 'WAVE')
+      writeString(12, 'fmt ')
+      view.setUint32(16, 16, true) // Subchunk size
+      view.setUint16(20, 1, true) // PCM format
+      view.setUint16(22, buffer.numberOfChannels, true)
+      view.setUint32(24, buffer.sampleRate, true)
+      view.setUint32(28, buffer.sampleRate * buffer.numberOfChannels * 2, true)
+      view.setUint16(32, buffer.numberOfChannels * 2, true)
+      view.setUint16(34, 16, true) // Bits per sample
+      writeString(36, 'data')
+      view.setUint32(40, length, true)
+
+      // Write audio data
+      const channelData = buffer.getChannelData(0)
+      let offset = 44
+      for (let i = 0; i < channelData.length; i++) {
+        const sample = Math.max(-1, Math.min(1, channelData[i]))
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true)
+        offset += 2
+      }
+
+      return new Blob([arrayBuffer], { type: 'audio/wav' })
+    }
+
+    // Download helper
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+
+    // Task Complete handlers
+    function playTaskComplete() {
+      const buffer = generateTaskCompleteSound()
+      playBuffer(buffer)
+      document.getElementById('status-complete').textContent = '▶️ Playing...'
+      setTimeout(() => {
+        document.getElementById('status-complete').textContent = ''
+      }, 500)
+    }
+
+    function downloadTaskComplete() {
+      const buffer = generateTaskCompleteSound()
+      const blob = bufferToWav(buffer)
+      downloadBlob(blob, 'task-complete.wav')
+      document.getElementById('status-complete').textContent = '✅ Downloaded! (Convert to MP3 if needed)'
+    }
+
+    // Task Create handlers
+    function playTaskCreate() {
+      const buffer = generateTaskCreateSound()
+      playBuffer(buffer)
+      document.getElementById('status-create').textContent = '▶️ Playing...'
+      setTimeout(() => {
+        document.getElementById('status-create').textContent = ''
+      }, 200)
+    }
+
+    function downloadTaskCreate() {
+      const buffer = generateTaskCreateSound()
+      const blob = bufferToWav(buffer)
+      downloadBlob(blob, 'task-create.wav')
+      document.getElementById('status-create').textContent = '✅ Downloaded! (Convert to MP3 if needed)'
+    }
+
+    // Task Delete handlers
+    function playTaskDelete() {
+      const buffer = generateTaskDeleteSound()
+      playBuffer(buffer)
+      document.getElementById('status-delete').textContent = '▶️ Playing...'
+      setTimeout(() => {
+        document.getElementById('status-delete').textContent = ''
+      }, 250)
+    }
+
+    function downloadTaskDelete() {
+      const buffer = generateTaskDeleteSound()
+      const blob = bufferToWav(buffer)
+      downloadBlob(blob, 'task-delete.wav')
+      document.getElementById('status-delete').textContent = '✅ Downloaded! (Convert to MP3 if needed)'
+    }
+  </script>
+</body>
+</html>

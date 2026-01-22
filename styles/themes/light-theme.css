@@ -1,0 +1,382 @@
+/* Light Theme Variables */
+.light {
+  /* Background colors */
+  --theme-bg-primary: 255, 255, 255;
+  --theme-bg-secondary: 249, 250, 251;
+  --theme-bg-tertiary: 243, 244, 246;
+  --theme-bg-hover: 255, 255, 255;
+  --theme-bg-active: 229, 231, 235;
+  --theme-bg-selected: 239, 246, 255;
+  --theme-bg-selected-border: 191, 219, 254;
+  
+  /* Surface colors */
+  --theme-surface: 255, 255, 255;
+  --theme-surface-hover: 243, 244, 246;
+  --theme-surface-raised: 255, 255, 255;
+  
+  /* Border colors */
+  --theme-border: 229, 231, 235;
+  --theme-border-hover: 209, 213, 219;
+  --theme-border-focus: 59, 130, 246;
+  --theme-border-input: 209, 213, 219;
+  
+  /* Text colors */
+  --theme-text-primary: 17, 24, 39;
+  --theme-text-secondary: 75, 85, 99;
+  --theme-text-muted: 107, 114, 128;
+  --theme-text-inverted: 255, 255, 255;
+  --theme-text-selected: 17, 24, 39;
+  
+  /* Interactive colors */
+  --theme-accent: 59, 130, 246;
+  --theme-accent-hover: 37, 99, 235;
+  --theme-accent-text: 255, 255, 255;
+  
+  /* Status colors */
+  --theme-success: 34, 197, 94;
+  --theme-warning: 245, 158, 11;
+  --theme-error: 239, 68, 68;
+  --theme-info: 6, 182, 212;
+  
+  /* Sidebar colors */
+  --theme-sidebar-bg: 243, 244, 246;
+  --theme-sidebar-border: 229, 231, 235;
+  --theme-sidebar-hover: 229, 231, 235;
+  --theme-sidebar-active: 219, 234, 254;
+  
+  /* Task panel colors */
+  --theme-panel-bg: 255, 255, 255;
+  --theme-panel-border: 229, 231, 235;
+  --theme-panel-arrow: 255, 255, 255;
+  
+  /* Header colors */
+  --theme-header-bg: 249, 250, 251;
+  --theme-header-border: 229, 231, 235;
+  
+  /* Input colors */
+  --theme-input-bg: 255, 255, 255;
+  --theme-input-border: 209, 213, 219;
+  --theme-input-placeholder: 156, 163, 175;
+  
+  /* Button colors */
+  --theme-button-bg: 255, 255, 255;
+  --theme-button-hover: 243, 244, 246;
+  --theme-button-border: 209, 213, 219;
+  
+  /* Light mode specific UI elements */
+  --theme-pill-bg: 243, 244, 246;
+  --theme-comment-bg: 249, 250, 251;
+  --theme-count-bg: 239, 239, 239;
+  
+  /* Component shadows */
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Light Theme Component Styles */
+.light .theme-bg-primary { background-color: rgb(var(--theme-bg-primary)); }
+.light .theme-bg-secondary { background-color: rgb(var(--theme-bg-secondary)); }
+.light .theme-bg-tertiary { background-color: rgb(var(--theme-bg-tertiary)); }
+.light .theme-bg-hover { background-color: rgb(var(--theme-bg-hover)); }
+.light .theme-bg-active { background-color: rgb(var(--theme-bg-active)); }
+.light .theme-bg-selected { 
+  background-color: rgb(var(--theme-bg-selected)); 
+  border-color: rgb(var(--theme-bg-selected-border));
+}
+
+.light .theme-text-primary { color: rgb(var(--theme-text-primary)); }
+.light .theme-text-secondary { color: rgb(var(--theme-text-secondary)); }
+.light .theme-text-muted { color: rgb(var(--theme-text-muted)); }
+.light .theme-text-selected { color: rgb(var(--theme-text-selected)); }
+
+.light .theme-border { border-color: rgb(var(--theme-border)); }
+.light .theme-border-input { border-color: rgb(var(--theme-border-input)); }
+
+.light .theme-surface { background-color: rgb(var(--theme-surface)); }
+.light .theme-surface-hover:hover { background-color: rgb(var(--theme-surface-hover)); }
+.light .theme-bg-hover:hover { background-color: rgb(var(--theme-bg-hover)); }
+.light .theme-text-secondary:hover { color: rgb(var(--theme-text-secondary)); }
+.light .theme-text-primary:hover { color: rgb(var(--theme-text-primary)); }
+
+/* Speech bubble arrow fill - matches theme-bg-secondary */
+.light .speech-bubble-arrow-fill { border-right-color: rgb(var(--theme-bg-secondary)); }
+.light .hover\\:theme-text-primary:hover { color: rgb(var(--theme-text-primary)); }
+.light .hover\\:theme-text-secondary:hover { color: rgb(var(--theme-text-secondary)); }
+
+.light .theme-panel {
+  background-color: rgb(var(--theme-panel-bg));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.light .theme-panel-arrow {
+  background-color: rgb(var(--theme-panel-arrow));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.light .theme-sidebar {
+  background-color: rgb(var(--theme-sidebar-bg));
+  border-color: rgb(var(--theme-sidebar-border));
+}
+
+.light .theme-header {
+  background-color: rgb(var(--theme-header-bg));
+  border-color: rgb(var(--theme-header-border));
+}
+
+.light .theme-input {
+  background-color: rgb(var(--theme-input-bg));
+  border-color: rgb(var(--theme-input-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.light .theme-input::placeholder {
+  color: rgb(var(--theme-input-placeholder));
+}
+
+.light .theme-button {
+  background-color: rgb(var(--theme-button-bg));
+  border-color: rgb(var(--theme-button-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.light .theme-button:hover {
+  background-color: rgb(var(--theme-button-hover));
+}
+
+.light .theme-shadow-sm { box-shadow: var(--theme-shadow-sm); }
+.light .theme-shadow { box-shadow: var(--theme-shadow); }
+.light .theme-shadow-lg { box-shadow: var(--theme-shadow-lg); }
+
+/* Light mode specific UI elements */
+.light .theme-pill-bg { background-color: rgb(var(--theme-pill-bg)); }
+.light .theme-comment-bg { background-color: rgb(var(--theme-comment-bg)); }
+.light .theme-count-bg { background-color: rgb(var(--theme-count-bg)); }
+
+/* Lite Theme Variables */
+.lite {
+  /* Background colors - lighter and more minimal */
+  --theme-bg-primary: 255, 255, 255;
+  --theme-bg-secondary: 252, 252, 252;
+  --theme-bg-tertiary: 248, 248, 248;
+  --theme-bg-hover: 255, 255, 255;
+  --theme-bg-active: 240, 240, 240;
+  --theme-bg-selected: 245, 249, 255;
+  --theme-bg-selected-border: 200, 221, 255;
+  
+  /* Surface colors */
+  --theme-surface: 255, 255, 255;
+  --theme-surface-hover: 248, 248, 248;
+  --theme-surface-raised: 255, 255, 255;
+  
+  /* Border colors - very subtle */
+  --theme-border: 240, 240, 240;
+  --theme-border-hover: 220, 220, 220;
+  --theme-border-focus: 59, 130, 246;
+  --theme-border-input: 230, 230, 230;
+  
+  /* Text colors - darker for better readability */
+  --theme-text-primary: 0, 0, 0;
+  --theme-text-secondary: 60, 60, 60;
+  --theme-text-muted: 120, 120, 120;
+  --theme-text-inverted: 255, 255, 255;
+  --theme-text-selected: 0, 0, 0;
+  
+  /* Interactive colors */
+  --theme-accent: 59, 130, 246;
+  --theme-accent-hover: 37, 99, 235;
+  --theme-accent-text: 255, 255, 255;
+  
+  /* Status colors */
+  --theme-success: 34, 197, 94;
+  --theme-warning: 245, 158, 11;
+  --theme-error: 239, 68, 68;
+  --theme-info: 6, 182, 212;
+  
+  /* Sidebar colors - darker text */
+  --theme-sidebar-bg: 250, 250, 250;
+  --theme-sidebar-border: 235, 235, 235;
+  --theme-sidebar-hover: 240, 240, 240;
+  --theme-sidebar-active: 230, 242, 255;
+  --theme-sidebar-text: 40, 40, 40;
+  
+  /* Task panel colors */
+  --theme-panel-bg: 255, 255, 255;
+  --theme-panel-border: 235, 235, 235;
+  --theme-panel-arrow: 255, 255, 255;
+  
+  /* Header colors */
+  --theme-header-bg: 252, 252, 252;
+  --theme-header-border: 240, 240, 240;
+  
+  /* Input colors */
+  --theme-input-bg: 255, 255, 255;
+  --theme-input-border: 220, 220, 220;
+  --theme-input-placeholder: 140, 140, 140;
+  
+  /* Button colors */
+  --theme-button-bg: 255, 255, 255;
+  --theme-button-hover: 248, 248, 248;
+  --theme-button-border: 220, 220, 220;
+  
+  /* Lite mode specific UI elements */
+  --theme-pill-bg: 243, 244, 246;
+  --theme-comment-bg: 249, 250, 251;
+  --theme-count-bg: 239, 239, 239;
+  
+  /* Component shadows - minimal */
+  --theme-shadow-sm: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+  --theme-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --theme-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Lite Theme Component Styles */
+.lite .theme-bg-primary { background-color: rgb(var(--theme-bg-primary)); }
+.lite .theme-bg-secondary { background-color: rgb(var(--theme-bg-secondary)); }
+.lite .theme-bg-tertiary { background-color: rgb(var(--theme-bg-tertiary)); }
+.lite .theme-bg-hover { background-color: rgb(var(--theme-bg-hover)); }
+.lite .theme-bg-active { background-color: rgb(var(--theme-bg-active)); }
+.lite .theme-bg-selected { 
+  background-color: rgb(var(--theme-bg-selected)); 
+  border-color: rgb(var(--theme-bg-selected-border));
+}
+
+.lite .theme-text-primary { color: rgb(var(--theme-text-primary)); }
+.lite .theme-text-secondary { color: rgb(var(--theme-text-secondary)); }
+.lite .theme-text-muted { color: rgb(var(--theme-text-muted)); }
+.lite .theme-text-selected { color: rgb(var(--theme-text-selected)); }
+
+.lite .theme-border { border-color: rgb(var(--theme-border)); }
+.lite .theme-border-input { border-color: rgb(var(--theme-border-input)); }
+
+.lite .theme-surface { background-color: rgb(var(--theme-surface)); }
+.lite .theme-surface-hover:hover { background-color: rgb(var(--theme-surface-hover)); }
+.lite .theme-bg-hover:hover { background-color: rgb(var(--theme-bg-hover)); }
+.lite .theme-text-secondary:hover { color: rgb(var(--theme-text-secondary)); }
+.lite .theme-text-primary:hover { color: rgb(var(--theme-text-primary)); }
+.lite .hover\\:theme-text-primary:hover { color: rgb(var(--theme-text-primary)); }
+.lite .hover\\:theme-text-secondary:hover { color: rgb(var(--theme-text-secondary)); }
+
+.lite .theme-panel {
+  background-color: rgb(var(--theme-panel-bg));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.lite .theme-panel-arrow {
+  background-color: rgb(var(--theme-panel-arrow));
+  border-color: rgb(var(--theme-panel-border));
+  box-shadow: none; /* Remove shadow from arrow */
+}
+
+.lite .theme-sidebar {
+  background-color: rgb(var(--theme-sidebar-bg));
+  border-color: rgb(var(--theme-sidebar-border));
+}
+
+/* Darker text in sidebar for lite mode */
+.lite .theme-sidebar .nav-button,
+.lite .theme-sidebar button {
+  color: rgb(var(--theme-sidebar-text)) !important;
+}
+
+.lite .theme-sidebar .text-gray-300,
+.lite .theme-sidebar .text-gray-400 {
+  color: rgb(var(--theme-sidebar-text)) !important;
+}
+
+.lite .theme-header {
+  background-color: rgb(var(--theme-header-bg));
+  border-color: rgb(var(--theme-header-border));
+}
+
+.lite .theme-input {
+  background-color: rgb(var(--theme-input-bg));
+  border-color: rgb(var(--theme-input-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.lite .theme-input::placeholder {
+  color: rgb(var(--theme-input-placeholder));
+}
+
+.lite .theme-button {
+  background-color: rgb(var(--theme-button-bg));
+  border-color: rgb(var(--theme-button-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.lite .theme-button:hover {
+  background-color: rgb(var(--theme-button-hover));
+}
+
+.lite .theme-shadow-sm { box-shadow: var(--theme-shadow-sm); }
+.lite .theme-shadow { box-shadow: var(--theme-shadow); }
+.lite .theme-shadow-lg { box-shadow: var(--theme-shadow-lg); }
+
+/* Lite mode specific UI elements */
+.lite .theme-pill-bg { background-color: rgb(var(--theme-pill-bg)); }
+.lite .theme-comment-bg { background-color: rgb(var(--theme-comment-bg)); }
+.lite .theme-count-bg { background-color: rgb(var(--theme-count-bg)); }
+
+/* ===== LIGHT THEME: Glass/Blur Material Effects ===== */
+/* Matches iOS LiquidGlass theme - translucent backgrounds with blur */
+
+/* Task cards: Glass material effect */
+.light .task-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.light .task-card:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Selected task card: Thicker glass with accent tint */
+.light .task-row-selected {
+  background-color: rgba(239, 246, 255, 0.8) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Mobile floating header: Glass material */
+.light .app-header-mobile-floating {
+  background-color: rgba(249, 250, 251, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* iOS drawer header: Glass material */
+.light .app-header-ios-drawer {
+  background-color: rgba(249, 250, 251, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile quick add bar: Glass material */
+.light .mobile-quick-add {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Mobile sidebar: Glass material */
+.light .app-sidebar-mobile {
+  background-color: rgba(243, 244, 246, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* List badges: Translucent on glass */
+.light .task-card .theme-bg-secondary {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* iOS drawer content: Solid background to cover sidebar when closed */
+.light .ios-drawer-content {
+  background-color: rgb(255, 255, 255);
+}

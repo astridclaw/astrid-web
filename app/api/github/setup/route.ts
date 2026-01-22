@@ -1,0 +1,114 @@
+/**
+ * GitHub App setup handler for post-installation
+ * Called by GitHub after user installs the app
+ */
+
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authConfig } from '@/lib/auth-config'
+import { prisma } from '@/lib/prisma'
+import { App } from '@octokit/app'
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const installationId = searchParams.get('installation_id')
+    const setupAction = searchParams.get('setup_action')
+
+    // Get session
+    const session = await getServerSession(authConfig)
+    if (!session?.user) {
+      return NextResponse.redirect(new URL('/auth/signin', request.url))
+    }
+
+    if ((setupAction === 'install' || setupAction === 'update') && installationId) {
+      const installationIdInt = parseInt(installationId)
+      const userId = session.user.id
+
+      // Security check: Ensure this installation isn't already connected by another user
+      const existingConnection = await prisma.gitHubIntegration.findFirst({
+        where: {
+          installationId: installationIdInt,
+          userId: { not: userId }
+        }
+      })
+
+      if (existingConnection) {
+        console.log(`⚠️ Installation ${installationId} already connected to another user`)
+        return NextResponse.redirect(
+          new URL('/settings/coding-agents?github=already_connected', request.url)
+        )
+      }
+
+      // Fetch repositories from this installation
+      let repositories: any[] = []
+      if (process.env.GITHUB_APP_ID && process.env.GITHUB_APP_PRIVATE_KEY) {
+        try {
+          const app = new App({
+            appId: parseInt(process.env.GITHUB_APP_ID),
+            privateKey: process.env.GITHUB_APP_PRIVATE_KEY
+          })
+
+          const installationOctokit = await app.getInstallationOctokit(installationIdInt)
+          const reposResponse = await installationOctokit.request('GET /installation/repositories')
+
+          const installationDetails = await app.octokit.request('GET /app/installations/{installation_id}', {
+            installation_id: installationIdInt
+          })
+
+          const account = installationDetails.data.account as any
+          repositories = reposResponse.data.repositories.map((repo: any) => ({
+            id: repo.id,
+            name: repo.name,
+            fullName: repo.full_name,
+            defaultBranch: repo.default_branch || 'main',
+            private: repo.private,
+            installationId: installationIdInt,
+            owner: account?.login || account?.name || 'unknown'
+          }))
+        } catch (error) {
+          console.error('Error fetching repositories:', error)
+          // Continue without repos - they can be fetched later
+        }
+      }
+
+      // Create or update GitHub integration (supports multiple installations per user)
+      await prisma.gitHubIntegration.upsert({
+        where: {
+          userId_installationId: {
+            userId,
+            installationId: installationIdInt
+          }
+        },
+        create: {
+          userId,
+          installationId: installationIdInt,
+          appId: process.env.GITHUB_APP_ID ? parseInt(process.env.GITHUB_APP_ID) : null,
+          isSharedApp: true,
+          repositories
+        },
+        update: {
+          appId: process.env.GITHUB_APP_ID ? parseInt(process.env.GITHUB_APP_ID) : null,
+          isSharedApp: true,
+          repositories
+        }
+      })
+
+      console.log(`✅ GitHub App ${setupAction}ed for user ${userId}, installation ${installationId}, ${repositories.length} repos`)
+
+      // Redirect to coding-agents settings with success message
+      return NextResponse.redirect(
+        new URL(`/settings/coding-agents?github=${setupAction === 'install' ? 'connected' : 'updated'}`, request.url)
+      )
+    }
+
+    // Default redirect to settings
+    return NextResponse.redirect(new URL('/settings/coding-agents', request.url))
+
+  } catch (error) {
+    console.error('Error handling GitHub setup:', error)
+    return NextResponse.redirect(
+      new URL('/settings/coding-agents?github=error', request.url)
+    )
+  }
+}

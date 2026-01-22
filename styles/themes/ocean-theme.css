@@ -1,0 +1,200 @@
+/* Ocean Theme Variables - Light theme with cyan background */
+.ocean {
+  /* Background colors - Cyan ocean background (#88DCF8) */
+  --theme-bg-primary: 136, 220, 248;
+  --theme-bg-secondary: 249, 250, 251;
+  --theme-bg-tertiary: 243, 244, 246;
+  --theme-bg-hover: 255, 255, 255;
+  --theme-bg-active: 229, 231, 235;
+  --theme-bg-selected: 239, 246, 255;
+  --theme-bg-selected-border: 191, 219, 254;
+
+  /* Surface colors - White cards (same as light) */
+  --theme-surface: 255, 255, 255;
+  --theme-surface-hover: 243, 244, 246;
+  --theme-surface-raised: 255, 255, 255;
+
+  /* Border colors (same as light) */
+  --theme-border: 229, 231, 235;
+  --theme-border-hover: 209, 213, 219;
+  --theme-border-focus: 59, 130, 246;
+  --theme-border-input: 209, 213, 219;
+
+  /* Text colors (same as light) */
+  --theme-text-primary: 0, 0, 0;
+  --theme-text-secondary: 75, 85, 99;
+  --theme-text-muted: 107, 114, 128;
+  --theme-text-inverted: 255, 255, 255;
+  --theme-text-selected: 0, 0, 0;
+
+  /* Interactive colors (same as light) */
+  --theme-accent: 59, 130, 246;
+  --theme-accent-hover: 37, 99, 235;
+  --theme-accent-text: 255, 255, 255;
+
+  /* Status colors (same as light) */
+  --theme-success: 34, 197, 94;
+  --theme-warning: 245, 158, 11;
+  --theme-error: 239, 68, 68;
+  --theme-info: 6, 182, 212;
+
+  /* Sidebar colors (same as light) */
+  --theme-sidebar-bg: 249, 250, 251;
+  --theme-sidebar-border: 229, 231, 235;
+  --theme-sidebar-hover: 243, 244, 246;
+  --theme-sidebar-active: 239, 246, 255;
+
+  /* Task panel colors (same as light) */
+  --theme-panel-bg: 249, 250, 251;
+  --theme-panel-border: 229, 231, 235;
+  --theme-panel-arrow: 249, 250, 251;
+
+  /* Header colors (same as light) */
+  --theme-header-bg: 249, 250, 251;
+  --theme-header-border: 229, 231, 235;
+
+  /* Input colors (same as light) */
+  --theme-input-bg: 255, 255, 255;
+  --theme-input-border: 209, 213, 219;
+  --theme-input-placeholder: 156, 163, 175;
+
+  /* Comment colors (same as light) */
+  --theme-comment-bg: 249, 250, 251;
+
+  /* Button colors (same as light) */
+  --theme-button-bg: 255, 255, 255;
+  --theme-button-hover: 243, 244, 246;
+  --theme-button-border: 209, 213, 219;
+
+  /* Component shadows (same as light) */
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Ocean Theme Component Styles */
+.ocean .theme-bg-primary { background-color: rgb(var(--theme-bg-primary)); }
+.ocean .theme-bg-secondary { background-color: rgb(var(--theme-bg-secondary)); }
+.ocean .theme-bg-tertiary { background-color: rgb(var(--theme-bg-tertiary)); }
+.ocean .theme-bg-hover { background-color: rgb(var(--theme-bg-hover)); }
+.ocean .theme-bg-active { background-color: rgb(var(--theme-bg-active)); }
+.ocean .theme-bg-selected {
+  background-color: rgb(var(--theme-bg-selected));
+  border-color: rgb(var(--theme-bg-selected-border));
+}
+
+.ocean .theme-text-primary { color: rgb(var(--theme-text-primary)); }
+.ocean .theme-text-secondary { color: rgb(var(--theme-text-secondary)); }
+.ocean .theme-text-muted { color: rgb(var(--theme-text-muted)); }
+.ocean .theme-text-selected { color: rgb(var(--theme-text-selected)); }
+
+.ocean .theme-border { border-color: rgb(var(--theme-border)); }
+.ocean .theme-border-input { border-color: rgb(var(--theme-border-input)); }
+
+.ocean .theme-surface { background-color: rgb(var(--theme-surface)); }
+.ocean .theme-surface-hover:hover { background-color: rgb(var(--theme-surface-hover)); }
+
+/* Speech bubble arrow fill - matches theme-surface (white) */
+.ocean .speech-bubble-arrow-fill { border-right-color: rgb(var(--theme-surface)); }
+
+.ocean .theme-panel {
+  background-color: rgb(var(--theme-panel-bg));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.ocean .theme-panel-arrow {
+  background-color: rgb(var(--theme-panel-arrow));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.ocean .theme-sidebar {
+  background-color: rgb(var(--theme-sidebar-bg));
+  border-color: rgb(var(--theme-sidebar-border));
+}
+
+.ocean .theme-header {
+  background-color: rgb(var(--theme-header-bg));
+  border-color: rgb(var(--theme-header-border));
+}
+
+.ocean .theme-input {
+  background-color: rgb(var(--theme-input-bg));
+  border-color: rgb(var(--theme-input-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.ocean .theme-input::placeholder {
+  color: rgb(var(--theme-input-placeholder));
+}
+
+.ocean .theme-comment-bg {
+  background-color: rgb(var(--theme-comment-bg));
+}
+
+.ocean .theme-button {
+  background-color: rgb(var(--theme-button-bg));
+  border-color: rgb(var(--theme-button-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.ocean .theme-button:hover {
+  background-color: rgb(var(--theme-button-hover));
+}
+
+.ocean .theme-shadow-sm { box-shadow: var(--theme-shadow-sm); }
+.ocean .theme-shadow { box-shadow: var(--theme-shadow); }
+.ocean .theme-shadow-lg { box-shadow: var(--theme-shadow-lg); }
+
+/* Ocean theme: Task cards use 80% opaque white (20% transparent) for subtle cyan show-through */
+/* Matches iOS TaskRowView.swift: Color.white.opacity(0.8) */
+.ocean .task-card {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Ocean theme: Mobile quick add footer uses same treatment */
+.ocean .mobile-quick-add {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(136, 220, 248, 0.3);
+}
+
+/* ===== OCEAN THEME: Cyan Background with White Cards ===== */
+/* Matches iOS Ocean theme - white cards floating on cyan ocean */
+
+/* Mobile floating header: White with subtle cyan border */
+.ocean .app-header-mobile-floating {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(136, 220, 248, 0.4);
+}
+
+/* iOS drawer header: Same white treatment */
+.ocean .app-header-ios-drawer {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(136, 220, 248, 0.4);
+}
+
+/* Mobile sidebar: White to contrast with cyan content */
+.ocean .app-sidebar-mobile {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Selected task card: White with blue accent border */
+.ocean .task-row-selected {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* iOS drawer content wrapper: Cyan background shows through */
+.ocean .ios-drawer-content {
+  background-color: rgb(136, 220, 248);
+}
+
+/* Task list area: Cyan background */
+.ocean .theme-bg-primary {
+  background-color: rgb(136, 220, 248);
+}
+
+/* List badges on Ocean: Slightly tinted for depth */
+.ocean .task-card .theme-bg-secondary {
+  background-color: rgba(243, 244, 246, 0.8);
+}
+
+/* Ocean theme inherits all component styles from light theme */

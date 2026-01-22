@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "我的任务",
+    "today": "今天",
+    "lists": "列表",
+    "addList": "添加列表",
+    "publicSharedLists": "公开共享列表",
+    "publicLists": "公开列表",
+    "seeAllCollaborative": "查看所有协作列表 →",
+    "seeAllSuggested": "查看所有推荐列表 →"
+  },
+  "userMenu": {
+    "settings": "设置",
+    "refreshData": "刷新数据",
+    "refreshing": "刷新中",
+    "signOut": "退出登录",
+    "signingOut": "退出中"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "close": "关闭",
+    "create": "创建",
+    "update": "更新",
+    "confirm": "确认",
+    "done": "完成",
+    "back": "返回",
+    "next": "下一步",
+    "copy": "复制",
+    "share": "分享",
+    "move": "移动",
+    "archive": "归档",
+    "restore": "恢复",
+    "retry": "重试",
+    "submit": "提交",
+    "send": "发送",
+    "upload": "上传",
+    "download": "下载",
+    "search": "搜索",
+    "filter": "筛选",
+    "sort": "排序",
+    "clear": "清除",
+    "reset": "重置",
+    "apply": "应用",
+    "select": "选择",
+    "selectAll": "全选",
+    "deselectAll": "取消全选"
+  },
+  "tasks": {
+    "task": "任务",
+    "tasks": "任务",
+    "newTask": "新任务",
+    "addTask": "添加任务",
+    "editTask": "编辑任务",
+    "deleteTask": "删除任务",
+    "completeTask": "完成任务",
+    "taskName": "任务名称",
+    "taskDescription": "描述",
+    "noDescription": "无描述",
+    "dueDate": "截止日期",
+    "reminder": "提醒",
+    "reminders": "提醒",
+    "priority": "优先级",
+    "assignee": "负责人",
+    "assignees": "负责人",
+    "unassigned": "未分配",
+    "comments": "评论",
+    "attachments": "附件",
+    "subtasks": "子任务",
+    "tags": "标签",
+    "completed": "已完成",
+    "incomplete": "未完成",
+    "overdue": "已逾期",
+    "noDueDate": "无截止日期",
+    "noReminder": "无提醒",
+    "addReminder": "添加提醒",
+    "addSubtask": "添加子任务",
+    "addComment": "添加评论",
+    "addAttachment": "添加附件",
+    "moveToList": "移动到列表",
+    "copyToList": "复制到列表",
+    "deleteConfirm": "确定要删除此任务吗？",
+    "placeholder": {
+      "taskName": "需要做什么？",
+      "description": "添加描述...",
+      "comment": "写评论..."
+    }
+  },
+  "lists": {
+    "list": "列表",
+    "newList": "新列表",
+    "addList": "添加列表",
+    "editList": "编辑列表",
+    "deleteList": "删除列表",
+    "listName": "列表名称",
+    "listDescription": "描述",
+    "listSettings": "列表设置",
+    "listDetails": "列表详情",
+    "sortAndFilters": "排序和筛选",
+    "membership": "成员资格",
+    "adminSettings": "管理员设置",
+    "privacy": "隐私",
+    "private": "私密",
+    "shared": "共享",
+    "public": "公开",
+    "owner": "所有者",
+    "admin": "管理员",
+    "member": "成员",
+    "viewer": "查看者",
+    "members": "成员",
+    "addMember": "添加成员",
+    "removeMember": "移除成员",
+    "leaveList": "离开列表",
+    "transferOwnership": "转让所有权",
+    "selectNewOwner": "选择新所有者",
+    "transferAndLeave": "转让并离开",
+    "deleteConfirm": "确定要删除此列表吗？",
+    "placeholder": {
+      "listName": "输入列表名称...",
+      "description": "添加描述..."
+    }
+  },
+  "priority": {
+    "none": "无",
+    "low": "低",
+    "medium": "中",
+    "high": "高",
+    "urgent": "紧急"
+  },
+  "time": {
+    "today": "今天",
+    "tomorrow": "明天",
+    "yesterday": "昨天",
+    "thisWeek": "本周",
+    "nextWeek": "下周",
+    "thisMonth": "本月",
+    "nextMonth": "下月",
+    "custom": "自定义",
+    "noDate": "无日期",
+    "pickDate": "选择日期",
+    "pickTime": "选择时间",
+    "atDueTime": "在截止时间",
+    "minutesBefore": "提前{count}分钟",
+    "hourBefore": "提前1小时",
+    "hoursBefore": "提前{count}小时",
+    "dayBefore": "提前1天",
+    "daysBefore": "提前{count}天",
+    "weekBefore": "提前1周"
+  },
+  "weekdays": {
+    "sunday": "星期日",
+    "monday": "星期一",
+    "tuesday": "星期二",
+    "wednesday": "星期三",
+    "thursday": "星期四",
+    "friday": "星期五",
+    "saturday": "星期六",
+    "sun": "周日",
+    "mon": "周一",
+    "tue": "周二",
+    "wed": "周三",
+    "thu": "周四",
+    "fri": "周五",
+    "sat": "周六"
+  },
+  "months": {
+    "january": "一月",
+    "february": "二月",
+    "march": "三月",
+    "april": "四月",
+    "may": "五月",
+    "june": "六月",
+    "july": "七月",
+    "august": "八月",
+    "september": "九月",
+    "october": "十月",
+    "november": "十一月",
+    "december": "十二月",
+    "jan": "1月",
+    "feb": "2月",
+    "mar": "3月",
+    "apr": "4月",
+    "jun": "6月",
+    "jul": "7月",
+    "aug": "8月",
+    "sep": "9月",
+    "oct": "10月",
+    "nov": "11月",
+    "dec": "12月"
+  },
+  "settings": {
+    "settings": "设置",
+    "account": "账户",
+    "accountAccess": "账户与访问",
+    "appearance": "外观",
+    "language": "语言",
+    "preferences": "偏好设置",
+    "notifications": "通知",
+    "remindersNotifications": "提醒与通知",
+    "taskSettings": "任务设置",
+    "integrations": "集成",
+    "apiAccess": "API访问",
+    "debug": "调试",
+    "about": "关于",
+    "help": "帮助",
+    "privacy": "隐私",
+    "terms": "服务条款",
+    "theme": {
+      "title": "主题",
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
+    },
+    "timezone": {
+      "title": "时区",
+      "auto": "自动检测"
+    }
+  },
+  "auth": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "signOut": "退出登录",
+    "signInWith": "使用{provider}登录",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "resetPassword": "重置密码",
+    "createAccount": "创建账户",
+    "alreadyHaveAccount": "已有账户？",
+    "dontHaveAccount": "没有账户？",
+    "continueWith": "使用{provider}继续",
+    "orContinueWith": "或者使用"
+  },
+  "messages": {
+    "success": "成功",
+    "error": "错误",
+    "warning": "警告",
+    "info": "信息",
+    "loading": "加载中",
+    "saving": "保存中",
+    "saved": "已保存",
+    "deleting": "删除中",
+    "deleted": "已删除",
+    "updating": "更新中",
+    "updated": "已更新",
+    "creating": "创建中",
+    "created": "已创建",
+    "copying": "复制中",
+    "copied": "已复制",
+    "moving": "移动中",
+    "moved": "已移动",
+    "confirmDelete": "确定要删除吗？",
+    "cannotUndo": "此操作无法撤销。",
+    "noResults": "未找到结果",
+    "tryAgain": "请重试",
+    "somethingWentWrong": "出了点问题",
+    "cacheCleared": "缓存已清除",
+    "dataRefreshed": "数据已刷新。正在重新加载...",
+    "settingsSaved": "设置已保存",
+    "changesSaved": "更改已保存"
+  },
+  "reminders": {
+    "general": [
+      "嗨！有空吗？",
+      "能占用你一秒钟吗？",
+      "有几分钟吗？",
+      "忘记了吗？",
+      "打扰一下！",
+      "有空的时候：",
+      "你的日程上：",
+      "有空吗？",
+      "Astrid在此！",
+      "嗨！打扰一下？",
+      "能占用一分钟吗？",
+      "今天是个好日子"
+    ],
+    "due": [
+      "该工作了！",
+      "截止日期到了！",
+      "准备开始了吗？",
+      "你说过要做：",
+      "该开始了：",
+      "是时候开始了：",
+      "时间到了！",
+      "打扰一下！是时候",
+      "有空吗？该"
+    ],
+    "responses": [
+      "我有东西要给你！",
+      "准备把这个翻篇了吗？",
+      "为什么不完成它呢？",
+      "怎么样？准备好了吗？",
+      "准备好做这个了吗？",
+      "能搞定吗？",
+      "完成这个就能开心了！",
+      "我保证完成后你会感觉更好！",
+      "今天不做吗？",
+      "请完成它吧！",
+      "能完成吗？当然能！",
+      "什么时候才会做？",
+      "让自己感觉好起来！加油！",
+      "我为你骄傲！让我们完成它！",
+      "完成后来点小零食？",
+      "就这一个任务？拜托？",
+      "是时候缩短待办清单了！",
+      "你是秩序派还是混乱派？秩序派！加油！",
+      "最近说过你很棒吗？继续保持！",
+      "一天一任务，杂乱不再来...再见杂乱！",
+      "你是怎么做到的？哇，太厉害了！",
+      "光靠颜值可不行。动手吧！",
+      "这种天气正适合工作，不是吗？",
+      "边工作边喝杯茶？",
+      "要是早做完，现在就能出去玩了。",
+      "时候到了。逃避不了的。",
+      "每次被忽视我都会难过一点。"
+    ],
+    "social": {
+      "one": "{name}在等着你！",
+      "multiple": "这些人在等着你！",
+      "multipleNames": "{name1}、{name2}等人在等着你！"
+    },
+    "ui": {
+      "title": "提醒：",
+      "snooze": "稍后提醒",
+      "complete": "完成",
+      "completedToast": "恭喜完成！",
+      "snooze1day": "1天后提醒",
+      "snooze1week": "1周后提醒"
+    }
+  },
+  "emptyState": {
+    "featured": "这个列表目前是空的！复制它并开始添加任务吧。",
+    "today": "今天没有安排！享受空闲时间，或添加新任务。",
+    "myTasks": "全部完成！目前没有分配给你的任务。休息一下吧！",
+    "assigned": "还没有任务！稍后再来或为团队创建任务。",
+    "notInList": "没有孤立任务！所有任务都已归类到列表中。",
+    "shared": "开始协作吧！添加一个任务来启动这个共享列表。",
+    "public": "与世界分享你的想法！添加任务 - 所有人都能看到这个公开列表。",
+    "personal": "准备记录想法了吗？点击添加任务创建你的第一个任务！",
+    "default": "让我们填满「{listName}」！添加你的第一个任务开始吧。",
+    "defaultNoName": "是时候整理一下了！添加你的第一个任务开始吧。",
+    "addTaskHint": "添加任务",
+    "noLists": "还没有列表。创建你的第一个列表开始吧！"
+  },
+  "common": {
+    "complete": "完成",
+    "snooze": "稍后提醒",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "close": "关闭",
+    "settings": "设置",
+    "language": "语言",
+    "preferences": "偏好",
+    "or": "或",
+    "and": "和",
+    "yes": "是",
+    "no": "否",
+    "ok": "确定",
+    "all": "全部",
+    "none": "无",
+    "more": "更多",
+    "less": "收起",
+    "show": "显示",
+    "hide": "隐藏",
+    "optional": "可选",
+    "required": "必填",
+    "copiedToClipboard": "已复制到剪贴板",
+    "unableToCopy": "无法复制到剪贴板"
+  },
+  "search": {
+    "placeholder": "搜索任务和用户",
+    "noResults": "未找到结果",
+    "searching": "搜索中..."
+  },
+  "listHeaders": {
+    "myTasks": "我的任务",
+    "myTasksDescription": "你的所有任务",
+    "today": "今天",
+    "todayDescription": "今天的任务",
+    "assigned": "已分配",
+    "assignedDescription": "分配给他人的任务",
+    "notInList": "无列表",
+    "notInListDescription": "孤立任务",
+    "public": "公开",
+    "publicDescription": "公开任务"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "账户与访问",
+      "description": "个人资料、邮箱验证和密码设置"
+    },
+    "remindersNotifications": {
+      "title": "提醒与通知",
+      "description": "配置提醒、推送通知和日历集成"
+    },
+    "codingAgent": {
+      "title": "代码助手",
+      "description": "完整的代码助手，集成GitHub + Vercel"
+    },
+    "aiAgents": {
+      "title": "AI与助手",
+      "description": "使用你的API密钥配置AI助手和代码助手"
+    },
+    "apiAccess": {
+      "title": "API访问",
+      "description": "OAuth应用程序和API集成"
+    },
+    "chatgpt": {
+      "title": "ChatGPT集成",
+      "description": "将Astrid连接到自定义GPT操作",
+      "loading": "加载ChatGPT集成...",
+      "breadcrumb": "ChatGPT集成",
+      "howItWorks": {
+        "title": "工作原理",
+        "description": "使用OAuth 2.0和OpenAPI将Astrid连接到ChatGPT",
+        "oauth": {
+          "title": "安全的OAuth 2.0",
+          "description": "无需分享密码即可安全认证"
+        },
+        "openapi": {
+          "title": "OpenAPI规范",
+          "description": "ChatGPT理解的标准API格式"
+        },
+        "shareable": {
+          "title": "可分享集成",
+          "description": "与他人分享你的自定义GPT"
+        }
+      },
+      "step1": {
+        "badge": "步骤1",
+        "title": "创建OAuth客户端",
+        "description": "创建OAuth客户端以在Astrid中验证你的GPT",
+        "manageButton": "管理客户端",
+        "instructions": {
+          "step1": "前往API访问设置",
+          "step2": "点击'创建OAuth客户端'",
+          "step3": "将授权类型设为'authorization_code'",
+          "step4": "添加下面的重定向URI",
+          "step5": "复制你的客户端ID和密钥"
+        },
+        "redirectUri": "重定向URI",
+        "scopes": "权限范围"
+      },
+      "step2": {
+        "badge": "步骤2",
+        "title": "配置你的GPT",
+        "description": "在自定义GPT配置中使用这些URL",
+        "manifestUrl": "插件清单URL",
+        "openapiSpec": "OpenAPI规范",
+        "authUrl": "授权URL",
+        "tokenUrl": "令牌URL",
+        "note": "将这些URL复制到你的GPT操作配置中",
+        "viewDocsButton": "查看文档",
+        "testApiButton": "测试API"
+      },
+      "step2b": {
+        "badge": "备选",
+        "title": "MCP服务器（备选方案）",
+        "description": "使用Model Context Protocol进行直接集成",
+        "serverUrl": "MCP服务器URL",
+        "postEndpoint": "POST端点",
+        "note": "MCP提供了一种标准化的方式将AI模型连接到外部工具"
+      },
+      "step3": {
+        "badge": "步骤3",
+        "title": "开始使用你的GPT",
+        "description": "用你连接的GPT尝试这些示例提示",
+        "examples": {
+          "example1": "显示我今天的任务",
+          "example2": "创建新任务：审查季度报告",
+          "example3": "我的购物清单上有什么？"
+        },
+        "shareNote": "你可以与他人分享你的自定义GPT"
+      },
+      "moreDetails": {
+        "title": "了解更多",
+        "reviewButton": "查看OAuth设置",
+        "openBuilderButton": "打开GPT构建器"
+      }
+    },
+    "contacts": {
+      "title": "联系人",
+      "description": "导入联系人以获取协作者建议",
+      "loading": "加载联系人...",
+      "importSuccess": "成功导入{count}个联系人",
+      "importError": "导入联系人失败。请重试。",
+      "clearConfirmation": "确定要删除所有联系人吗？此操作无法撤销。",
+      "clearSuccess": "已删除{count}个联系人",
+      "clearError": "删除联系人失败。请重试。",
+      "syncedTitle": "已同步联系人",
+      "syncedDescription": "从外部服务导入的联系人",
+      "contactsSynced": "个联系人已同步",
+      "lastUpdated": "最后更新",
+      "importTitle": "导入联系人",
+      "importDescription": "从外部服务导入联系人以获取协作者建议",
+      "googleContacts": "Google通讯录",
+      "googleDescription": "从你的Google账户导入联系人",
+      "connecting": "连接中...",
+      "import": "导入",
+      "privacyNotice": "你的联系人会被安全存储，仅用于分享列表时推荐协作者。",
+      "dangerZone": "危险区域",
+      "irreversibleActions": "这些操作无法撤销",
+      "clearAll": "删除所有联系人",
+      "clearAllDescription": "从账户中删除所有导入的联系人",
+      "clearContacts": "删除联系人"
+    },
+    "appearance": {
+      "title": "外观",
+      "description": "自定义主题、颜色和视觉偏好"
+    },
+    "debug": {
+      "title": "调试",
+      "description": "开发者选项和调试功能",
+      "loading": "加载调试设置...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "列表已恢复",
+          "description": "已恢复{count}个默认列表"
+        },
+        "restoreError": {
+          "title": "恢复失败",
+          "description": "无法恢复默认列表"
+        },
+        "refreshSuccess": {
+          "title": "数据已刷新",
+          "description": "缓存已清除，数据已刷新"
+        },
+        "cacheCleared": {
+          "title": "缓存已清除",
+          "description": "本地缓存已被清除"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "调试选项",
+          "description": "为开发启用调试功能",
+          "toastDebugMode": {
+            "label": "通知调试模式",
+            "description": "显示详细的通知用于调试",
+            "current": "当前",
+            "debugOn": "调试（详细）",
+            "subtleOn": "简洁（最小）"
+          },
+          "reminderDebugMode": {
+            "label": "提醒调试模式",
+            "description": "显示提醒调试信息",
+            "current": "当前",
+            "debugOn": "调试开启",
+            "debugOff": "调试关闭"
+          }
+        },
+        "dataManagement": {
+          "title": "数据管理",
+          "description": "管理你的本地数据和缓存",
+          "favoriteLists": {
+            "label": "恢复默认列表",
+            "description": "如果删除了默认收藏列表，请恢复它们",
+            "button": "恢复默认列表",
+            "restoring": "恢复中..."
+          },
+          "refreshData": {
+            "label": "刷新数据",
+            "description": "清除缓存并从服务器重新加载所有数据",
+            "button": "刷新所有数据",
+            "refreshing": "刷新中..."
+          }
+        }
+      }
+    },
+    "manageAccount": "管理你的账户和偏好设置",
+    "profileInfo": {
+      "title": "个人资料",
+      "description": "更新你的个人信息",
+      "displayName": "显示名称",
+      "emailAddress": "邮箱地址",
+      "saveChanges": "保存更改",
+      "saving": "保存中...",
+      "clickToChangePhoto": "点击更改头像",
+      "viewPublicProfile": "查看公开资料"
+    },
+    "emailVerification": {
+      "title": "邮箱验证",
+      "description": "验证你的邮箱地址以提高安全性",
+      "verified": "已验证",
+      "verifiedViaGoogle": "通过Google验证",
+      "notVerified": "未验证",
+      "verify": "验证",
+      "verificationSent": "验证邮件已发送！",
+      "checkEmail": "请查看你的邮箱并点击验证链接。",
+      "pendingChange": "邮箱更改待处理",
+      "waitingVerification": "等待验证"
+    },
+    "passwordSection": {
+      "title": "更改密码",
+      "description": "更新你的邮箱/密码认证密码",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "changePassword": "更改密码",
+      "passwordsDoNotMatch": "新密码不匹配。",
+      "passwordTooShort": "新密码必须至少6个字符。"
+    },
+    "passkeys": {
+      "title": "通行密钥",
+      "description": "使用通行密钥更快更安全地登录，无需密码",
+      "addPasskey": "添加通行密钥",
+      "addingPasskey": "添加通行密钥中...",
+      "noPasskeys": "还没有注册通行密钥",
+      "addPasskeyHint": "添加通行密钥以更快地无密码登录",
+      "goPasswordless": "无密码登录",
+      "removePassword": "移除密码",
+      "removePasswordHint": "移除密码，仅使用通行密钥登录"
+    },
+    "accountInfo": {
+      "title": "账户信息",
+      "created": "账户创建于",
+      "lastUpdated": "最后更新",
+      "accountId": "账户ID"
+    },
+    "exportData": {
+      "title": "导出你的数据",
+      "description": "下载所有任务、列表和账户数据",
+      "includes": "导出内容包括：",
+      "allTasks": "所有任务（已创建和已分配）",
+      "allLists": "所有列表（拥有和成员）",
+      "comments": "评论和附件元数据",
+      "settings": "账户设置和偏好",
+      "exportJson": "导出为JSON",
+      "exportCsv": "导出为CSV",
+      "exporting": "导出中..."
+    },
+    "deleteAccount": {
+      "title": "删除账户",
+      "description": "永久删除你的账户和所有相关数据",
+      "warning": "警告：此操作无法撤销！",
+      "willRemove": "删除账户将永久移除：",
+      "allTasks": "所有任务、列表和评论",
+      "allFiles": "所有上传的文件和附件",
+      "allIntegrations": "所有集成和设置",
+      "sharedAccess": "共享列表和协作的访问权限",
+      "considerExporting": "建议先导出你的数据（见上方）。",
+      "deleteMyAccount": "删除我的账户",
+      "confirmTitle": "确认删除账户",
+      "confirmDescription": "此操作是永久的，无法撤销。",
+      "enterPassword": "输入密码以确认",
+      "typeToConfirm": "输入「删除我的账户」以确认",
+      "permanentlyDelete": "永久删除账户",
+      "deleting": "删除中..."
+    },
+    "appearancePage": {
+      "title": "外观与用户体验",
+      "description": "自定义界面的外观、感觉和流程",
+      "theme": {
+        "title": "主题",
+        "description": "在Ocean、浅色和深色主题之间选择",
+        "ocean": "Ocean",
+        "oceanDesc": "清爽青色背景的浅色主题",
+        "light": "浅色模式",
+        "lightDesc": "明亮整洁的界面，非常适合白天使用",
+        "dark": "深色模式",
+        "darkDesc": "时尚的深色界面，在弱光下更护眼",
+        "proTip": "你的主题偏好会自动保存并应用到所有设备。"
+      },
+      "keyboard": {
+        "title": "键盘快捷键",
+        "description": "查看和学习键盘快捷键以更快导航",
+        "viewShortcuts": "查看快捷键",
+        "viewTitle": "查看键盘快捷键",
+        "viewDesc": "查看所有可用的键盘快捷键以高效管理任务",
+        "quickAccess": "在任务管理器中随时按?打开键盘快捷键。"
+      },
+      "emailToTask": {
+        "title": "邮件创建任务",
+        "description": "通过发送邮件到remindme@astrid.cc即时创建任务",
+        "threeWays": "三种创建任务的方式",
+        "selfTask": "自己的任务：",
+        "selfTaskDesc": "发送到remindme@astrid.cc",
+        "assignedTask": "分配的任务：",
+        "assignedTaskDesc": "抄送remindme@astrid.cc和一个收件人",
+        "groupTask": "群组任务：",
+        "groupTaskDesc": "抄送remindme@astrid.cc和多个收件人",
+        "configure": "配置邮件设置",
+        "configureDesc": "自定义默认截止日期，启用/禁用功能等",
+        "proTip": "邮件主题变成任务标题，正文变成描述。非常适合从收件箱快速捕获任务！"
+      }
+    }
+  }
+}

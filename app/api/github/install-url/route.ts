@@ -1,0 +1,40 @@
+/**
+ * GitHub App Installation URL endpoint
+ */
+
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authConfig } from '@/lib/auth-config'
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authConfig)
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const appId = process.env.GITHUB_APP_ID
+    if (!appId) {
+      return NextResponse.json({ error: 'GitHub App not configured' }, { status: 500 })
+    }
+
+    // Create installation URL with state parameter to track user
+    const state = Buffer.from(JSON.stringify({
+      userId: session.user.id,
+      timestamp: Date.now()
+    })).toString('base64')
+
+    // Use the actual GitHub App name from your GitHub App settings
+    const appName = 'astrid-code-assistant' // The actual GitHub app name
+    const installUrl = `https://github.com/apps/${appName}/installations/new?state=${state}`
+
+    return NextResponse.json({ installUrl })
+
+  } catch (error) {
+    console.error('Error generating install URL:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}

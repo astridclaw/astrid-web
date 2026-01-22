@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PWA Icon Converter</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .icon { margin: 10px; display: inline-block; }
+    canvas { border: 1px solid #ccc; margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>PWA Icon Converter</h1>
+  <p>Right-click on each canvas and "Save image as..." to create PNG files:</p>
+  
+  
+    <div class="icon">
+      <h3>72x72</h3>
+      <canvas id="canvas-72" width="72" height="72"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>96x96</h3>
+      <canvas id="canvas-96" width="96" height="96"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>128x128</h3>
+      <canvas id="canvas-128" width="128" height="128"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>144x144</h3>
+      <canvas id="canvas-144" width="144" height="144"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>152x152</h3>
+      <canvas id="canvas-152" width="152" height="152"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>180x180</h3>
+      <canvas id="canvas-180" width="180" height="180"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>192x192</h3>
+      <canvas id="canvas-192" width="192" height="192"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>384x384</h3>
+      <canvas id="canvas-384" width="384" height="384"></canvas>
+    </div>
+  
+    <div class="icon">
+      <h3>512x512</h3>
+      <canvas id="canvas-512" width="512" height="512"></canvas>
+    </div>
+  
+  
+  <script>
+    
+      const canvas72 = document.getElementById('canvas-72');
+      const ctx72 = canvas72.getContext('2d');
+      
+      // Create gradient
+      const gradient72 = ctx72.createLinearGradient(0, 0, 72, 72);
+      gradient72.addColorStop(0, '#3b82f6');
+      gradient72.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx72.fillStyle = gradient72;
+      ctx72.roundRect(0, 0, 72, 72, 14.4);
+      ctx72.fill();
+      
+      // Draw text
+      ctx72.fillStyle = 'white';
+      ctx72.font = 'bold 28.8px Arial';
+      ctx72.textAlign = 'center';
+      ctx72.textBaseline = 'middle';
+      ctx72.fillText('A', 36, 36);
+    
+      const canvas96 = document.getElementById('canvas-96');
+      const ctx96 = canvas96.getContext('2d');
+      
+      // Create gradient
+      const gradient96 = ctx96.createLinearGradient(0, 0, 96, 96);
+      gradient96.addColorStop(0, '#3b82f6');
+      gradient96.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx96.fillStyle = gradient96;
+      ctx96.roundRect(0, 0, 96, 96, 19.200000000000003);
+      ctx96.fill();
+      
+      // Draw text
+      ctx96.fillStyle = 'white';
+      ctx96.font = 'bold 38.400000000000006px Arial';
+      ctx96.textAlign = 'center';
+      ctx96.textBaseline = 'middle';
+      ctx96.fillText('A', 48, 48);
+    
+      const canvas128 = document.getElementById('canvas-128');
+      const ctx128 = canvas128.getContext('2d');
+      
+      // Create gradient
+      const gradient128 = ctx128.createLinearGradient(0, 0, 128, 128);
+      gradient128.addColorStop(0, '#3b82f6');
+      gradient128.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx128.fillStyle = gradient128;
+      ctx128.roundRect(0, 0, 128, 128, 25.6);
+      ctx128.fill();
+      
+      // Draw text
+      ctx128.fillStyle = 'white';
+      ctx128.font = 'bold 51.2px Arial';
+      ctx128.textAlign = 'center';
+      ctx128.textBaseline = 'middle';
+      ctx128.fillText('A', 64, 64);
+    
+      const canvas144 = document.getElementById('canvas-144');
+      const ctx144 = canvas144.getContext('2d');
+      
+      // Create gradient
+      const gradient144 = ctx144.createLinearGradient(0, 0, 144, 144);
+      gradient144.addColorStop(0, '#3b82f6');
+      gradient144.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx144.fillStyle = gradient144;
+      ctx144.roundRect(0, 0, 144, 144, 28.8);
+      ctx144.fill();
+      
+      // Draw text
+      ctx144.fillStyle = 'white';
+      ctx144.font = 'bold 57.6px Arial';
+      ctx144.textAlign = 'center';
+      ctx144.textBaseline = 'middle';
+      ctx144.fillText('A', 72, 72);
+    
+      const canvas152 = document.getElementById('canvas-152');
+      const ctx152 = canvas152.getContext('2d');
+      
+      // Create gradient
+      const gradient152 = ctx152.createLinearGradient(0, 0, 152, 152);
+      gradient152.addColorStop(0, '#3b82f6');
+      gradient152.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx152.fillStyle = gradient152;
+      ctx152.roundRect(0, 0, 152, 152, 30.400000000000002);
+      ctx152.fill();
+      
+      // Draw text
+      ctx152.fillStyle = 'white';
+      ctx152.font = 'bold 60.800000000000004px Arial';
+      ctx152.textAlign = 'center';
+      ctx152.textBaseline = 'middle';
+      ctx152.fillText('A', 76, 76);
+    
+      const canvas180 = document.getElementById('canvas-180');
+      const ctx180 = canvas180.getContext('2d');
+      
+      // Create gradient
+      const gradient180 = ctx180.createLinearGradient(0, 0, 180, 180);
+      gradient180.addColorStop(0, '#3b82f6');
+      gradient180.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx180.fillStyle = gradient180;
+      ctx180.roundRect(0, 0, 180, 180, 36);
+      ctx180.fill();
+      
+      // Draw text
+      ctx180.fillStyle = 'white';
+      ctx180.font = 'bold 72px Arial';
+      ctx180.textAlign = 'center';
+      ctx180.textBaseline = 'middle';
+      ctx180.fillText('A', 90, 90);
+    
+      const canvas192 = document.getElementById('canvas-192');
+      const ctx192 = canvas192.getContext('2d');
+      
+      // Create gradient
+      const gradient192 = ctx192.createLinearGradient(0, 0, 192, 192);
+      gradient192.addColorStop(0, '#3b82f6');
+      gradient192.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx192.fillStyle = gradient192;
+      ctx192.roundRect(0, 0, 192, 192, 38.400000000000006);
+      ctx192.fill();
+      
+      // Draw text
+      ctx192.fillStyle = 'white';
+      ctx192.font = 'bold 76.80000000000001px Arial';
+      ctx192.textAlign = 'center';
+      ctx192.textBaseline = 'middle';
+      ctx192.fillText('A', 96, 96);
+    
+      const canvas384 = document.getElementById('canvas-384');
+      const ctx384 = canvas384.getContext('2d');
+      
+      // Create gradient
+      const gradient384 = ctx384.createLinearGradient(0, 0, 384, 384);
+      gradient384.addColorStop(0, '#3b82f6');
+      gradient384.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx384.fillStyle = gradient384;
+      ctx384.roundRect(0, 0, 384, 384, 76.80000000000001);
+      ctx384.fill();
+      
+      // Draw text
+      ctx384.fillStyle = 'white';
+      ctx384.font = 'bold 153.60000000000002px Arial';
+      ctx384.textAlign = 'center';
+      ctx384.textBaseline = 'middle';
+      ctx384.fillText('A', 192, 192);
+    
+      const canvas512 = document.getElementById('canvas-512');
+      const ctx512 = canvas512.getContext('2d');
+      
+      // Create gradient
+      const gradient512 = ctx512.createLinearGradient(0, 0, 512, 512);
+      gradient512.addColorStop(0, '#3b82f6');
+      gradient512.addColorStop(1, '#1d4ed8');
+      
+      // Draw background
+      ctx512.fillStyle = gradient512;
+      ctx512.roundRect(0, 0, 512, 512, 102.4);
+      ctx512.fill();
+      
+      // Draw text
+      ctx512.fillStyle = 'white';
+      ctx512.font = 'bold 204.8px Arial';
+      ctx512.textAlign = 'center';
+      ctx512.textBaseline = 'middle';
+      ctx512.fillText('A', 256, 256);
+    
+  </script>
+</body>
+</html>

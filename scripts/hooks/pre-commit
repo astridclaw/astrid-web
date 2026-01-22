@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Auto-increment iOS build number when iOS files are staged
+# Version format: MARKETING_VERSION = X.Y.Z where Z is the build number
+
+PBXPROJ="ios-app/Astrid App.xcodeproj/project.pbxproj"
+
+# Check if any ios-app files are staged (excluding .xcuserdata and build folders)
+IOS_CHANGES=$(git diff --cached --name-only | grep "^ios-app/" | grep -v ".xcuserdata" | grep -v "^ios-app/build/")
+
+if [ -z "$IOS_CHANGES" ]; then
+    # No iOS changes, skip
+    exit 0
+fi
+
+echo "📱 iOS changes detected, incrementing build number..."
+
+# Get current marketing version (e.g., 1.1.1 or 1.1)
+CURRENT_VERSION=$(grep -m1 "MARKETING_VERSION = " "$PBXPROJ" | sed 's/.*MARKETING_VERSION = \([^;]*\);/\1/')
+
+# Parse version components
+IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+MAJOR="${VERSION_PARTS[0]}"
+MINOR="${VERSION_PARTS[1]}"
+PATCH="${VERSION_PARTS[2]:-0}"
+
+# Increment patch/build number
+NEW_PATCH=$((PATCH + 1))
+NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+
+echo "   Version: $CURRENT_VERSION → $NEW_VERSION"
+
+# Update all MARKETING_VERSION entries in project.pbxproj
+sed -i '' "s/MARKETING_VERSION = $CURRENT_VERSION;/MARKETING_VERSION = $NEW_VERSION;/g" "$PBXPROJ"
+
+# Also update CURRENT_PROJECT_VERSION to match the patch number
+sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEW_PATCH;/g" "$PBXPROJ"
+
+# Stage the updated project file
+git add "$PBXPROJ"
+
+echo "✅ Build number incremented to $NEW_VERSION"

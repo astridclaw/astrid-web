@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "My Tasks",
+    "today": "Today",
+    "lists": "Lists",
+    "addList": "Add List",
+    "publicSharedLists": "Public Shared Lists",
+    "publicLists": "Public Lists",
+    "seeAllCollaborative": "See all collaborative lists →",
+    "seeAllSuggested": "See all suggested lists →"
+  },
+  "userMenu": {
+    "settings": "Settings",
+    "refreshData": "Refresh data",
+    "refreshing": "Refreshing",
+    "signOut": "Sign out",
+    "signingOut": "Signing out"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "create": "Create",
+    "update": "Update",
+    "confirm": "Confirm",
+    "done": "Done",
+    "back": "Back",
+    "next": "Next",
+    "copy": "Copy",
+    "share": "Share",
+    "move": "Move",
+    "archive": "Archive",
+    "restore": "Restore",
+    "retry": "Retry",
+    "submit": "Submit",
+    "send": "Send",
+    "upload": "Upload",
+    "download": "Download",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "clear": "Clear",
+    "reset": "Reset",
+    "apply": "Apply",
+    "select": "Select",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all"
+  },
+  "tasks": {
+    "task": "Task",
+    "tasks": "Tasks",
+    "newTask": "New task",
+    "addTask": "Add task",
+    "editTask": "Edit task",
+    "deleteTask": "Delete task",
+    "completeTask": "Complete task",
+    "taskName": "Task name",
+    "taskDescription": "Description",
+    "noDescription": "No description",
+    "dueDate": "Due date",
+    "reminder": "Reminder",
+    "reminders": "Reminders",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "assignees": "Assignees",
+    "unassigned": "Unassigned",
+    "comments": "Comments",
+    "attachments": "Attachments",
+    "subtasks": "Subtasks",
+    "tags": "Tags",
+    "completed": "Completed",
+    "incomplete": "Incomplete",
+    "overdue": "Overdue",
+    "noDueDate": "No due date",
+    "noReminder": "No reminder",
+    "addReminder": "Add reminder",
+    "addSubtask": "Add subtask",
+    "addComment": "Add comment",
+    "addAttachment": "Add attachment",
+    "moveToList": "Move to list",
+    "copyToList": "Copy to list",
+    "deleteConfirm": "Are you sure you want to delete this task?",
+    "placeholder": {
+      "taskName": "What needs to be done?",
+      "description": "Add a description...",
+      "comment": "Write a comment..."
+    }
+  },
+  "lists": {
+    "list": "List",
+    "newList": "New list",
+    "addList": "Add list",
+    "editList": "Edit list",
+    "deleteList": "Delete list",
+    "listName": "List name",
+    "listDescription": "Description",
+    "listSettings": "List settings",
+    "listDetails": "List details",
+    "sortAndFilters": "Sort & filters",
+    "membership": "Membership",
+    "adminSettings": "Admin settings",
+    "privacy": "Privacy",
+    "private": "Private",
+    "shared": "Shared",
+    "public": "Public",
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member",
+    "viewer": "Viewer",
+    "members": "Members",
+    "addMember": "Add member",
+    "removeMember": "Remove member",
+    "leaveList": "Leave list",
+    "transferOwnership": "Transfer ownership",
+    "selectNewOwner": "Select new owner",
+    "transferAndLeave": "Transfer & leave",
+    "deleteConfirm": "Are you sure you want to delete this list?",
+    "placeholder": {
+      "listName": "Enter list name...",
+      "description": "Add a description..."
+    }
+  },
+  "priority": {
+    "none": "None",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "time": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "thisWeek": "This week",
+    "nextWeek": "Next week",
+    "thisMonth": "This month",
+    "nextMonth": "Next month",
+    "custom": "Custom",
+    "noDate": "No date",
+    "pickDate": "Pick a date",
+    "pickTime": "Pick a time",
+    "atDueTime": "At due time",
+    "minutesBefore": "{count} minutes before",
+    "hourBefore": "1 hour before",
+    "hoursBefore": "{count} hours before",
+    "dayBefore": "1 day before",
+    "daysBefore": "{count} days before",
+    "weekBefore": "1 week before"
+  },
+  "weekdays": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  "settings": {
+    "settings": "Settings",
+    "account": "Account",
+    "accountAccess": "Account & access",
+    "appearance": "Appearance",
+    "language": "Language",
+    "preferences": "Preferences",
+    "notifications": "Notifications",
+    "remindersNotifications": "Reminders & notifications",
+    "taskSettings": "Task settings",
+    "integrations": "Integrations",
+    "apiAccess": "API access",
+    "debug": "Debug",
+    "about": "About",
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms of service",
+    "theme": {
+      "title": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "auto": "Auto-detect"
+    }
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "signInWith": "Sign in with {provider}",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password",
+    "createAccount": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "continueWith": "Continue with {provider}",
+    "orContinueWith": "Or continue with"
+  },
+  "messages": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "loading": "Loading",
+    "saving": "Saving",
+    "saved": "Saved",
+    "deleting": "Deleting",
+    "deleted": "Deleted",
+    "updating": "Updating",
+    "updated": "Updated",
+    "creating": "Creating",
+    "created": "Created",
+    "copying": "Copying",
+    "copied": "Copied",
+    "moving": "Moving",
+    "moved": "Moved",
+    "confirmDelete": "Are you sure you want to delete this?",
+    "cannotUndo": "This action cannot be undone.",
+    "noResults": "No results found",
+    "tryAgain": "Please try again",
+    "somethingWentWrong": "Something went wrong",
+    "cacheCleared": "Cache cleared",
+    "dataRefreshed": "Data refreshed. Reloading...",
+    "settingsSaved": "Settings saved",
+    "changesSaved": "Changes saved"
+  },
+  "reminders": {
+    "general": [
+      "Hi there! Have a sec?",
+      "Can I see you for a sec?",
+      "Have a few minutes?",
+      "Did you forget?",
+      "Excuse me!",
+      "When you have a minute:",
+      "On your agenda:",
+      "Free for a moment?",
+      "Astrid here!",
+      "Hi! Can I bug you?",
+      "A minute of your time?",
+      "It's a great day to"
+    ],
+    "due": [
+      "Time to work!",
+      "Due date is here!",
+      "Ready to start?",
+      "You said you would do:",
+      "You're supposed to start:",
+      "Time to start:",
+      "It's time!",
+      "Excuse me! Time for",
+      "You free? Time to"
+    ],
+    "responses": [
+      "I've got something for you!",
+      "Ready to put this in the past?",
+      "Why don't you get this done?",
+      "How about it? Ready tiger?",
+      "Ready to do this?",
+      "Can you handle this?",
+      "You can be happy! Just finish this!",
+      "I promise you'll feel better if you finish this!",
+      "Won't you do this today?",
+      "Please finish this, I'm sick of it!",
+      "Can you finish this? Yes you can!",
+      "Are you ever going to do this?",
+      "Feel good about yourself! Let's go!",
+      "I'm so proud of you! Lets get it done!",
+      "A little snack after you finish this?",
+      "Just this one task? Please?",
+      "Time to shorten your todo list!",
+      "Are you on Team Order or Team Chaos? Team Order! Let's go!",
+      "Have I mentioned you are awesome recently? Keep it up!",
+      "A task a day keeps the clutter away... Goodbye clutter!",
+      "How do you do it? Wow, I'm impressed!",
+      "You can't just get by on your good looks. Let's get to it!",
+      "Lovely weather for a job like this, isn't it?",
+      "A spot of tea while you work on this?",
+      "If only you had already done this, then you could go outside and play.",
+      "It's time. You can't put off the inevitable.",
+      "I die a little every time you ignore me."
+    ],
+    "social": {
+      "one": "{name} is counting on you!",
+      "multiple": "These people are counting on you!",
+      "multipleNames": "{name1}, {name2}, and others are counting on you!"
+    },
+    "ui": {
+      "title": "Reminder:",
+      "snooze": "Snooze",
+      "complete": "Complete",
+      "completedToast": "Congratulations on finishing!",
+      "snooze1day": "Snooze 1 day",
+      "snooze1week": "Snooze 1 week"
+    }
+  },
+  "emptyState": {
+    "featured": "This list is empty right now! Copy it to make it your own and start adding tasks.",
+    "today": "Nothing scheduled for today! Enjoy the free time, or add something new.",
+    "myTasks": "You're all caught up! No tasks assigned to you right now. Time to relax!",
+    "assigned": "No tasks assigned yet! Check back later or create tasks for your team.",
+    "notInList": "No orphaned tasks! All your tasks are organized in lists.",
+    "shared": "Start collaborating! Add a task to get this shared list going.",
+    "public": "Share your ideas with the world! Add tasks - anyone can see this public list.",
+    "personal": "Ready to capture your thoughts? Tap add a task to create your first task!",
+    "default": "Let's fill up \"{listName}\"! Add your first task to get started.",
+    "defaultNoName": "Time to get organized! Add your first task to get started.",
+    "addTaskHint": "Add task",
+    "noLists": "No lists yet. Create your first list to get started!"
+  },
+  "common": {
+    "complete": "Complete",
+    "snooze": "Snooze",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "settings": "Settings",
+    "language": "Language",
+    "preferences": "Preferences",
+    "or": "or",
+    "and": "and",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "all": "All",
+    "none": "None",
+    "more": "More",
+    "less": "Less",
+    "show": "Show",
+    "hide": "Hide",
+    "optional": "Optional",
+    "required": "Required",
+    "copiedToClipboard": "Copied to clipboard",
+    "unableToCopy": "Unable to copy to clipboard"
+  },
+  "search": {
+    "placeholder": "Search for tasks and users",
+    "noResults": "No results found",
+    "searching": "Searching..."
+  },
+  "listHeaders": {
+    "myTasks": "My Tasks",
+    "myTasksDescription": "All your tasks",
+    "today": "Today",
+    "todayDescription": "Tasks due today",
+    "assigned": "Assigned",
+    "assignedDescription": "Tasks assigned to others",
+    "notInList": "Not in List",
+    "notInListDescription": "Orphaned tasks",
+    "public": "Public",
+    "publicDescription": "Public tasks"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "Account & Access",
+      "description": "Profile, email verification, and password settings"
+    },
+    "remindersNotifications": {
+      "title": "Reminders & Notifications",
+      "description": "Configure reminders, push notifications, and calendar integration"
+    },
+    "codingAgent": {
+      "title": "Coding Agent",
+      "description": "Full coding agent with GitHub + Vercel integration"
+    },
+    "aiAgents": {
+      "title": "AI & Agents",
+      "description": "Configure AI assistants and coding agents with your API keys"
+    },
+    "apiAccess": {
+      "title": "API Access",
+      "description": "OAuth applications and API integrations"
+    },
+    "chatgpt": {
+      "title": "ChatGPT Integration",
+      "description": "Connect Astrid to custom GPT actions",
+      "loading": "Loading ChatGPT integration...",
+      "breadcrumb": "ChatGPT Integration",
+      "howItWorks": {
+        "title": "How It Works",
+        "description": "Connect Astrid to ChatGPT using OAuth 2.0 and OpenAPI",
+        "oauth": {
+          "title": "Secure OAuth 2.0",
+          "description": "Authenticate securely without sharing your password"
+        },
+        "openapi": {
+          "title": "OpenAPI Specification",
+          "description": "Standard API format that ChatGPT understands"
+        },
+        "shareable": {
+          "title": "Shareable Integration",
+          "description": "Share your custom GPT with others"
+        }
+      },
+      "step1": {
+        "badge": "Step 1",
+        "title": "Create OAuth Client",
+        "description": "Create an OAuth client to authenticate your GPT with Astrid",
+        "manageButton": "Manage Clients",
+        "instructions": {
+          "step1": "Go to API Access settings",
+          "step2": "Click 'Create OAuth Client'",
+          "step3": "Set grant type to 'authorization_code'",
+          "step4": "Add the redirect URI below",
+          "step5": "Copy your Client ID and Secret"
+        },
+        "redirectUri": "Redirect URI",
+        "scopes": "Scopes"
+      },
+      "step2": {
+        "badge": "Step 2",
+        "title": "Configure Your GPT",
+        "description": "Use these URLs in your custom GPT configuration",
+        "manifestUrl": "Plugin Manifest URL",
+        "openapiSpec": "OpenAPI Specification",
+        "authUrl": "Authorization URL",
+        "tokenUrl": "Token URL",
+        "note": "Copy these URLs into your GPT's action configuration",
+        "viewDocsButton": "View Docs",
+        "testApiButton": "Test API"
+      },
+      "step2b": {
+        "badge": "Alt",
+        "title": "MCP Server (Alternative)",
+        "description": "Use the Model Context Protocol for direct integration",
+        "serverUrl": "MCP Server URL",
+        "postEndpoint": "POST Endpoint",
+        "note": "MCP provides a standardized way to connect AI models to external tools"
+      },
+      "step3": {
+        "badge": "Step 3",
+        "title": "Start Using Your GPT",
+        "description": "Try these example prompts with your connected GPT",
+        "examples": {
+          "example1": "Show me my tasks for today",
+          "example2": "Create a new task: Review quarterly report",
+          "example3": "What's on my shopping list?"
+        },
+        "shareNote": "You can share your custom GPT with others"
+      },
+      "moreDetails": {
+        "title": "Learn More",
+        "reviewButton": "Review OAuth Settings",
+        "openBuilderButton": "Open GPT Builder"
+      }
+    },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Import contacts for collaborator suggestions",
+      "loading": "Loading contacts...",
+      "importSuccess": "Successfully imported {count} contacts",
+      "importError": "Failed to import contacts. Please try again.",
+      "clearConfirmation": "Are you sure you want to clear all contacts? This cannot be undone.",
+      "clearSuccess": "Cleared {count} contacts",
+      "clearError": "Failed to clear contacts. Please try again.",
+      "syncedTitle": "Synced Contacts",
+      "syncedDescription": "Contacts imported from external services",
+      "contactsSynced": "contacts synced",
+      "lastUpdated": "Last updated",
+      "importTitle": "Import Contacts",
+      "importDescription": "Import contacts from external services to get collaborator suggestions",
+      "googleContacts": "Google Contacts",
+      "googleDescription": "Import contacts from your Google account",
+      "connecting": "Connecting...",
+      "import": "Import",
+      "privacyNotice": "Your contacts are stored securely and only used to suggest collaborators when sharing lists.",
+      "dangerZone": "Danger Zone",
+      "irreversibleActions": "These actions cannot be undone",
+      "clearAll": "Clear All Contacts",
+      "clearAllDescription": "Remove all imported contacts from your account",
+      "clearContacts": "Clear Contacts"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize theme, colors, and visual preferences"
+    },
+    "debug": {
+      "title": "Debug",
+      "description": "Developer options and debugging features",
+      "loading": "Loading debug settings...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "Lists Restored",
+          "description": "Restored {count} default lists"
+        },
+        "restoreError": {
+          "title": "Restore Failed",
+          "description": "Failed to restore default lists"
+        },
+        "refreshSuccess": {
+          "title": "Data Refreshed",
+          "description": "Cache cleared and data refreshed"
+        },
+        "cacheCleared": {
+          "title": "Cache Cleared",
+          "description": "Local cache has been cleared"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "Debug Options",
+          "description": "Toggle debug features for development",
+          "toastDebugMode": {
+            "label": "Toast Debug Mode",
+            "description": "Show detailed toast notifications for debugging",
+            "current": "Current",
+            "debugOn": "Debug (verbose)",
+            "subtleOn": "Subtle (minimal)"
+          },
+          "reminderDebugMode": {
+            "label": "Reminder Debug Mode",
+            "description": "Show reminder debug information",
+            "current": "Current",
+            "debugOn": "Debug enabled",
+            "debugOff": "Debug disabled"
+          }
+        },
+        "dataManagement": {
+          "title": "Data Management",
+          "description": "Manage your local data and cache",
+          "favoriteLists": {
+            "label": "Restore Default Lists",
+            "description": "Restore the default favorite lists if they were deleted",
+            "button": "Restore Default Lists",
+            "restoring": "Restoring..."
+          },
+          "refreshData": {
+            "label": "Refresh Data",
+            "description": "Clear cache and reload all data from the server",
+            "button": "Refresh All Data",
+            "refreshing": "Refreshing..."
+          }
+        }
+      }
+    },
+    "manageAccount": "Manage your account and preferences",
+    "profileInfo": {
+      "title": "Profile Information",
+      "description": "Update your personal information",
+      "displayName": "Display Name",
+      "emailAddress": "Email Address",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "clickToChangePhoto": "Click to change profile picture",
+      "viewPublicProfile": "View Public Profile"
+    },
+    "emailVerification": {
+      "title": "Email Verification",
+      "description": "Verify your email address for security",
+      "verified": "Verified",
+      "verifiedViaGoogle": "Verified via Google",
+      "notVerified": "Not verified",
+      "verify": "Verify",
+      "verificationSent": "Verification Email Sent!",
+      "checkEmail": "Please check your email and click the verification link.",
+      "pendingChange": "Pending email change",
+      "waitingVerification": "Waiting for verification"
+    },
+    "passwordSection": {
+      "title": "Change Password",
+      "description": "Update your password for email/password authentication",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "changePassword": "Change Password",
+      "passwordsDoNotMatch": "New passwords do not match.",
+      "passwordTooShort": "New password must be at least 6 characters long."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Use passkeys for faster, more secure sign-in without passwords",
+      "addPasskey": "Add a Passkey",
+      "addingPasskey": "Adding passkey...",
+      "noPasskeys": "No passkeys registered yet",
+      "addPasskeyHint": "Add a passkey for faster, passwordless sign-in",
+      "goPasswordless": "Go passwordless",
+      "removePassword": "Remove Password",
+      "removePasswordHint": "Remove your password and sign in with passkey only"
+    },
+    "accountInfo": {
+      "title": "Account Information",
+      "created": "Account created",
+      "lastUpdated": "Last updated",
+      "accountId": "Account ID"
+    },
+    "exportData": {
+      "title": "Export Your Data",
+      "description": "Download all your tasks, lists, and account data",
+      "includes": "Export includes:",
+      "allTasks": "All tasks (created and assigned)",
+      "allLists": "All lists (owned and member of)",
+      "comments": "Comments and attachments metadata",
+      "settings": "Account settings and preferences",
+      "exportJson": "Export as JSON",
+      "exportCsv": "Export as CSV",
+      "exporting": "Exporting..."
+    },
+    "deleteAccount": {
+      "title": "Delete Account",
+      "description": "Permanently delete your account and all associated data",
+      "warning": "Warning: This action cannot be undone!",
+      "willRemove": "Deleting your account will permanently remove:",
+      "allTasks": "All tasks, lists, and comments",
+      "allFiles": "All uploaded files and attachments",
+      "allIntegrations": "All integrations and settings",
+      "sharedAccess": "Access to shared lists and collaborations",
+      "considerExporting": "Consider exporting your data first (see above).",
+      "deleteMyAccount": "Delete My Account",
+      "confirmTitle": "Confirm Account Deletion",
+      "confirmDescription": "This action is permanent and cannot be reversed.",
+      "enterPassword": "Enter your password to confirm",
+      "typeToConfirm": "Type DELETE MY ACCOUNT to confirm",
+      "permanentlyDelete": "Permanently Delete Account",
+      "deleting": "Deleting..."
+    },
+    "appearancePage": {
+      "title": "Appearance and User Experience",
+      "description": "Customize the look, feel, and workflow of your interface",
+      "theme": {
+        "title": "Theme",
+        "description": "Choose between Ocean, light, and dark themes",
+        "ocean": "Ocean",
+        "oceanDesc": "Light theme with a refreshing cyan background",
+        "light": "Light Mode",
+        "lightDesc": "A bright, clean interface perfect for daytime use",
+        "dark": "Dark Mode",
+        "darkDesc": "A sleek, dark interface that's easier on the eyes in low light",
+        "proTip": "Your theme preference is saved automatically and will be applied across all your devices."
+      },
+      "keyboard": {
+        "title": "Keyboard Shortcuts",
+        "description": "View and learn keyboard shortcuts to navigate faster",
+        "viewShortcuts": "View Shortcuts",
+        "viewTitle": "View Keyboard Shortcuts",
+        "viewDesc": "See all available keyboard shortcuts for efficient task management",
+        "quickAccess": "Press ? anywhere in the task manager to open keyboard shortcuts."
+      },
+      "emailToTask": {
+        "title": "Email-to-Task",
+        "description": "Create tasks instantly by sending emails to remindme@astrid.cc",
+        "threeWays": "Three Ways to Create Tasks",
+        "selfTask": "Self-task:",
+        "selfTaskDesc": "Send TO remindme@astrid.cc",
+        "assignedTask": "Assigned task:",
+        "assignedTaskDesc": "CC remindme@astrid.cc with one recipient",
+        "groupTask": "Group task:",
+        "groupTaskDesc": "CC remindme@astrid.cc with multiple recipients",
+        "configure": "Configure Email Settings",
+        "configureDesc": "Customize default due dates, enable/disable the feature, and more",
+        "proTip": "The email subject becomes your task title, and the body becomes the description. Perfect for quick task capture from your inbox!"
+      }
+    }
+  }
+}

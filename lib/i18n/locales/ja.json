@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "マイタスク",
+    "today": "今日",
+    "lists": "リスト",
+    "addList": "リストを追加",
+    "publicSharedLists": "公開共有リスト",
+    "publicLists": "公開リスト",
+    "seeAllCollaborative": "すべてのコラボリストを見る →",
+    "seeAllSuggested": "すべてのおすすめリストを見る →"
+  },
+  "userMenu": {
+    "settings": "設定",
+    "refreshData": "データを更新",
+    "refreshing": "更新中",
+    "signOut": "ログアウト",
+    "signingOut": "ログアウト中"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "close": "閉じる",
+    "create": "作成",
+    "update": "更新",
+    "confirm": "確認",
+    "done": "完了",
+    "back": "戻る",
+    "next": "次へ",
+    "copy": "コピー",
+    "share": "共有",
+    "move": "移動",
+    "archive": "アーカイブ",
+    "restore": "復元",
+    "retry": "再試行",
+    "submit": "送信",
+    "send": "送信",
+    "upload": "アップロード",
+    "download": "ダウンロード",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並び替え",
+    "clear": "クリア",
+    "reset": "リセット",
+    "apply": "適用",
+    "select": "選択",
+    "selectAll": "すべて選択",
+    "deselectAll": "すべて解除"
+  },
+  "tasks": {
+    "task": "タスク",
+    "tasks": "タスク",
+    "newTask": "新しいタスク",
+    "addTask": "タスクを追加",
+    "editTask": "タスクを編集",
+    "deleteTask": "タスクを削除",
+    "completeTask": "タスクを完了",
+    "taskName": "タスク名",
+    "taskDescription": "説明",
+    "noDescription": "説明なし",
+    "dueDate": "期限",
+    "reminder": "リマインダー",
+    "reminders": "リマインダー",
+    "priority": "優先度",
+    "assignee": "担当者",
+    "assignees": "担当者",
+    "unassigned": "未割り当て",
+    "comments": "コメント",
+    "attachments": "添付ファイル",
+    "subtasks": "サブタスク",
+    "tags": "タグ",
+    "completed": "完了",
+    "incomplete": "未完了",
+    "overdue": "期限超過",
+    "noDueDate": "期限なし",
+    "noReminder": "リマインダーなし",
+    "addReminder": "リマインダーを追加",
+    "addSubtask": "サブタスクを追加",
+    "addComment": "コメントを追加",
+    "addAttachment": "添付ファイルを追加",
+    "moveToList": "リストに移動",
+    "copyToList": "リストにコピー",
+    "deleteConfirm": "このタスクを削除しますか？",
+    "placeholder": {
+      "taskName": "何をする必要がありますか？",
+      "description": "説明を追加...",
+      "comment": "コメントを書く..."
+    }
+  },
+  "lists": {
+    "list": "リスト",
+    "newList": "新しいリスト",
+    "addList": "リストを追加",
+    "editList": "リストを編集",
+    "deleteList": "リストを削除",
+    "listName": "リスト名",
+    "listDescription": "説明",
+    "listSettings": "リスト設定",
+    "listDetails": "リスト詳細",
+    "sortAndFilters": "並び替えとフィルター",
+    "membership": "メンバーシップ",
+    "adminSettings": "管理者設定",
+    "privacy": "プライバシー",
+    "private": "プライベート",
+    "shared": "共有",
+    "public": "公開",
+    "owner": "オーナー",
+    "admin": "管理者",
+    "member": "メンバー",
+    "viewer": "閲覧者",
+    "members": "メンバー",
+    "addMember": "メンバーを追加",
+    "removeMember": "メンバーを削除",
+    "leaveList": "リストを離れる",
+    "transferOwnership": "所有権を移転",
+    "selectNewOwner": "新しいオーナーを選択",
+    "transferAndLeave": "移転して離れる",
+    "deleteConfirm": "このリストを削除しますか？",
+    "placeholder": {
+      "listName": "リスト名を入力...",
+      "description": "説明を追加..."
+    }
+  },
+  "priority": {
+    "none": "なし",
+    "low": "低",
+    "medium": "中",
+    "high": "高",
+    "urgent": "緊急"
+  },
+  "time": {
+    "today": "今日",
+    "tomorrow": "明日",
+    "yesterday": "昨日",
+    "thisWeek": "今週",
+    "nextWeek": "来週",
+    "thisMonth": "今月",
+    "nextMonth": "来月",
+    "custom": "カスタム",
+    "noDate": "日付なし",
+    "pickDate": "日付を選択",
+    "pickTime": "時間を選択",
+    "atDueTime": "期限時刻に",
+    "minutesBefore": "{count}分前",
+    "hourBefore": "1時間前",
+    "hoursBefore": "{count}時間前",
+    "dayBefore": "1日前",
+    "daysBefore": "{count}日前",
+    "weekBefore": "1週間前"
+  },
+  "weekdays": {
+    "sunday": "日曜日",
+    "monday": "月曜日",
+    "tuesday": "火曜日",
+    "wednesday": "水曜日",
+    "thursday": "木曜日",
+    "friday": "金曜日",
+    "saturday": "土曜日",
+    "sun": "日",
+    "mon": "月",
+    "tue": "火",
+    "wed": "水",
+    "thu": "木",
+    "fri": "金",
+    "sat": "土"
+  },
+  "months": {
+    "january": "1月",
+    "february": "2月",
+    "march": "3月",
+    "april": "4月",
+    "may": "5月",
+    "june": "6月",
+    "july": "7月",
+    "august": "8月",
+    "september": "9月",
+    "october": "10月",
+    "november": "11月",
+    "december": "12月",
+    "jan": "1月",
+    "feb": "2月",
+    "mar": "3月",
+    "apr": "4月",
+    "jun": "6月",
+    "jul": "7月",
+    "aug": "8月",
+    "sep": "9月",
+    "oct": "10月",
+    "nov": "11月",
+    "dec": "12月"
+  },
+  "settings": {
+    "settings": "設定",
+    "account": "アカウント",
+    "accountAccess": "アカウントとアクセス",
+    "appearance": "外観",
+    "language": "言語",
+    "preferences": "設定",
+    "notifications": "通知",
+    "remindersNotifications": "リマインダーと通知",
+    "taskSettings": "タスク設定",
+    "integrations": "連携",
+    "apiAccess": "APIアクセス",
+    "debug": "デバッグ",
+    "about": "情報",
+    "help": "ヘルプ",
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "theme": {
+      "title": "テーマ",
+      "light": "ライト",
+      "dark": "ダーク",
+      "system": "システム"
+    },
+    "timezone": {
+      "title": "タイムゾーン",
+      "auto": "自動検出"
+    }
+  },
+  "auth": {
+    "signIn": "ログイン",
+    "signUp": "登録",
+    "signOut": "ログアウト",
+    "signInWith": "{provider}でログイン",
+    "email": "メール",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "resetPassword": "パスワードをリセット",
+    "createAccount": "アカウントを作成",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+    "dontHaveAccount": "アカウントをお持ちでないですか？",
+    "continueWith": "{provider}で続ける",
+    "orContinueWith": "または以下で続ける"
+  },
+  "messages": {
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報",
+    "loading": "読み込み中",
+    "saving": "保存中",
+    "saved": "保存しました",
+    "deleting": "削除中",
+    "deleted": "削除しました",
+    "updating": "更新中",
+    "updated": "更新しました",
+    "creating": "作成中",
+    "created": "作成しました",
+    "copying": "コピー中",
+    "copied": "コピーしました",
+    "moving": "移動中",
+    "moved": "移動しました",
+    "confirmDelete": "これを削除しますか？",
+    "cannotUndo": "この操作は元に戻せません。",
+    "noResults": "結果が見つかりません",
+    "tryAgain": "もう一度お試しください",
+    "somethingWentWrong": "問題が発生しました",
+    "cacheCleared": "キャッシュをクリアしました",
+    "dataRefreshed": "データを更新しました。再読み込み中...",
+    "settingsSaved": "設定を保存しました",
+    "changesSaved": "変更を保存しました"
+  },
+  "reminders": {
+    "general": [
+      "こんにちは！ちょっといいですか？",
+      "少しお時間いただけますか？",
+      "数分ありますか？",
+      "忘れていませんか？",
+      "すみません！",
+      "お時間があるときに：",
+      "あなたの予定に：",
+      "少し空いていますか？",
+      "アストリッドです！",
+      "こんにちは！お邪魔してもいいですか？",
+      "1分だけお時間を？",
+      "今日は絶好の日です"
+    ],
+    "due": [
+      "仕事の時間です！",
+      "期限が来ました！",
+      "始める準備はできていますか？",
+      "あなたはこれをやると言いました：",
+      "始めるはずです：",
+      "始める時間です：",
+      "その時が来ました！",
+      "すみません！時間です",
+      "空いてますか？時間です"
+    ],
+    "responses": [
+      "あなたに何かあります！",
+      "これを過去のものにする準備は？",
+      "これを終わらせませんか？",
+      "どうですか？準備万端ですか？",
+      "これをやる準備は？",
+      "これをこなせますか？",
+      "幸せになれます！これを終わらせるだけです！",
+      "これを終わらせれば気分が良くなると約束します！",
+      "今日はやらないのですか？",
+      "お願いですからこれを終わらせて！",
+      "これを終わらせられますか？できますよ！",
+      "いつかやるつもりはありますか？",
+      "自分を褒めてあげて！行きましょう！",
+      "あなたを誇りに思います！終わらせましょう！",
+      "これを終わらせたら小さなご褒美は？",
+      "このタスクだけ？お願い？",
+      "やることリストを短くする時間です！",
+      "秩序チームですか、混沌チームですか？秩序チーム！行きましょう！",
+      "最近あなたが素晴らしいと言いましたか？その調子！",
+      "1日1タスクで散らかりを防ぐ... さよなら散らかり！",
+      "どうやってるの？すごい、感動です！",
+      "見た目だけではやっていけません。取り掛かりましょう！",
+      "こんな仕事にぴったりの天気ですね？",
+      "これに取り組みながらお茶でも？",
+      "もう終わらせていれば、外で遊べたのに。",
+      "その時が来ました。避けられないことを先延ばしにはできません。",
+      "無視されるたびに少し死んでいます。"
+    ],
+    "social": {
+      "one": "{name}があなたを頼りにしています！",
+      "multiple": "この人たちがあなたを頼りにしています！",
+      "multipleNames": "{name1}、{name2}、その他の人があなたを頼りにしています！"
+    },
+    "ui": {
+      "title": "リマインダー：",
+      "snooze": "スヌーズ",
+      "complete": "完了",
+      "completedToast": "完了おめでとうございます！",
+      "snooze1day": "1日スヌーズ",
+      "snooze1week": "1週間スヌーズ"
+    }
+  },
+  "emptyState": {
+    "featured": "このリストは現在空です！コピーして自分のものにし、タスクを追加し始めましょう。",
+    "today": "今日の予定はありません！自由時間を楽しむか、何か新しいことを追加しましょう。",
+    "myTasks": "全て完了しています！現在割り当てられたタスクはありません。リラックスする時間です！",
+    "assigned": "まだ割り当てられたタスクはありません！後で確認するか、チームのタスクを作成してください。",
+    "notInList": "孤立したタスクはありません！すべてのタスクはリストに整理されています。",
+    "shared": "コラボレーションを始めましょう！この共有リストを開始するためにタスクを追加してください。",
+    "public": "アイデアを世界と共有しましょう！タスクを追加 - 誰でもこの公開リストを見ることができます。",
+    "personal": "考えを記録する準備は？タスクを追加をタップして最初のタスクを作成しましょう！",
+    "default": "「{listName}」を埋めましょう！最初のタスクを追加して始めましょう。",
+    "defaultNoName": "整理整頓の時間です！最初のタスクを追加して始めましょう。",
+    "addTaskHint": "タスクを追加",
+    "noLists": "まだリストがありません。最初のリストを作成して始めましょう！"
+  },
+  "common": {
+    "complete": "完了",
+    "snooze": "スヌーズ",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "add": "追加",
+    "close": "閉じる",
+    "settings": "設定",
+    "language": "言語",
+    "preferences": "設定",
+    "or": "または",
+    "and": "と",
+    "yes": "はい",
+    "no": "いいえ",
+    "ok": "OK",
+    "all": "すべて",
+    "none": "なし",
+    "more": "もっと",
+    "less": "少なく",
+    "show": "表示",
+    "hide": "非表示",
+    "optional": "任意",
+    "required": "必須",
+    "copiedToClipboard": "クリップボードにコピーしました",
+    "unableToCopy": "クリップボードにコピーできません"
+  },
+  "search": {
+    "placeholder": "タスクとユーザーを検索",
+    "noResults": "結果が見つかりません",
+    "searching": "検索中..."
+  },
+  "listHeaders": {
+    "myTasks": "マイタスク",
+    "myTasksDescription": "すべてのタスク",
+    "today": "今日",
+    "todayDescription": "今日のタスク",
+    "assigned": "割り当て済み",
+    "assignedDescription": "他の人に割り当てたタスク",
+    "notInList": "リストなし",
+    "notInListDescription": "孤立したタスク",
+    "public": "公開",
+    "publicDescription": "公開タスク"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "アカウントとアクセス",
+      "description": "プロフィール、メール確認、パスワード設定"
+    },
+    "remindersNotifications": {
+      "title": "リマインダーと通知",
+      "description": "リマインダー、プッシュ通知、カレンダー連携を設定"
+    },
+    "codingAgent": {
+      "title": "コーディングエージェント",
+      "description": "GitHub + Vercel連携付きのフルコーディングエージェント"
+    },
+    "aiAgents": {
+      "title": "AIとエージェント",
+      "description": "APIキーでAIアシスタントとコーディングエージェントを設定"
+    },
+    "apiAccess": {
+      "title": "APIアクセス",
+      "description": "OAuthアプリケーションとAPI連携"
+    },
+    "chatgpt": {
+      "title": "ChatGPT連携",
+      "description": "AstridをカスタムGPTアクションに接続",
+      "loading": "ChatGPT連携を読み込み中...",
+      "breadcrumb": "ChatGPT連携",
+      "howItWorks": {
+        "title": "仕組み",
+        "description": "OAuth 2.0とOpenAPIを使用してAstridをChatGPTに接続",
+        "oauth": {
+          "title": "安全なOAuth 2.0",
+          "description": "パスワードを共有せずに安全に認証"
+        },
+        "openapi": {
+          "title": "OpenAPI仕様",
+          "description": "ChatGPTが理解する標準APIフォーマット"
+        },
+        "shareable": {
+          "title": "共有可能な連携",
+          "description": "カスタムGPTを他の人と共有"
+        }
+      },
+      "step1": {
+        "badge": "ステップ1",
+        "title": "OAuthクライアントを作成",
+        "description": "GPTをAstridで認証するためのOAuthクライアントを作成",
+        "manageButton": "クライアントを管理",
+        "instructions": {
+          "step1": "APIアクセス設定に移動",
+          "step2": "「OAuthクライアントを作成」をクリック",
+          "step3": "グラントタイプを「authorization_code」に設定",
+          "step4": "以下のリダイレクトURIを追加",
+          "step5": "クライアントIDとシークレットをコピー"
+        },
+        "redirectUri": "リダイレクトURI",
+        "scopes": "スコープ"
+      },
+      "step2": {
+        "badge": "ステップ2",
+        "title": "GPTを設定",
+        "description": "カスタムGPT設定でこれらのURLを使用",
+        "manifestUrl": "プラグインマニフェストURL",
+        "openapiSpec": "OpenAPI仕様",
+        "authUrl": "認証URL",
+        "tokenUrl": "トークンURL",
+        "note": "これらのURLをGPTのアクション設定にコピー",
+        "viewDocsButton": "ドキュメントを見る",
+        "testApiButton": "APIをテスト"
+      },
+      "step2b": {
+        "badge": "代替",
+        "title": "MCPサーバー（代替）",
+        "description": "直接連携のためにModel Context Protocolを使用",
+        "serverUrl": "MCPサーバーURL",
+        "postEndpoint": "POSTエンドポイント",
+        "note": "MCPはAIモデルを外部ツールに接続する標準化された方法を提供"
+      },
+      "step3": {
+        "badge": "ステップ3",
+        "title": "GPTの使用を開始",
+        "description": "接続されたGPTでこれらのサンプルプロンプトを試す",
+        "examples": {
+          "example1": "今日のタスクを見せて",
+          "example2": "新しいタスクを作成：四半期レポートを確認",
+          "example3": "買い物リストには何がある？"
+        },
+        "shareNote": "カスタムGPTを他の人と共有できます"
+      },
+      "moreDetails": {
+        "title": "詳細を見る",
+        "reviewButton": "OAuth設定を確認",
+        "openBuilderButton": "GPTビルダーを開く"
+      }
+    },
+    "contacts": {
+      "title": "連絡先",
+      "description": "コラボレーター提案のために連絡先をインポート",
+      "loading": "連絡先を読み込み中...",
+      "importSuccess": "{count}件の連絡先をインポートしました",
+      "importError": "連絡先のインポートに失敗しました。もう一度お試しください。",
+      "clearConfirmation": "すべての連絡先を削除しますか？この操作は元に戻せません。",
+      "clearSuccess": "{count}件の連絡先を削除しました",
+      "clearError": "連絡先の削除に失敗しました。もう一度お試しください。",
+      "syncedTitle": "同期された連絡先",
+      "syncedDescription": "外部サービスからインポートされた連絡先",
+      "contactsSynced": "連絡先同期済み",
+      "lastUpdated": "最終更新",
+      "importTitle": "連絡先をインポート",
+      "importDescription": "コラボレーター提案のために外部サービスから連絡先をインポート",
+      "googleContacts": "Google連絡先",
+      "googleDescription": "Googleアカウントから連絡先をインポート",
+      "connecting": "接続中...",
+      "import": "インポート",
+      "privacyNotice": "連絡先は安全に保存され、リストを共有する際のコラボレーター提案にのみ使用されます。",
+      "dangerZone": "危険ゾーン",
+      "irreversibleActions": "これらの操作は元に戻せません",
+      "clearAll": "すべての連絡先を削除",
+      "clearAllDescription": "アカウントからインポートされたすべての連絡先を削除",
+      "clearContacts": "連絡先を削除"
+    },
+    "appearance": {
+      "title": "外観",
+      "description": "テーマ、色、視覚的な設定をカスタマイズ"
+    },
+    "debug": {
+      "title": "デバッグ",
+      "description": "開発者オプションとデバッグ機能",
+      "loading": "デバッグ設定を読み込み中...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "リストを復元しました",
+          "description": "{count}件のデフォルトリストを復元しました"
+        },
+        "restoreError": {
+          "title": "復元に失敗",
+          "description": "デフォルトリストの復元に失敗しました"
+        },
+        "refreshSuccess": {
+          "title": "データを更新しました",
+          "description": "キャッシュをクリアしてデータを更新しました"
+        },
+        "cacheCleared": {
+          "title": "キャッシュをクリア",
+          "description": "ローカルキャッシュがクリアされました"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "デバッグオプション",
+          "description": "開発用のデバッグ機能を切り替え",
+          "toastDebugMode": {
+            "label": "トーストデバッグモード",
+            "description": "デバッグ用の詳細なトースト通知を表示",
+            "current": "現在",
+            "debugOn": "デバッグ（詳細）",
+            "subtleOn": "控えめ（最小）"
+          },
+          "reminderDebugMode": {
+            "label": "リマインダーデバッグモード",
+            "description": "リマインダーのデバッグ情報を表示",
+            "current": "現在",
+            "debugOn": "デバッグ有効",
+            "debugOff": "デバッグ無効"
+          }
+        },
+        "dataManagement": {
+          "title": "データ管理",
+          "description": "ローカルデータとキャッシュを管理",
+          "favoriteLists": {
+            "label": "デフォルトリストを復元",
+            "description": "削除された場合、デフォルトのお気に入りリストを復元",
+            "button": "デフォルトリストを復元",
+            "restoring": "復元中..."
+          },
+          "refreshData": {
+            "label": "データを更新",
+            "description": "キャッシュをクリアしてサーバーからすべてのデータを再読み込み",
+            "button": "すべてのデータを更新",
+            "refreshing": "更新中..."
+          }
+        }
+      }
+    },
+    "manageAccount": "アカウントと設定を管理",
+    "profileInfo": {
+      "title": "プロフィール情報",
+      "description": "個人情報を更新",
+      "displayName": "表示名",
+      "emailAddress": "メールアドレス",
+      "saveChanges": "変更を保存",
+      "saving": "保存中...",
+      "clickToChangePhoto": "クリックしてプロフィール画像を変更",
+      "viewPublicProfile": "公開プロフィールを表示"
+    },
+    "emailVerification": {
+      "title": "メール確認",
+      "description": "セキュリティのためにメールアドレスを確認",
+      "verified": "確認済み",
+      "verifiedViaGoogle": "Googleで確認済み",
+      "notVerified": "未確認",
+      "verify": "確認",
+      "verificationSent": "確認メールを送信しました！",
+      "checkEmail": "メールを確認して確認リンクをクリックしてください。",
+      "pendingChange": "メール変更保留中",
+      "waitingVerification": "確認待ち"
+    },
+    "passwordSection": {
+      "title": "パスワードを変更",
+      "description": "メール/パスワード認証用のパスワードを更新",
+      "currentPassword": "現在のパスワード",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "新しいパスワードを確認",
+      "changePassword": "パスワードを変更",
+      "passwordsDoNotMatch": "新しいパスワードが一致しません。",
+      "passwordTooShort": "新しいパスワードは6文字以上である必要があります。"
+    },
+    "passkeys": {
+      "title": "パスキー",
+      "description": "パスキーを使用してパスワードなしでより速く安全にログイン",
+      "addPasskey": "パスキーを追加",
+      "addingPasskey": "パスキーを追加中...",
+      "noPasskeys": "まだパスキーが登録されていません",
+      "addPasskeyHint": "パスワードなしで素早くログインするためにパスキーを追加",
+      "goPasswordless": "パスワードレスにする",
+      "removePassword": "パスワードを削除",
+      "removePasswordHint": "パスワードを削除してパスキーのみでログイン"
+    },
+    "accountInfo": {
+      "title": "アカウント情報",
+      "created": "アカウント作成日",
+      "lastUpdated": "最終更新",
+      "accountId": "アカウントID"
+    },
+    "exportData": {
+      "title": "データをエクスポート",
+      "description": "すべてのタスク、リスト、アカウントデータをダウンロード",
+      "includes": "エクスポートに含まれるもの：",
+      "allTasks": "すべてのタスク（作成済みと割り当て済み）",
+      "allLists": "すべてのリスト（所有とメンバー）",
+      "comments": "コメントと添付ファイルのメタデータ",
+      "settings": "アカウント設定と環境設定",
+      "exportJson": "JSONとしてエクスポート",
+      "exportCsv": "CSVとしてエクスポート",
+      "exporting": "エクスポート中..."
+    },
+    "deleteAccount": {
+      "title": "アカウントを削除",
+      "description": "アカウントと関連するすべてのデータを完全に削除",
+      "warning": "警告：この操作は元に戻せません！",
+      "willRemove": "アカウントを削除すると以下が完全に削除されます：",
+      "allTasks": "すべてのタスク、リスト、コメント",
+      "allFiles": "すべてのアップロードされたファイルと添付ファイル",
+      "allIntegrations": "すべての連携と設定",
+      "sharedAccess": "共有リストとコラボレーションへのアクセス",
+      "considerExporting": "まずデータをエクスポートすることを検討してください（上記参照）。",
+      "deleteMyAccount": "マイアカウントを削除",
+      "confirmTitle": "アカウント削除の確認",
+      "confirmDescription": "この操作は永続的で元に戻せません。",
+      "enterPassword": "確認のためにパスワードを入力",
+      "typeToConfirm": "確認のためにアカウントを削除と入力",
+      "permanentlyDelete": "アカウントを完全に削除",
+      "deleting": "削除中..."
+    },
+    "appearancePage": {
+      "title": "外観とユーザー体験",
+      "description": "インターフェースの見た目、感触、フローをカスタマイズ",
+      "theme": {
+        "title": "テーマ",
+        "description": "Ocean、ライト、ダークテーマから選択",
+        "ocean": "Ocean",
+        "oceanDesc": "さわやかなシアン背景のライトテーマ",
+        "light": "ライトモード",
+        "lightDesc": "日中の使用に最適な明るくクリーンなインターフェース",
+        "dark": "ダークモード",
+        "darkDesc": "暗い環境で目に優しいスタイリッシュなダークインターフェース",
+        "proTip": "テーマ設定は自動的に保存され、すべてのデバイスに適用されます。"
+      },
+      "keyboard": {
+        "title": "キーボードショートカット",
+        "description": "より速くナビゲートするためのキーボードショートカットを表示・学習",
+        "viewShortcuts": "ショートカットを見る",
+        "viewTitle": "キーボードショートカットを見る",
+        "viewDesc": "効率的なタスク管理のために利用可能なすべてのキーボードショートカットを見る",
+        "quickAccess": "タスクマネージャーのどこでも?を押してキーボードショートカットを開きます。"
+      },
+      "emailToTask": {
+        "title": "メールからタスク",
+        "description": "remindme@astrid.ccにメールを送信してタスクを即座に作成",
+        "threeWays": "タスクを作成する3つの方法",
+        "selfTask": "自分へのタスク：",
+        "selfTaskDesc": "remindme@astrid.cc宛に送信",
+        "assignedTask": "割り当てタスク：",
+        "assignedTaskDesc": "受信者1人とremindme@astrid.ccをCC",
+        "groupTask": "グループタスク：",
+        "groupTaskDesc": "複数の受信者とremindme@astrid.ccをCC",
+        "configure": "メール設定を構成",
+        "configureDesc": "デフォルトの期限日をカスタマイズ、機能の有効化/無効化など",
+        "proTip": "メールの件名がタスクのタイトルになり、本文が説明になります。受信トレイからの素早いタスク取り込みに最適！"
+      }
+    }
+  }
+}

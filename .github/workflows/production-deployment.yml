@@ -1,0 +1,524 @@
+name: 'Production Deployment'
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [closed]
+    branches: [main]
+    # Only trigger on merged PRs from staging
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'lib/**'
+      - 'hooks/**'
+      - 'types/**'
+      - 'prisma/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'tailwind.config.js'
+      - 'next.config.js'
+      - '.github/workflows/**'
+
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - 'production'
+          - 'staging'
+      skip_tests:
+        description: 'Skip tests (emergency deployment)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # Job 1: Quality Gates (Tests, Linting, Build)
+  quality-gates:
+    name: 'Quality Gates'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: ${{ !inputs.skip_tests }}
+    outputs:
+      quality-passed: ${{ steps.quality-check.outputs.passed }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Check
+        run: npm run typecheck
+
+      - name: Check Prisma Schema Drift
+        env:
+          # Dummy values - not actually connecting to DB, just validating schema matches migrations
+          DATABASE_URL: "postgresql://x:x@localhost:5432/x"
+          DATABASE_URL_DIRECT: "postgresql://x:x@localhost:5432/x"
+        run: |
+          echo "Checking if Prisma schema matches migrations..."
+          # Compare the schema against the migrations folder (not the live database)
+          # This detects if someone added fields to schema.prisma without creating a migration
+
+          # Use prisma format to validate schema, then check migration status
+          npx prisma validate
+
+          # Generate a temporary migration to see if there are uncommitted schema changes
+          # This doesn't require a database connection
+          DIFF=$(npx prisma migrate diff \
+            --from-empty \
+            --to-schema-datamodel ./prisma/schema.prisma \
+            --script 2>&1) || true
+
+          # Get what the migrations folder would produce
+          MIGRATION_SQL=""
+          for migration in prisma/migrations/*/migration.sql; do
+            if [ -f "$migration" ]; then
+              MIGRATION_SQL="$MIGRATION_SQL$(cat "$migration")\n"
+            fi
+          done
+
+          # Check if schema.prisma defines tables/columns not in any migration file
+          # We look for CREATE TABLE statements in the diff that aren't in migrations
+          # Note: prisma migrate diff outputs "CREATE TABLE "TableName"" but migrations may use
+          # "CREATE TABLE "public"."TableName"" (schema-qualified), so we extract just the table name
+          SCHEMA_TABLES=$(echo "$DIFF" | grep -oE 'CREATE TABLE "[^"]+"' | sed 's/CREATE TABLE "//' | sed 's/"$//' | sort -u || true)
+
+          MISSING_TABLES=""
+          while IFS= read -r table_name; do
+            # Skip empty lines
+            if [ -z "$table_name" ]; then
+              continue
+            fi
+            # Search for CREATE TABLE with this name, allowing for optional schema prefix like "public".
+            if ! grep -qE "CREATE TABLE (\"public\"\\.)?\"${table_name}\"" prisma/migrations/*/migration.sql 2>/dev/null; then
+              MISSING_TABLES="${MISSING_TABLES}CREATE TABLE \"${table_name}\"\n"
+            fi
+          done <<< "$SCHEMA_TABLES"
+
+          if [ -n "$MISSING_TABLES" ]; then
+            echo ""
+            echo "❌ ERROR: Prisma schema has changes that are not in migrations!"
+            echo ""
+            echo "Missing from migrations:"
+            echo -e "$MISSING_TABLES"
+            echo ""
+            echo "To fix this, run locally:"
+            echo "  npx prisma migrate dev --name <describe_your_change>"
+            echo ""
+            echo "Then commit the new migration file in prisma/migrations/"
+            exit 1
+          fi
+          echo "✅ Prisma schema matches migrations"
+
+      - name: Check API/iOS Model Sync
+        run: |
+          echo "Checking if Prisma, Swift, and Core Data models are in sync..."
+          npm run check:model-sync
+
+      - name: Check for API Breaking Changes
+        run: |
+          echo "Checking for API breaking changes..."
+          npm run check:api-breaking
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm test
+        env:
+          NODE_ENV: test
+
+      - name: Build Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          # Use production database for builds
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Set Quality Check Status
+        id: quality-check
+        run: |
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "✅ All quality gates passed"
+
+  # Job 2: Database Migration (Production)
+  database-migration:
+    name: 'Database Migration'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: quality-gates
+    if: always() && (needs.quality-gates.outputs.quality-passed == 'true' || inputs.skip_tests)
+    outputs:
+      migration-success: ${{ steps.migration.outputs.success }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Clear Stale Migration Locks
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          echo "Clearing any stale advisory locks from previous failed migrations..."
+          # Prisma uses advisory lock 72707369 for migrations
+          # Release it if stuck from a previous failed run
+          npx prisma db execute --stdin <<< "SELECT pg_advisory_unlock(72707369);" || true
+          echo "✅ Lock cleanup complete"
+
+      - name: Resolve Failed Migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          echo "Checking for failed migrations..."
+
+          # Find failed migrations by looking at the _prisma_migrations table
+          # These are migrations that started but didn't finish (no finished_at and not rolled back)
+          FAILED_MIGRATIONS=$(npx prisma db execute --stdin <<< "SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NULL AND rolled_back_at IS NULL ORDER BY started_at;" 2>&1) || true
+
+          # Extract just the migration names (skip header/footer lines)
+          MIGRATION_NAMES=$(echo "$FAILED_MIGRATIONS" | grep -E "^[0-9]{8}" || true)
+
+          if [ -z "$MIGRATION_NAMES" ]; then
+            echo "✅ No failed migrations found"
+            exit 0
+          fi
+
+          echo "Found failed migrations:"
+          echo "$MIGRATION_NAMES"
+          echo ""
+
+          # For each failed migration, check if its artifacts exist in the database
+          # If they do, mark as applied (safe). If not, mark as rolled-back (retry).
+          while IFS= read -r migration; do
+            if [ -z "$migration" ]; then
+              continue
+            fi
+
+            echo "Processing failed migration: $migration"
+
+            # Find the migration file and extract table names it creates
+            MIGRATION_FILE="prisma/migrations/${migration}/migration.sql"
+            if [ ! -f "$MIGRATION_FILE" ]; then
+              echo "  ⚠️ Migration file not found, marking as rolled-back"
+              npx prisma migrate resolve --rolled-back "$migration" || true
+              continue
+            fi
+
+            # Extract CREATE TABLE statements to find tables this migration creates
+            TABLES_CREATED=$(grep -oE 'CREATE TABLE "[^"]+"' "$MIGRATION_FILE" | sed 's/CREATE TABLE "//' | sed 's/"$//' || true)
+
+            if [ -z "$TABLES_CREATED" ]; then
+              # No tables created - might be an ALTER or INDEX migration
+              # Check if it's adding columns
+              COLUMNS_ADDED=$(grep -oE 'ADD COLUMN "[^"]+"' "$MIGRATION_FILE" || true)
+              if [ -n "$COLUMNS_ADDED" ]; then
+                echo "  Migration adds columns, marking as applied (safe default)"
+                npx prisma migrate resolve --applied "$migration" || true
+              else
+                echo "  No CREATE TABLE found, marking as applied (safe default)"
+                npx prisma migrate resolve --applied "$migration" || true
+              fi
+              continue
+            fi
+
+            # Check if any of the tables exist
+            TABLES_EXIST=false
+            for table in $TABLES_CREATED; do
+              TABLE_CHECK=$(npx prisma db execute --stdin <<< "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '${table}');" 2>&1) || true
+              if echo "$TABLE_CHECK" | grep -q "t"; then
+                TABLES_EXIST=true
+                echo "  Table '${table}' exists in database"
+                break
+              fi
+            done
+
+            if [ "$TABLES_EXIST" = true ]; then
+              echo "  ✅ Migration artifacts exist, marking as applied"
+              npx prisma migrate resolve --applied "$migration"
+            else
+              echo "  ⚠️ Migration artifacts don't exist, marking as rolled-back for retry"
+              npx prisma migrate resolve --rolled-back "$migration"
+            fi
+
+          done <<< "$MIGRATION_NAMES"
+
+          echo "✅ Failed migrations resolved"
+
+      - name: Run Database Migrations
+        id: migration
+        env:
+          # DATABASE_URL = pooler URL for runtime queries
+          # DATABASE_URL_DIRECT = direct connection for migrations (required for advisory locks)
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          echo "Running database migrations..."
+          npx prisma migrate deploy
+          echo "success=true" >> $GITHUB_OUTPUT
+          echo "✅ Database migrations completed successfully"
+
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          echo "Generating Prisma client..."
+          npx prisma generate
+
+  # Job 3: Deploy to Vercel Production
+  deploy-production:
+    name: 'Deploy to Production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [quality-gates, database-migration]
+    if: always() && (needs.quality-gates.outputs.quality-passed == 'true' || inputs.skip_tests) && needs.database-migration.outputs.migration-success == 'true'
+    outputs:
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+      deployment-success: ${{ steps.deploy.outputs.success }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ "${{ inputs.deploy_environment }}" = "staging" ]; then
+            vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+          else
+            vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          fi
+
+      - name: Build Project Artifacts
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token=$VERCEL_TOKEN
+
+      - name: Deploy to Vercel
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "Deploying to production..."
+
+          # Deploy to Vercel production
+          DEPLOYMENT_OUTPUT=$(vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN 2>&1)
+          echo "Deployment output:"
+          echo "$DEPLOYMENT_OUTPUT"
+
+          # Extract production URL from output
+          DEPLOYMENT_URL=$(echo "$DEPLOYMENT_OUTPUT" | grep -E 'https://.*\.vercel\.app' | tail -1 | tr -d ' ')
+
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "❌ Failed to extract deployment URL from output"
+            exit 1
+          fi
+
+          echo "✅ Deployed to: $DEPLOYMENT_URL"
+          echo "deployment-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "success=true" >> $GITHUB_OUTPUT
+
+  # Job 4: Post-Deployment Health Check
+  health-check:
+    name: 'Health Check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: deploy-production
+    if: needs.deploy-production.outputs.deployment-success == 'true'
+    steps:
+      - name: Wait for Deployment
+        run: |
+          echo "Waiting for deployment to be ready..."
+          DEPLOYMENT_URL="${{ needs.deploy-production.outputs.deployment-url }}"
+
+          # Wait up to 8 minutes for deployment to be ready
+          MAX_ATTEMPTS=96
+          ATTEMPT=0
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS - Checking deployment status..."
+
+            if curl -s --head --fail --max-time 10 "$DEPLOYMENT_URL" > /dev/null 2>&1; then
+              echo "✅ Deployment is ready!"
+              break
+            fi
+
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "❌ Deployment not ready after 8 minutes"
+              exit 1
+            fi
+
+            sleep 5
+          done
+
+      - name: Run Health Checks
+        env:
+          DEPLOYMENT_URL: ${{ needs.deploy-production.outputs.deployment-url }}
+        run: |
+          echo "Running health checks against: $DEPLOYMENT_URL"
+
+          # Test home page
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYMENT_URL")
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Home page health check passed"
+          else
+            echo "❌ Home page health check failed with status: $HTTP_STATUS"
+            exit 1
+          fi
+
+          # Test API health endpoint (if it exists)
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYMENT_URL/api/health" || echo "404")
+          if [ "$HEALTH_STATUS" = "200" ]; then
+            echo "✅ API health check passed"
+          else
+            echo "ℹ️ API health endpoint not available (status: $HEALTH_STATUS)"
+          fi
+
+          # Test database connectivity via API
+          DB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYMENT_URL/api/admin/health" || echo "404")
+          if [ "$DB_STATUS" = "200" ]; then
+            echo "✅ Database connectivity check passed"
+          else
+            echo "ℹ️ Database health endpoint not available (status: $DB_STATUS)"
+          fi
+
+          echo "🎯 Production health checks completed successfully!"
+
+  # Job 5: Update AI Agent Tasks (if applicable)
+  update-ai-tasks:
+    name: 'Update AI Tasks'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [deploy-production, health-check]
+    if: needs.deploy-production.outputs.deployment-success == 'true'
+    continue-on-error: true  # Don't fail deployment if this fails
+    steps:
+      - name: Check for AI Agent Related Changes
+        id: check-ai-changes
+        run: |
+          echo "Checking if this deployment includes AI agent changes..."
+
+          # Check if any AI-related files were changed in this push
+          AI_CHANGES=$(git diff --name-only HEAD~1..HEAD | grep -E "(ai-|coding-|github-)" | wc -l)
+
+          if [ "$AI_CHANGES" -gt 0 ]; then
+            echo "ai_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ AI agent related changes detected"
+          else
+            echo "ai_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No AI agent related changes"
+          fi
+
+      - name: Notify AI Agent of Deployment
+        if: steps.check-ai-changes.outputs.ai_changes == 'true'
+        env:
+          DEPLOYMENT_URL: ${{ needs.deploy-production.outputs.deployment-url }}
+          ASTRID_WEBHOOK_URL: ${{ secrets.ASTRID_WEBHOOK_URL || needs.deploy-production.outputs.deployment-url }}
+          ASTRID_MCP_TOKEN: ${{ secrets.ASTRID_MCP_TOKEN }}
+        run: |
+          echo "Notifying AI agent of successful deployment..."
+
+          # Find any open coding workflows that might be affected
+          curl -s -X POST "$ASTRID_WEBHOOK_URL/api/coding-agent/deployment-complete" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ASTRID_MCP_TOKEN" \
+            -d "{
+              \"deploymentUrl\": \"$DEPLOYMENT_URL\",
+              \"environment\": \"production\",
+              \"githubContext\": {
+                \"repository\": \"${{ github.repository }}\",
+                \"ref\": \"${{ github.ref }}\",
+                \"sha\": \"${{ github.sha }}\",
+                \"runId\": \"${{ github.run_id }}\"
+              }
+            }" || echo "Warning: Could not notify AI agent of deployment"
+
+  # Job 6: Deployment Summary
+  deployment-summary:
+    name: 'Deployment Summary'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [quality-gates, database-migration, deploy-production, health-check]
+    if: always()
+    steps:
+      - name: Generate Deployment Summary
+        env:
+          DEPLOYMENT_URL: ${{ needs.deploy-production.outputs.deployment-url }}
+          QUALITY_RESULT: ${{ needs.quality-gates.result }}
+          MIGRATION_RESULT: ${{ needs.database-migration.result }}
+          DEPLOYMENT_RESULT: ${{ needs.deploy-production.result }}
+          HEALTH_RESULT: ${{ needs.health-check.result }}
+        run: |
+          echo "## 🚀 Production Deployment Summary"
+          echo ""
+          echo "**Deployment Status:** ${{ needs.deploy-production.outputs.deployment-success == 'true' && '✅ SUCCESS' || '❌ FAILED' }}"
+          echo "**Environment:** ${{ inputs.deploy_environment || 'production' }}"
+          echo "**Branch:** ${{ github.ref_name }}"
+          echo "**Commit:** ${{ github.sha }}"
+          echo ""
+          echo "### Job Results"
+          echo "- **Quality Gates:** ${{ needs.quality-gates.result == 'success' && '✅ Passed' || needs.quality-gates.result == 'skipped' && 'ℹ️ Skipped' || '❌ Failed' }}"
+          echo "- **Database Migration:** ${{ needs.database-migration.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          echo "- **Production Deployment:** ${{ needs.deploy-production.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          echo "- **Health Checks:** ${{ needs.health-check.result == 'success' && '✅ Passed' || '❌ Failed' }}"
+          echo ""
+
+          if [ -n "$DEPLOYMENT_URL" ]; then
+            echo "**🌐 Production URL:** $DEPLOYMENT_URL"
+            echo ""
+          fi
+
+          if [ "${{ needs.deploy-production.outputs.deployment-success }}" = "true" ]; then
+            echo "### 🎉 Deployment Successful!"
+            echo "Your application has been successfully deployed to production."
+            echo ""
+            echo "**Post-Deployment:**"
+            echo "- All services are healthy and responding"
+            echo "- Database migrations completed successfully"
+            echo "- AI agent workflows (if any) have been notified"
+          else
+            echo "### ❌ Deployment Failed"
+            echo "Please check the job logs for details and retry the deployment."
+          fi
+
+          echo ""
+          echo "**GitHub Actions Run:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

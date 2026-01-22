@@ -1,0 +1,28 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    },
+    "app/api/sse/route.ts": {
+      "maxDuration": 300
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/reminders",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/system-tasks",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/analytics",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}

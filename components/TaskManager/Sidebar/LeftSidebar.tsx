@@ -1,0 +1,463 @@
+"use client"
+
+import React, { useState, useRef } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Plus, ExternalLink, Settings, LogOut, ChevronDown, ChevronUp, RefreshCw } from "lucide-react"
+import { signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
+import { useTranslations } from "@/lib/i18n/client"
+import { ListItem } from "./ListItem"
+import { isListAdminOrOwner } from "@/lib/list-member-utils"
+import { canUserEditTasks } from "@/lib/list-permissions"
+import type { TaskList } from "@/types/task"
+
+interface LeftSidebarProps {
+  // Layout and responsive
+  isMobile: boolean
+  showHamburgerMenu: boolean
+  showMobileSidebar: boolean
+  sidebarRef: React.MutableRefObject<HTMLDivElement | null>
+
+  // Data
+  effectiveSession: any
+  lists: TaskList[]
+  publicLists: TaskList[]
+  collaborativePublicLists: TaskList[]
+  suggestedPublicLists: TaskList[]
+  selectedListId: string
+
+  // Memoized functions
+  getFixedListTaskCountMemo: (listType: string) => number
+  getSavedFilterTaskCountMemo: (list: TaskList) => number
+  getTaskCountForListMemo: (listId: string) => number
+
+  // Handlers
+  setSelectedListId: (listId: string, fromFeatured?: boolean) => void
+  setShowMobileSidebar: (show: boolean) => void
+  setShowAddListModal: (show: boolean) => void
+  setShowPublicBrowser: (show: boolean) => void
+
+  // Swipe handlers (optional for backward compatibility)
+  sidebarSwipeToDismiss?: {
+    onTouchStart: (e: React.TouchEvent) => void
+    onTouchMove: (e: React.TouchEvent) => void
+    onTouchEnd: () => void
+  }
+
+  // Drag and drop state
+  isTaskDragActive: boolean
+  dragOverListId: string | null
+  isShiftDrag: boolean
+  onTaskDropOnList: (listId: string, options: { shiftKey: boolean }) => void
+  onTaskDragEnter: (listId: string, shiftKey: boolean) => void
+  onTaskDragLeave: (listId: string) => void
+  onTaskDragOver: (shiftKey: boolean, listId: string) => void
+}
+
+export function LeftSidebar({
+  isMobile,
+  showHamburgerMenu,
+  showMobileSidebar,
+  sidebarRef,
+  effectiveSession,
+  lists,
+  publicLists,
+  collaborativePublicLists,
+  suggestedPublicLists,
+  selectedListId,
+  getFixedListTaskCountMemo,
+  getSavedFilterTaskCountMemo,
+  getTaskCountForListMemo,
+  setSelectedListId,
+  setShowMobileSidebar,
+  setShowAddListModal,
+  setShowPublicBrowser,
+  sidebarSwipeToDismiss,
+  isTaskDragActive,
+  dragOverListId,
+  isShiftDrag,
+  onTaskDropOnList,
+  onTaskDragEnter,
+  onTaskDragLeave,
+  onTaskDragOver
+}: LeftSidebarProps) {
+  const router = useRouter()
+  const { toast } = useToast()
+  const { t } = useTranslations()
+  const navigationRef = useRef<HTMLDivElement>(null)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+  const [refreshingData, setRefreshingData] = useState(false)
+  const currentUser = effectiveSession?.user
+
+  const handleListClick = (listId: string, fromFeatured?: boolean) => {
+    // Always update state immediately for smooth UX
+    setSelectedListId(listId, fromFeatured)
+
+    // Scroll sidebar navigation to top on mobile
+    if (navigationRef.current) {
+      navigationRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+
+    // Update URL without navigation for real lists
+    if (listId !== "my-tasks") {
+      // Use replace to update URL without adding to history stack for rapid clicking
+      window.history.replaceState(null, '', `/lists/${listId}`)
+    } else {
+      // For my-tasks, go back to home URL
+      window.history.replaceState(null, '', '/')
+    }
+
+    if (showHamburgerMenu) {
+      setShowMobileSidebar(false)
+    }
+  }
+
+  const handleAddListClick = () => {
+    setShowAddListModal(true)
+    if (showHamburgerMenu) {
+      setShowMobileSidebar(false)
+    }
+  }
+
+  const handleUserMenuToggle = () => {
+    setShowUserMenu(!showUserMenu)
+  }
+
+  const handleSettingsClick = () => {
+    router.push('/settings')
+    setShowUserMenu(false)
+    if (showHamburgerMenu) {
+      setShowMobileSidebar(false)
+    }
+  }
+
+  const handleRefreshData = async () => {
+    setRefreshingData(true)
+    try {
+      // Clear Redis cache
+      const response = await fetch("/api/cache/clear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+
+      if (response.ok) {
+        toast({
+          title: t("messages.success"),
+          description: t("messages.dataRefreshed"),
+          duration: 3000,
+        })
+        // Reload the page to get fresh data
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      } else {
+        toast({
+          title: t("messages.cacheCleared"),
+          description: t("messages.dataRefreshed"),
+          duration: 3000,
+        })
+        // Even if API fails, reload to get fresh data
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      }
+    } catch (error) {
+      console.error("Error refreshing data:", error)
+      toast({
+        title: t("messages.cacheCleared"),
+        description: t("messages.dataRefreshed"),
+        duration: 3000,
+      })
+      // Even if there's an error, reload to get fresh data
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    } finally {
+      setRefreshingData(false)
+    }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      setIsSigningOut(true)
+      await signOut({ callbackUrl: "/auth/signin" })
+    } catch (error) {
+      console.error("Error signing out:", error)
+    } finally {
+      setIsSigningOut(false)
+    }
+  }
+
+  const canDropOnList = (list: TaskList) => {
+    if (!isTaskDragActive) return false
+    if (!currentUser) return false
+    if (list.isVirtual) return false
+    return canUserEditTasks(currentUser, list)
+  }
+
+  return (
+    <div
+      ref={sidebarRef}
+      className={`theme-sidebar theme-border overflow-hidden ${
+        showHamburgerMenu
+          ? `app-sidebar-mobile ${showMobileSidebar ? 'app-sidebar-mobile-open' : ''}`
+          : 'app-sidebar'
+      }`}
+      {...(sidebarSwipeToDismiss && {
+        onTouchStart: sidebarSwipeToDismiss.onTouchStart,
+        onTouchMove: sidebarSwipeToDismiss.onTouchMove,
+        onTouchEnd: sidebarSwipeToDismiss.onTouchEnd,
+      })}
+    >
+      {/* User Profile */}
+      <div className="border-b border-gray-700">
+        <Button
+          variant="ghost"
+          onClick={handleUserMenuToggle}
+          className="w-full p-4 h-auto justify-start hover:bg-opacity-10"
+        >
+          <div className="flex items-center space-x-3 w-full">
+            <Avatar className="w-8 h-8 rounded-lg">
+              <AvatarImage src={effectiveSession.user.image || "/placeholder.svg"} />
+              <AvatarFallback>{effectiveSession.user.name?.charAt(0) || "U"}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 text-left">
+              <div className="font-medium">{effectiveSession.user.name}</div>
+              <div className="text-sm theme-text-muted">{effectiveSession.user.email}</div>
+            </div>
+            {showUserMenu ? (
+              <ChevronUp className="w-4 h-4 theme-text-muted" />
+            ) : (
+              <ChevronDown className="w-4 h-4 theme-text-muted" />
+            )}
+          </div>
+        </Button>
+
+        {/* User Menu Options */}
+        {showUserMenu && (
+          <div className="border-t border-gray-700 bg-opacity-50">
+            <Button
+              variant="ghost"
+              onClick={handleSettingsClick}
+              className="w-full justify-start px-4 py-3 h-auto"
+            >
+              <Settings className="w-4 h-4 mr-3" />
+              {t("userMenu.settings")}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleRefreshData}
+              disabled={refreshingData}
+              className="w-full justify-start px-4 py-3 h-auto"
+            >
+              <RefreshCw className={`w-4 h-4 mr-3 ${refreshingData ? 'animate-spin' : ''}`} />
+              {refreshingData ? t("userMenu.refreshing") : t("userMenu.refreshData")}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="w-full justify-start px-4 py-3 h-auto"
+            >
+              <LogOut className="w-4 h-4 mr-3" />
+              {isSigningOut ? t("userMenu.signingOut") : t("userMenu.signOut")}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <div ref={navigationRef} className="overflow-y-auto scrollbar-hide sidebar-navigation" style={{height: 'calc(100vh - 120px)'}}>
+        <div className="p-2">
+          <div className="space-y-1">
+            <Button
+              variant="ghost"
+              className={`w-full justify-start ${
+                isMobile ? 'mobile-list-item text-left' : ''
+              } ${
+                selectedListId === "my-tasks"
+                  ? "bg-blue-600 !text-white hover:bg-blue-700 hover:!text-white"
+                  : "theme-text-secondary hover:theme-text-primary hover:theme-bg-hover"
+              }`}
+              onClick={() => handleListClick("my-tasks")}
+            >
+              <div className="flex items-center justify-between w-full">
+                <span>{t("navigation.myTasks")}</span>
+                <span className="text-xs theme-count-bg theme-text-primary px-2 py-1 rounded">
+                  {getFixedListTaskCountMemo("my-tasks")}
+                </span>
+              </div>
+            </Button>
+
+            {/* Saved Filters */}
+            {lists
+              .filter(list => list.isFavorite)
+              .filter((list, index, self) => {
+                // Deduplicate lists by ID (keep first occurrence)
+                return self.findIndex(l => l.id === list.id) === index
+              })
+              .sort((a, b) => (a.favoriteOrder || 0) - (b.favoriteOrder || 0))
+              .map((list) => (
+                <ListItem
+                  key={list.id}
+                  list={list}
+                  selectedListId={selectedListId}
+                  isMobile={isMobile}
+                  taskCount={list.isVirtual ? getSavedFilterTaskCountMemo(list) : getTaskCountForListMemo(list.id)}
+                  onClick={handleListClick}
+                  droppable={canDropOnList(list)}
+                  isDragActive={isTaskDragActive}
+                  isDropTarget={dragOverListId === list.id}
+                  dropMode={isShiftDrag ? 'add' : 'move'}
+                  onTaskDrop={(shiftKey) => onTaskDropOnList(list.id, { shiftKey })}
+                  onTaskDragEnter={(shiftKey) => onTaskDragEnter(list.id, shiftKey)}
+                  onTaskDragLeave={() => onTaskDragLeave(list.id)}
+                  onTaskDragOver={onTaskDragOver}
+                />
+              ))}
+          </div>
+        </div>
+
+        {/* Lists */}
+        <div className="p-2 mt-4">
+          <div className="text-xs text-gray-400 uppercase tracking-wide mb-2 px-2">
+            {t("navigation.lists")}
+          </div>
+          <div className="space-y-1">
+            <Button
+              variant="ghost"
+              className="w-full justify-start theme-text-secondary hover:theme-text-primary hover:theme-bg-hover"
+              onClick={handleAddListClick}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t("navigation.addList")}
+            </Button>
+
+            {/* Lists */}
+            {lists
+              .filter(list => !list.isFavorite)
+              .filter(list => {
+                // Exclude public lists that the user doesn't own or admin
+                if (list.privacy === 'PUBLIC') {
+                  return effectiveSession?.user?.id ?
+                    isListAdminOrOwner(list, effectiveSession.user.id) : false
+                }
+                return true
+              })
+              .filter((list, index, self) => {
+                // Deduplicate lists by ID (keep first occurrence)
+                return self.findIndex(l => l.id === list.id) === index
+              })
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((list) => (
+                <ListItem
+                  key={list.id}
+                  list={list}
+                  selectedListId={selectedListId}
+                  isMobile={isMobile}
+                  taskCount={list.isVirtual ? getSavedFilterTaskCountMemo(list) : getTaskCountForListMemo(list.id)}
+                  onClick={handleListClick}
+                  droppable={canDropOnList(list)}
+                  isDragActive={isTaskDragActive}
+                  isDropTarget={dragOverListId === list.id}
+                  dropMode={isShiftDrag ? 'add' : 'move'}
+                  onTaskDrop={(shiftKey) => onTaskDropOnList(list.id, { shiftKey })}
+                  onTaskDragEnter={(shiftKey) => onTaskDragEnter(list.id, shiftKey)}
+                  onTaskDragLeave={() => onTaskDragLeave(list.id)}
+                  onTaskDragOver={onTaskDragOver}
+                />
+              ))}
+          </div>
+        </div>
+
+        {/* Public Shared Lists */}
+        {collaborativePublicLists && collaborativePublicLists.length > 0 && (
+          <div className="p-2 mt-4">
+            <div className="text-xs text-gray-400 uppercase tracking-wide mb-2 px-2">
+              {t("navigation.publicSharedLists")}
+            </div>
+            <div className="space-y-1">
+              {/* Show max 2 collaborative lists that user doesn't already own/admin */}
+              {collaborativePublicLists
+                .filter(list => {
+                  // Exclude public lists that user owns/admins (they already appear in "Lists" section)
+                  if (effectiveSession?.user?.id) {
+                    return !isListAdminOrOwner(list, effectiveSession.user.id)
+                  }
+                  return true
+                })
+                .slice(0, 2).map((list) => (
+                <ListItem
+                  key={list.id}
+                  list={list}
+                  selectedListId={selectedListId}
+                  isMobile={isMobile}
+                  taskCount={(list as any)._count?.tasks || 0}
+                  onClick={(listId) => handleListClick(listId, true)}
+                />
+              ))}
+            </div>
+
+            {/* See all collaborative lists link */}
+            {collaborativePublicLists.length > 2 && (
+              <button
+                onClick={() => setShowPublicBrowser(true)}
+                className="w-full mt-2 px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-left"
+              >
+                {t("navigation.seeAllCollaborative")}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Public Lists */}
+        {suggestedPublicLists && suggestedPublicLists.length > 0 && (
+          <div className="p-2 mt-4">
+            <div className="text-xs text-gray-400 uppercase tracking-wide mb-2 px-2">
+              {t("navigation.publicLists")}
+            </div>
+            <div className="space-y-1">
+              {/* Show max 2 suggested lists that user doesn't already own/admin */}
+              {suggestedPublicLists
+                .filter(list => {
+                  // Exclude public lists that user owns/admins (they already appear in "Lists" section)
+                  if (effectiveSession?.user?.id) {
+                    return !isListAdminOrOwner(list, effectiveSession.user.id)
+                  }
+                  return true
+                })
+                .slice(0, 2).map((list) => (
+                <ListItem
+                  key={list.id}
+                  list={list}
+                  selectedListId={selectedListId}
+                  isMobile={isMobile}
+                  taskCount={(list as any)._count?.tasks || 0}
+                  onClick={(listId) => handleListClick(listId, true)}
+                />
+              ))}
+            </div>
+
+            {/* See all suggested lists link */}
+            {suggestedPublicLists.length > 2 && (
+              <button
+                onClick={() => setShowPublicBrowser(true)}
+                className="w-full mt-2 px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-left"
+              >
+                {t("navigation.seeAllSuggested")}
+              </button>
+            )}
+
+            <div className="pb-60"></div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

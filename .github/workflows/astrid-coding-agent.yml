@@ -1,0 +1,398 @@
+name: 'Astrid AI Coding Agent'
+
+on:
+  repository_dispatch:
+    types: [astrid-task-assigned]
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: 'Astrid Task ID'
+        required: true
+        type: string
+      repository_name:
+        description: 'Target Repository'
+        required: false
+        type: string
+        default: 'astrid-res/www'
+
+env:
+  NODE_VERSION: '20'
+  ASTRID_WEBHOOK_URL: ${{ secrets.ASTRID_WEBHOOK_URL || 'https://astrid.cc' }}
+
+jobs:
+  # Job 1: Validate and setup
+  setup:
+    name: 'Setup & Validation'
+    runs-on: ubuntu-latest
+    outputs:
+      task_id: ${{ steps.get-task.outputs.task_id }}
+      should_proceed: ${{ steps.validate.outputs.should_proceed }}
+    steps:
+      - name: Get Task ID
+        id: get-task
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "task_id=${{ github.event.inputs.task_id }}" >> $GITHUB_OUTPUT
+          else
+            echo "task_id=${{ github.event.client_payload.task_id }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate Task Assignment
+        id: validate
+        run: |
+          TASK_ID="${{ steps.get-task.outputs.task_id }}"
+
+          if [ -z "$TASK_ID" ]; then
+            echo "❌ No task ID provided"
+            echo "should_proceed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          echo "✅ Task ID: $TASK_ID"
+          echo "should_proceed=true" >> $GITHUB_OUTPUT
+
+  # Job 2: Trigger AI Implementation
+  ai-implementation:
+    name: 'AI Code Generation'
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.should_proceed == 'true'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Trigger AI Orchestration
+        id: trigger-ai
+        env:
+          TASK_ID: ${{ needs.setup.outputs.task_id }}
+          ASTRID_MCP_TOKEN: ${{ secrets.ASTRID_MCP_TOKEN }}
+          GITHUB_TOKEN_FOR_AI: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🤖 Triggering AI implementation for task: $TASK_ID"
+
+          # Call the AI orchestration API
+          RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
+            -X POST "$ASTRID_WEBHOOK_URL/api/coding-agent/github-trigger" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ASTRID_MCP_TOKEN" \
+            -d "{
+              \"taskId\": \"$TASK_ID\",
+              \"githubContext\": {
+                \"repository\": \"${{ github.repository }}\",
+                \"ref\": \"${{ github.ref }}\",
+                \"sha\": \"${{ github.sha }}\",
+                \"actor\": \"${{ github.actor }}\",
+                \"workflow\": \"${{ github.workflow }}\",
+                \"runId\": \"${{ github.run_id }}\",
+                \"runNumber\": \"${{ github.run_number }}\"
+              }
+            }")
+
+          # Extract HTTP status
+          HTTP_STATUS=$(echo $RESPONSE | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+          BODY=$(echo $RESPONSE | sed -e 's/HTTPSTATUS\:.*//g')
+
+          echo "HTTP Status: $HTTP_STATUS"
+          echo "Response: $BODY"
+
+          if [ $HTTP_STATUS -eq 200 ] || [ $HTTP_STATUS -eq 201 ]; then
+            echo "✅ AI orchestration triggered successfully"
+            echo "response=$BODY" >> $GITHUB_OUTPUT
+          else
+            echo "❌ AI orchestration failed with status: $HTTP_STATUS"
+            echo "❌ Response: $BODY"
+            exit 1
+          fi
+
+      - name: Setup Workflow Status Monitoring
+        id: monitor-setup
+        run: |
+          echo "🔍 Setting up workflow monitoring for task: ${{ needs.setup.outputs.task_id }}"
+          echo "Monitor URL: $ASTRID_WEBHOOK_URL/api/coding-workflow/status/${{ needs.setup.outputs.task_id }}"
+
+  # Job 3: Build and Test (in parallel with AI work)
+  build-and-test:
+    name: 'Build & Test'
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.should_proceed == 'true'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Check
+        run: npm run typecheck
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm test
+        env:
+          NODE_ENV: test
+
+      - name: Build Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            .next/
+            !.next/cache/
+          retention-days: 1
+
+  # Job 4: Monitor AI Progress & Deploy Preview
+  monitor-and-preview:
+    name: 'Monitor AI & Deploy Preview'
+    runs-on: ubuntu-latest
+    needs: [setup, ai-implementation, build-and-test]
+    if: always() && needs.setup.outputs.should_proceed == 'true' && needs.ai-implementation.result == 'success'
+    timeout-minutes: 65  # ✅ Increased to 65 to accommodate 60-minute workflow monitoring
+    steps:
+      - name: Monitor AI Workflow Progress
+        id: monitor
+        env:
+          TASK_ID: ${{ needs.setup.outputs.task_id }}
+          ASTRID_MCP_TOKEN: ${{ secrets.ASTRID_MCP_TOKEN }}
+        run: |
+          echo "🔍 Monitoring AI workflow progress for task: $TASK_ID"
+
+          MAX_ATTEMPTS=120  # 60 minutes with 30-second intervals
+          ATTEMPT=0
+          LAST_MESSAGE=""
+          LAST_PHASE=""
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+
+            # ✅ Get detailed progress instead of just status
+            PROGRESS_RESPONSE=$(curl -s \
+              -H "Authorization: Bearer $ASTRID_MCP_TOKEN" \
+              "$ASTRID_WEBHOOK_URL/api/coding-workflow/progress/$TASK_ID")
+
+            # Extract progress details
+            PHASE=$(echo "$PROGRESS_RESPONSE" | jq -r '.progress.phase // "UNKNOWN"')
+            MESSAGE=$(echo "$PROGRESS_RESPONSE" | jq -r '.progress.message // ""')
+            COMPLETED=$(echo "$PROGRESS_RESPONSE" | jq -r '.progress.completedSteps // 0')
+            TOTAL=$(echo "$PROGRESS_RESPONSE" | jq -r '.progress.totalSteps // 5')
+            PERCENT=$(echo "$PROGRESS_RESPONSE" | jq -r '.progress.percentComplete // 0')
+            TRACE_ID=$(echo "$PROGRESS_RESPONSE" | jq -r '.traceId // ""')
+
+            # ✅ Show progress bar
+            FILLED=$((COMPLETED * 2))
+            EMPTY=$((TOTAL * 2 - FILLED))
+            PROGRESS_BAR=$(printf '%*s' $FILLED | tr ' ' '█')$(printf '%*s' $EMPTY | tr ' ' '░')
+
+            # ✅ Only print when phase or message changes (reduce spam)
+            if [ "$PHASE" != "$LAST_PHASE" ] || [ "$MESSAGE" != "$LAST_MESSAGE" ]; then
+              echo ""
+              echo "[$ATTEMPT/$MAX_ATTEMPTS] $PROGRESS_BAR $PERCENT%"
+              echo "Phase: $PHASE"
+              echo "Status: $MESSAGE"
+              if [ -n "$TRACE_ID" ] && [ "$TRACE_ID" != "null" ] && [ "$TRACE_ID" != "no-trace-id" ]; then
+                echo "Trace ID: $TRACE_ID"
+              fi
+              LAST_PHASE="$PHASE"
+              LAST_MESSAGE="$MESSAGE"
+            else
+              # Just show dot for heartbeat
+              echo -n "."
+            fi
+
+            # Check for completion
+            case $PHASE in
+              "COMPLETED"|"TESTING"|"READY_TO_MERGE")
+                echo ""
+                echo "✅ Workflow reached completion phase: $PHASE"
+
+                # Extract PR and deployment URLs
+                PR_URL=$(echo "$PROGRESS_RESPONSE" | jq -r '.deployment.prUrl // ""')
+                DEPLOY_URL=$(echo "$PROGRESS_RESPONSE" | jq -r '.deployment.deploymentUrl // ""')
+
+                echo "workflow_status=$PHASE" >> $GITHUB_OUTPUT
+                echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+                echo "preview_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+                exit 0
+                ;;
+              "FAILED"|"CANCELLED")
+                echo ""
+                echo "❌ Workflow failed with phase: $PHASE"
+
+                # ✅ Print error details for debugging
+                ERROR_MSG=$(echo "$PROGRESS_RESPONSE" | jq -r '.error.message // "Unknown error"')
+                ERROR_PHASE=$(echo "$PROGRESS_RESPONSE" | jq -r '.error.phase // "Unknown phase"')
+
+                echo "Error: $ERROR_MSG"
+                echo "Failed during: $ERROR_PHASE"
+                if [ -n "$TRACE_ID" ] && [ "$TRACE_ID" != "null" ]; then
+                  echo "Trace ID: $TRACE_ID"
+                fi
+
+                # ✅ Show recent activity for context
+                echo ""
+                echo "Recent activity:"
+                echo "$PROGRESS_RESPONSE" | jq -r '.recentActivity[0:3][]? | "[\(.timestamp)] \(.message)"'
+
+                exit 1
+                ;;
+            esac
+
+            # Wait 30 seconds before next check
+            sleep 30
+          done
+
+          echo ""
+          echo "❌ Timeout: AI workflow did not complete within 60 minutes"
+          exit 1
+
+      - name: Report Results
+        if: always()
+        run: |
+          echo "🎯 AI Workflow Summary:"
+          echo "Task ID: ${{ needs.setup.outputs.task_id }}"
+          echo "Final Status: ${{ steps.monitor.outputs.workflow_status }}"
+          echo "Pull Request: ${{ steps.monitor.outputs.pr_url }}"
+          echo "Preview URL: ${{ steps.monitor.outputs.preview_url }}"
+
+          if [ -n "${{ steps.monitor.outputs.pr_url }}" ]; then
+            echo "🔗 View the generated code: ${{ steps.monitor.outputs.pr_url }}"
+          fi
+
+          if [ -n "${{ steps.monitor.outputs.preview_url }}" ]; then
+            echo "🌐 Test the live preview: ${{ steps.monitor.outputs.preview_url }}"
+          fi
+
+      - name: Update GitHub Status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const workflowStatus = '${{ steps.monitor.outputs.workflow_status }}';
+            const prUrl = '${{ steps.monitor.outputs.pr_url }}';
+            const previewUrl = '${{ steps.monitor.outputs.preview_url }}';
+
+            let state, description;
+
+            switch(workflowStatus) {
+              case 'COMPLETED':
+              case 'TESTING':
+              case 'READY_TO_MERGE':
+                state = 'success';
+                description = `AI implementation complete! Preview: ${previewUrl || 'Building...'}`;
+                break;
+              case 'FAILED':
+              case 'CANCELLED':
+                state = 'failure';
+                description = 'AI implementation failed';
+                break;
+              default:
+                state = 'pending';
+                description = 'AI implementation in progress...';
+            }
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: state,
+              target_url: prUrl || previewUrl || `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              description: description,
+              context: 'Astrid AI Coding Agent'
+            });
+
+  # Job 5: Notification & Cleanup
+  notify-completion:
+    name: 'Notify Completion'
+    runs-on: ubuntu-latest
+    needs: [setup, ai-implementation, build-and-test, monitor-and-preview]
+    if: always() && needs.setup.outputs.should_proceed == 'true'
+    steps:
+      - name: Determine Overall Status
+        id: status
+        run: |
+          AI_RESULT="${{ needs.ai-implementation.result }}"
+          BUILD_RESULT="${{ needs.build-and-test.result }}"
+          MONITOR_RESULT="${{ needs.monitor-and-preview.result }}"
+
+          if [[ "$AI_RESULT" == "success" && "$BUILD_RESULT" == "success" && "$MONITOR_RESULT" == "success" ]]; then
+            echo "overall_status=success" >> $GITHUB_OUTPUT
+            echo "status_emoji=✅" >> $GITHUB_OUTPUT
+            echo "status_message=AI coding workflow completed successfully!" >> $GITHUB_OUTPUT
+          elif [[ "$AI_RESULT" == "failure" || "$BUILD_RESULT" == "failure" || "$MONITOR_RESULT" == "failure" ]]; then
+            echo "overall_status=failure" >> $GITHUB_OUTPUT
+            echo "status_emoji=❌" >> $GITHUB_OUTPUT
+            echo "status_message=AI coding workflow failed" >> $GITHUB_OUTPUT
+          else
+            echo "overall_status=partial" >> $GITHUB_OUTPUT
+            echo "status_emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "status_message=AI coding workflow completed with warnings" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post Results to Astrid
+        env:
+          TASK_ID: ${{ needs.setup.outputs.task_id }}
+          ASTRID_MCP_TOKEN: ${{ secrets.ASTRID_MCP_TOKEN }}
+          OVERALL_STATUS: ${{ steps.status.outputs.overall_status }}
+          STATUS_MESSAGE: ${{ steps.status.outputs.status_message }}
+          PR_URL: ${{ needs.monitor-and-preview.outputs.pr_url }}
+          PREVIEW_URL: ${{ needs.monitor-and-preview.outputs.preview_url }}
+        run: |
+          echo "${{ steps.status.outputs.status_emoji }} $STATUS_MESSAGE"
+
+          # Post workflow completion status to Astrid
+          curl -s -X POST "$ASTRID_WEBHOOK_URL/api/coding-agent/workflow-complete" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ASTRID_MCP_TOKEN" \
+            -d "{
+              \"taskId\": \"$TASK_ID\",
+              \"workflowStatus\": \"$OVERALL_STATUS\",
+              \"message\": \"$STATUS_MESSAGE\",
+              \"githubContext\": {
+                \"repository\": \"${{ github.repository }}\",
+                \"runId\": \"${{ github.run_id }}\",
+                \"runUrl\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\",
+                \"prUrl\": \"$PR_URL\",
+                \"previewUrl\": \"$PREVIEW_URL\"
+              }
+            }" || echo "Warning: Could not post results to Astrid"
+
+      - name: Summary
+        run: |
+          echo "## 🎯 Astrid AI Coding Agent - Workflow Complete"
+          echo ""
+          echo "**Task ID:** ${{ needs.setup.outputs.task_id }}"
+          echo "**Status:** ${{ steps.status.outputs.status_emoji }} ${{ steps.status.outputs.status_message }}"
+          echo "**Build Result:** ${{ needs.build-and-test.result }}"
+          echo "**AI Implementation:** ${{ needs.ai-implementation.result }}"
+          echo "**Monitoring:** ${{ needs.monitor-and-preview.result }}"
+          echo ""
+          if [ -n "${{ needs.monitor-and-preview.outputs.pr_url }}" ]; then
+            echo "**🔗 Pull Request:** ${{ needs.monitor-and-preview.outputs.pr_url }}"
+          fi
+          if [ -n "${{ needs.monitor-and-preview.outputs.preview_url }}" ]; then
+            echo "**🌐 Live Preview:** ${{ needs.monitor-and-preview.outputs.preview_url }}"
+          fi
+          echo ""
+          echo "The AI has completed the implementation. Review the code and preview, then approve for production deployment."

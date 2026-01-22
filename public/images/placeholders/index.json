@@ -1,0 +1,98 @@
+[
+  {
+    "name": "lavender",
+    "color": "#E6E6FA",
+    "filename": "lavender.png",
+    "path": "/images/placeholders/lavender.png"
+  },
+  {
+    "name": "mint",
+    "color": "#F0FFF0",
+    "filename": "mint.png",
+    "path": "/images/placeholders/mint.png"
+  },
+  {
+    "name": "peach",
+    "color": "#FFEAA7",
+    "filename": "peach.png",
+    "path": "/images/placeholders/peach.png"
+  },
+  {
+    "name": "coral",
+    "color": "#FFB3BA",
+    "filename": "coral.png",
+    "path": "/images/placeholders/coral.png"
+  },
+  {
+    "name": "sky",
+    "color": "#AED6F1",
+    "filename": "sky.png",
+    "path": "/images/placeholders/sky.png"
+  },
+  {
+    "name": "sage",
+    "color": "#C8E6C9",
+    "filename": "sage.png",
+    "path": "/images/placeholders/sage.png"
+  },
+  {
+    "name": "rose",
+    "color": "#F8BBD9",
+    "filename": "rose.png",
+    "path": "/images/placeholders/rose.png"
+  },
+  {
+    "name": "butter",
+    "color": "#FFF9C4",
+    "filename": "butter.png",
+    "path": "/images/placeholders/butter.png"
+  },
+  {
+    "name": "periwinkle",
+    "color": "#CCCCFF",
+    "filename": "periwinkle.png",
+    "path": "/images/placeholders/periwinkle.png"
+  },
+  {
+    "name": "seafoam",
+    "color": "#B2DFDB",
+    "filename": "seafoam.png",
+    "path": "/images/placeholders/seafoam.png"
+  },
+  {
+    "name": "apricot",
+    "color": "#FFE0B2",
+    "filename": "apricot.png",
+    "path": "/images/placeholders/apricot.png"
+  },
+  {
+    "name": "lilac",
+    "color": "#E1BEE7",
+    "filename": "lilac.png",
+    "path": "/images/placeholders/lilac.png"
+  },
+  {
+    "name": "blush",
+    "color": "#FFB7C5",
+    "filename": "blush.png",
+    "path": "/images/placeholders/blush.png"
+  },
+  {
+    "name": "powder",
+    "color": "#B0E0E6",
+    "filename": "powder.png",
+    "path": "/images/placeholders/powder.png"
+  },
+  {
+    "name": "cream",
+    "color": "#F5F5DC",
+    "filename": "cream.png",
+    "path": "/images/placeholders/cream.png"
+  },
+  {
+    "name": "pearl",
+    "color": "#F0F0F0",
+    "filename": "pearl.png",
+    "path": "/images/placeholders/pearl.png"
+  }
+]

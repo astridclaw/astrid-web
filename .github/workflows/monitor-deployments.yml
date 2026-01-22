@@ -1,0 +1,90 @@
+name: Monitor Vercel Deployments
+
+on:
+  # Run after every push to main (after deployment)
+  push:
+    branches: [main]
+
+  # Run on schedule to catch any issues
+  schedule:
+    # Run every hour during business hours (UTC)
+    - cron: '0 9-17 * * 1-5'
+    # Run every 4 hours outside business hours
+    - cron: '0 */4 * * *'
+
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      apply_fixes:
+        description: 'Apply automatic fixes'
+        type: boolean
+        default: true
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: Monitor and Fix Deployment Issues
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Configure Vercel Project
+        run: |
+          mkdir -p .vercel
+          echo '{"projectId":"${{ secrets.VERCEL_PROJECT_ID }}","orgId":"${{ secrets.VERCEL_ORG_ID }}","projectName":"newastrid"}' > .vercel/project.json
+          cat .vercel/project.json
+
+      - name: Test Vercel CLI
+        run: vercel list --token=${{ secrets.VERCEL_TOKEN }} --yes 2>&1 | head -20
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Monitor deployments
+        run: |
+          if [[ "${{ github.event.inputs.apply_fixes }}" == "false" ]]; then
+            npm run monitor:vercel:no-fix
+          else
+            npm run monitor:vercel
+          fi
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Upload deployment reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-reports-${{ github.run_number }}
+          path: logs/vercel/
+          retention-days: 30
+
+      - name: Auto-commit fixes
+        if: success() && github.event.inputs.apply_fixes != 'false'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "fix: auto-apply deployment issue fixes"
+            git push
+            echo "Applied and committed fixes"
+          else
+            echo "No fixes needed"
+          fi

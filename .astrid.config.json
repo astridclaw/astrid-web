@@ -1,0 +1,162 @@
+{
+  "version": "2.0",
+  "projectName": "Astrid",
+  "description": "AI-powered task management web application",
+
+  "structure": {
+    "web": {
+      "name": "Web App",
+      "description": "Next.js web application",
+      "rootPath": ".",
+      "filePatterns": ["**/*.ts", "**/*.tsx"],
+      "keyDirectories": ["app/", "components/", "lib/", "hooks/", "types/"]
+    },
+    "scripts": {
+      "name": "Scripts",
+      "description": "Development and automation scripts",
+      "rootPath": "scripts/",
+      "filePatterns": ["scripts/**/*.ts"],
+      "keyDirectories": ["scripts/"]
+    },
+    "api": {
+      "name": "API",
+      "description": "API routes and controllers",
+      "rootPath": ".",
+      "filePatterns": ["app/api/**/*.ts", "controllers/**/*.ts"],
+      "keyDirectories": ["app/api/", "controllers/"]
+    },
+    "sdk": {
+      "name": "SDK Package",
+      "description": "Published npm package for AI agents",
+      "rootPath": "packages/astrid-sdk/",
+      "filePatterns": ["packages/astrid-sdk/**/*.ts"],
+      "keyDirectories": ["packages/astrid-sdk/src/"]
+    }
+  },
+
+  "platforms": [
+    {
+      "name": "web",
+      "keywords": ["web", "react", "next", "nextjs", "frontend", "ui", "component", "page", "route"],
+      "filePatterns": ["**/*.tsx", "**/*.ts", "app/**/*", "components/**/*"],
+      "hints": [
+        "Uses Next.js App Router",
+        "Components are in components/",
+        "Hooks are in hooks/",
+        "API routes are in app/api/",
+        "Run npm run predeploy after changes"
+      ]
+    },
+    {
+      "name": "api",
+      "keywords": ["api", "endpoint", "route", "backend", "server", "controller"],
+      "filePatterns": ["app/api/**/*.ts", "controllers/**/*.ts", "lib/**/*.ts"],
+      "hints": [
+        "API routes use Next.js App Router conventions",
+        "Controllers are in controllers/",
+        "Shared logic is in lib/"
+      ]
+    },
+    {
+      "name": "database",
+      "keywords": ["database", "prisma", "db", "schema", "migration", "model"],
+      "filePatterns": ["prisma/**/*", "lib/database*.ts"],
+      "hints": [
+        "Uses Prisma ORM",
+        "Schema is in prisma/schema.prisma",
+        "Database utilities are in lib/"
+      ]
+    },
+    {
+      "name": "ai-agents",
+      "keywords": ["ai", "agent", "executor", "claude", "openai", "gemini", "llm"],
+      "filePatterns": ["lib/ai/**/*.ts", "packages/astrid-sdk/**/*.ts"],
+      "hints": [
+        "AI executors are in lib/ai/",
+        "Config system is in lib/ai/config/",
+        "SDK package mirrors www structure"
+      ]
+    }
+  ],
+
+  "agent": {
+    "planningTimeoutMinutes": 10,
+    "executionTimeoutMinutes": 15,
+    "maxPlanningIterations": 30,
+    "maxExecutionIterations": 50,
+    "additionalContext": "This is a web application (Next.js). iOS app is in separate repository. Always check ASTRID.md for detailed project context.",
+    "modelParameters": {
+      "planning": {
+        "temperature": 0.7,
+        "maxTokens": 8192
+      },
+      "execution": {
+        "temperature": 0.2,
+        "maxTokens": 8192
+      }
+    }
+  },
+
+  "prompts": {
+    "planningRules": [
+      "DO NOT modify any files - this is READ-ONLY exploration",
+      "Maximum {{maxFilesPerPlan}} files in the plan",
+      "Be SURGICAL: only list files that MUST change",
+      "Include specific file paths you discovered",
+      "Consider existing patterns in the codebase",
+      "For bug fixes, include a test file in the plan"
+    ],
+    "executionRules": [
+      "Follow the implementation plan exactly",
+      "Write complete, working code - no placeholders or TODOs",
+      "Make minimal changes - do not refactor unrelated code",
+      "Read files before editing to understand context",
+      "Run tests after making changes"
+    ],
+    "workflowInstructions": "After completing changes, always run npm run predeploy to verify tests pass."
+  },
+
+  "validation": {
+    "maxFilesPerPlan": 5,
+    "minFilesPerPlan": 1,
+    "rejectEmptyPlans": true,
+    "maxModificationSize": 60000,
+    "contextTruncationLength": 8000,
+    "requireTestsForBugFixes": true,
+    "maxGlobResults": 100
+  },
+
+  "safety": {
+    "blockedBashPatterns": [
+      "rm -rf /",
+      "rm -rf ~",
+      "sudo",
+      "> /dev/",
+      "mkfs",
+      "dd if="
+    ],
+    "requirePlanApproval": false,
+    "enforceProtectedPaths": true,
+    "maxBudgetPerTask": 10.0,
+    "maxCostPerCall": 2.0
+  },
+
+  "retry": {
+    "maxRetries": 3,
+    "initialBackoffMs": 2000,
+    "maxBackoffMs": 30000,
+    "apiTimeoutMs": 120000
+  },
+
+  "protectedPaths": [
+    ".env",
+    ".env.local",
+    ".env.production",
+    "*.pem",
+    "*.key",
+    "prisma/migrations/",
+    ".git/**"
+  ],
+
+  "customInstructions": "When making changes, follow existing patterns in the codebase. Consider if E2E tests in e2e/ are needed. Always run npm run predeploy before marking a task complete."
+}

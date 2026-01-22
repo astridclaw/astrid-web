@@ -1,0 +1,174 @@
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { signupRateLimiter, passwordChangeRateLimiter, RateLimiter } from '@/lib/rate-limiter'
+import { NextRequest } from 'next/server'
+
+// Mock NextAuth
+vi.mock('next-auth', () => ({
+  getServerSession: vi.fn(),
+}))
+
+// Mock Prisma
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+    },
+  },
+}))
+
+// Mock bcrypt
+vi.mock('bcryptjs', () => ({
+  default: {
+    hash: vi.fn(),
+    compare: vi.fn(),
+  },
+}))
+
+// Create mock NextRequest with IP
+function createMockRequest(ip: string = '127.0.0.1'): NextRequest {
+  return {
+    headers: new Headers({
+      'x-forwarded-for': ip,
+    }),
+  } as NextRequest
+}
+
+// Generate unique IP for each test to avoid shared state
+let ipCounter = 100
+function getUniqueIP(): string {
+  return `10.1.${Math.floor(ipCounter / 256)}.${ipCounter++ % 256}`
+}
+
+describe('Authentication System', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+    vi.useRealTimers()
+  })
+
+  describe('Rate Limiting', () => {
+    it('should allow requests within rate limit', () => {
+      const rateLimiter = new RateLimiter({
+        windowMs: 60000,
+        maxRequests: 5
+      })
+      const ip = getUniqueIP()
+
+      // First 5 requests should succeed
+      for (let i = 0; i < 5; i++) {
+        const result = rateLimiter.checkRateLimit(createMockRequest(ip))
+        expect(result.allowed).toBe(true)
+        expect(result.remaining).toBe(4 - i)
+      }
+
+      // 6th request should fail
+      const result = rateLimiter.checkRateLimit(createMockRequest(ip))
+      expect(result.allowed).toBe(false)
+      expect(result.remaining).toBe(0)
+    })
+
+    it('should reset rate limit after window expires', async () => {
+      const rateLimiter = new RateLimiter({
+        windowMs: 100,
+        maxRequests: 3
+      })
+      const ip = getUniqueIP()
+      const req = createMockRequest(ip)
+
+      // Use up all requests
+      for (let i = 0; i < 3; i++) {
+        rateLimiter.checkRateLimit(req)
+      }
+
+      // Should be rate limited
+      expect(rateLimiter.checkRateLimit(req).allowed).toBe(false)
+
+      // Advance time past the window
+      vi.advanceTimersByTime(150)
+
+      // Should allow requests again
+      const result = rateLimiter.checkRateLimit(req)
+      expect(result.allowed).toBe(true)
+      expect(result.remaining).toBe(2)
+    })
+
+    it('should handle multiple IPs independently', () => {
+      const rateLimiter = new RateLimiter({
+        windowMs: 60000,
+        maxRequests: 3
+      })
+      const req1 = createMockRequest(getUniqueIP())
+      const req2 = createMockRequest(getUniqueIP())
+
+      // Use up all requests for IP1
+      for (let i = 0; i < 3; i++) {
+        rateLimiter.checkRateLimit(req1)
+      }
+
+      // IP1 should be rate limited
+      expect(rateLimiter.checkRateLimit(req1).allowed).toBe(false)
+
+      // IP2 should still work
+      const result = rateLimiter.checkRateLimit(req2)
+      expect(result.allowed).toBe(true)
+      expect(result.remaining).toBe(2)
+    })
+  })
+
+  describe('Signup Rate Limiting', () => {
+    it('should enforce stricter limits for signup', () => {
+      const ip = getUniqueIP()
+      const req = createMockRequest(ip)
+
+      // First 5 requests should succeed (signupRateLimiter has maxRequests: 5)
+      for (let i = 0; i < 5; i++) {
+        const result = signupRateLimiter.checkRateLimit(req)
+        expect(result.allowed).toBe(true)
+      }
+
+      // 6th request should fail
+      const result = signupRateLimiter.checkRateLimit(req)
+      expect(result.allowed).toBe(false)
+    })
+  })
+
+  describe('Password Change Rate Limiting', () => {
+    it('should enforce stricter limits for password changes', () => {
+      const ip = getUniqueIP()
+      const req = createMockRequest(ip)
+
+      // First 5 requests should succeed (passwordChangeRateLimiter has maxRequests: 5)
+      for (let i = 0; i < 5; i++) {
+        const result = passwordChangeRateLimiter.checkRateLimit(req)
+        expect(result.allowed).toBe(true)
+      }
+
+      // 6th request should fail
+      const result = passwordChangeRateLimiter.checkRateLimit(req)
+      expect(result.allowed).toBe(false)
+    })
+  })
+
+  describe('Rate Limiter Response', () => {
+    it('should include correct rate limit info in response', () => {
+      const rateLimiter = new RateLimiter({
+        windowMs: 60000,
+        maxRequests: 5
+      })
+      const req = createMockRequest(getUniqueIP())
+
+      const result = rateLimiter.checkRateLimit(req)
+
+      expect(result).toHaveProperty('allowed')
+      expect(result).toHaveProperty('remaining')
+      expect(result).toHaveProperty('resetTime')
+      expect(result).toHaveProperty('total')
+      expect(result.total).toBe(5)
+    })
+  })
+})

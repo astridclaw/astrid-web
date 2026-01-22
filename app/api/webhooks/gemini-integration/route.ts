@@ -1,0 +1,80 @@
+import { NextRequest, NextResponse } from "next/server"
+
+export async function POST(request: NextRequest) {
+  console.log('💎 Gemini integration webhook called')
+
+  return NextResponse.json({
+    service: "Gemini Integration Webhook",
+    status: "ready",
+    message: "Astrid is ready to send task notifications to Gemini-based services",
+    instructions: {
+      setup: "Configure Gemini Function Calling with these endpoints",
+      mcpEndpoint: "https://astrid.cc/api/mcp/operations",
+      contextEndpoint: "https://astrid.cc/api/mcp/context?agentType=gemini",
+      webhookEndpoint: "https://astrid.cc/api/webhooks/ai-agents",
+      documentation: "https://astrid.cc/api/webhooks/ai-agents"
+    },
+    geminiIntegration: {
+      description: "Use Gemini Function Calling to interact with Astrid MCP API",
+      functionDeclarations: [
+        {
+          name: "astrid_get_task_details",
+          description: "Get detailed information about an assigned task",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              accessToken: { type: "STRING", description: "MCP access token" },
+              taskId: { type: "STRING", description: "Task ID" }
+            },
+            required: ["accessToken", "taskId"]
+          }
+        },
+        {
+          name: "astrid_update_task",
+          description: "Update task status or properties",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              accessToken: { type: "STRING", description: "MCP access token" },
+              taskId: { type: "STRING", description: "Task ID" },
+              completed: { type: "BOOLEAN", description: "Mark task as completed" },
+              progress: { type: "STRING", description: "Progress update" }
+            },
+            required: ["accessToken", "taskId"]
+          }
+        },
+        {
+          name: "astrid_add_comment",
+          description: "Add a progress comment to a task",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              accessToken: { type: "STRING", description: "MCP access token" },
+              taskId: { type: "STRING", description: "Task ID" },
+              content: { type: "STRING", description: "Comment content" }
+            },
+            required: ["accessToken", "taskId", "content"]
+          }
+        }
+      ]
+    }
+  })
+}
+
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    service: "Gemini Integration Webhook",
+    description: "Integration point for Google Gemini AI services with Astrid Task Manager",
+    status: "active",
+    integration: {
+      type: "Function Calling",
+      description: "Use Gemini's function calling capability to interact with Astrid MCP API",
+      endpoint: "https://astrid.cc/api/mcp/operations"
+    },
+    setup: {
+      step1: "Configure Gemini with function declarations for Astrid MCP operations",
+      step2: "Use provided MCP access token for authentication",
+      step3: "Call functions to read task details, update status, and add comments"
+    }
+  })
+}

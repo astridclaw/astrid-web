@@ -1,0 +1,198 @@
+/* Dark Theme Variables */
+.dark {
+  /* Background colors */
+  --theme-bg-primary: 17, 24, 39;
+  --theme-bg-secondary: 31, 41, 55;
+  --theme-bg-tertiary: 55, 65, 81;
+  --theme-bg-hover: 55, 65, 81;
+  --theme-bg-active: 75, 85, 99;
+  --theme-bg-selected: 30, 58, 138;
+  --theme-bg-selected-border: 59, 130, 246;
+  
+  /* Surface colors */
+  --theme-surface: 31, 41, 55;
+  --theme-surface-hover: 55, 65, 81;
+  --theme-surface-raised: 31, 41, 55;
+  
+  /* Border colors */
+  --theme-border: 75, 85, 99;
+  --theme-border-hover: 107, 114, 128;
+  --theme-border-focus: 59, 130, 246;
+  --theme-border-input: 75, 85, 99;
+  
+  /* Text colors */
+  --theme-text-primary: 255, 255, 255;
+  --theme-text-secondary: 209, 213, 219;
+  --theme-text-muted: 156, 163, 175;
+  --theme-text-inverted: 17, 24, 39;
+  --theme-text-selected: 255, 255, 255;
+  
+  /* Interactive colors */
+  --theme-accent: 59, 130, 246;
+  --theme-accent-hover: 37, 99, 235;
+  --theme-accent-text: 255, 255, 255;
+  
+  /* Status colors */
+  --theme-success: 34, 197, 94;
+  --theme-warning: 245, 158, 11;
+  --theme-error: 239, 68, 68;
+  --theme-info: 6, 182, 212;
+  
+  /* Sidebar colors */
+  --theme-sidebar-bg: 31, 41, 55;
+  --theme-sidebar-border: 75, 85, 99;
+  --theme-sidebar-hover: 55, 65, 81;
+  --theme-sidebar-active: 30, 58, 138;
+  
+  /* Task panel colors */
+  --theme-panel-bg: 31, 41, 55;
+  --theme-panel-border: 75, 85, 99;
+  --theme-panel-arrow: 31, 41, 55;
+  
+  /* Header colors */
+  --theme-header-bg: 31, 41, 55;
+  --theme-header-border: 75, 85, 99;
+  
+  /* Input colors */
+  --theme-input-bg: 55, 65, 81;
+  --theme-input-border: 75, 85, 99;
+  --theme-input-placeholder: 156, 163, 175;
+  
+  /* Comment colors */
+  --theme-comment-bg: 55, 65, 81;
+  
+  /* Button colors */
+  --theme-button-bg: 55, 65, 81;
+  --theme-button-hover: 75, 85, 99;
+  --theme-button-border: 75, 85, 99;
+  
+  /* Component shadows */
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --theme-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Theme Component Styles */
+.dark .theme-bg-primary { background-color: rgb(var(--theme-bg-primary)); }
+.dark .theme-bg-secondary { background-color: rgb(var(--theme-bg-secondary)); }
+.dark .theme-bg-tertiary { background-color: rgb(var(--theme-bg-tertiary)); }
+.dark .theme-bg-hover { background-color: rgb(var(--theme-bg-hover)); }
+.dark .theme-bg-active { background-color: rgb(var(--theme-bg-active)); }
+.dark .theme-bg-selected { 
+  background-color: rgb(var(--theme-bg-selected)); 
+  border-color: rgb(var(--theme-bg-selected-border));
+}
+
+.dark .theme-text-primary { color: rgb(var(--theme-text-primary)); }
+.dark .theme-text-secondary { color: rgb(var(--theme-text-secondary)); }
+.dark .theme-text-muted { color: rgb(var(--theme-text-muted)); }
+.dark .theme-text-selected { color: rgb(var(--theme-text-selected)); }
+
+.dark .theme-border { border-color: rgb(var(--theme-border)); }
+.dark .theme-border-input { border-color: rgb(var(--theme-border-input)); }
+
+.dark .theme-surface { background-color: rgb(var(--theme-surface)); }
+.dark .theme-surface-hover:hover { background-color: rgb(var(--theme-surface-hover)); }
+
+/* Speech bubble arrow fill - matches theme-bg-secondary */
+.dark .speech-bubble-arrow-fill { border-right-color: rgb(var(--theme-bg-secondary)); }
+
+.dark .theme-panel {
+  background-color: rgb(var(--theme-panel-bg));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.dark .theme-panel-arrow {
+  background-color: rgb(var(--theme-panel-arrow));
+  border-color: rgb(var(--theme-panel-border));
+}
+
+.dark .theme-sidebar {
+  background-color: rgb(var(--theme-sidebar-bg));
+  border-color: rgb(var(--theme-sidebar-border));
+}
+
+.dark .theme-header {
+  background-color: rgb(var(--theme-header-bg));
+  border-color: rgb(var(--theme-header-border));
+}
+
+.dark .theme-input {
+  background-color: rgb(var(--theme-input-bg));
+  border-color: rgb(var(--theme-input-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.dark .theme-input::placeholder {
+  color: rgb(var(--theme-input-placeholder));
+}
+
+.dark .theme-comment-bg {
+  background-color: rgb(var(--theme-comment-bg));
+}
+
+.dark .theme-button {
+  background-color: rgb(var(--theme-button-bg));
+  border-color: rgb(var(--theme-button-border));
+  color: rgb(var(--theme-text-primary));
+}
+
+.dark .theme-button:hover {
+  background-color: rgb(var(--theme-button-hover));
+}
+
+.dark .theme-shadow-sm { box-shadow: var(--theme-shadow-sm); }
+.dark .theme-shadow { box-shadow: var(--theme-shadow); }
+.dark .theme-shadow-lg { box-shadow: var(--theme-shadow-lg); }
+
+/* ===== DARK THEME: Solid Dark Backgrounds ===== */
+/* Matches iOS Dark theme - reduced contrast for comfort */
+
+/* Task cards: Solid dark gray */
+.dark .task-card {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+}
+
+.dark .task-card:hover {
+  background-color: rgb(37, 47, 61);
+}
+
+/* Selected task card: Darker with blue accent */
+.dark .task-row-selected {
+  background-color: rgb(30, 58, 138) !important;
+  border-color: rgb(59, 130, 246);
+}
+
+/* Mobile floating header: Solid dark */
+.dark .app-header-mobile-floating {
+  background-color: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+}
+
+/* iOS drawer header: Solid dark */
+.dark .app-header-ios-drawer {
+  background-color: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+}
+
+/* Mobile quick add bar: Solid dark gray */
+.dark .mobile-quick-add {
+  background-color: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+}
+
+/* Mobile sidebar: Slightly lighter dark for contrast */
+.dark .app-sidebar-mobile {
+  background-color: rgb(31, 41, 55);
+}
+
+/* iOS drawer content wrapper: Near-black background */
+.dark .ios-drawer-content {
+  background-color: rgb(17, 24, 39);
+}
+
+/* List badges on Dark: Subtle dark surface */
+.dark .task-card .theme-bg-secondary {
+  background-color: rgb(55, 65, 81);
+}

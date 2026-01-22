@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "Mijn Taken",
+    "today": "Vandaag",
+    "lists": "Lijsten",
+    "addList": "Lijst Toevoegen",
+    "publicSharedLists": "Openbare Gedeelde Lijsten",
+    "publicLists": "Openbare Lijsten",
+    "seeAllCollaborative": "Bekijk alle samenwerkingslijsten →",
+    "seeAllSuggested": "Bekijk alle aanbevolen lijsten →"
+  },
+  "userMenu": {
+    "settings": "Instellingen",
+    "refreshData": "Gegevens Vernieuwen",
+    "refreshing": "Vernieuwen...",
+    "signOut": "Uitloggen",
+    "signingOut": "Uitloggen..."
+  },
+  "actions": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "add": "Toevoegen",
+    "close": "Sluiten",
+    "create": "Aanmaken",
+    "update": "Bijwerken",
+    "confirm": "Bevestigen",
+    "done": "Klaar",
+    "back": "Terug",
+    "next": "Volgende",
+    "copy": "Kopiëren",
+    "share": "Delen",
+    "move": "Verplaatsen",
+    "archive": "Archiveren",
+    "restore": "Herstellen",
+    "retry": "Opnieuw",
+    "submit": "Versturen",
+    "send": "Verzenden",
+    "upload": "Uploaden",
+    "download": "Downloaden",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "sort": "Sorteren",
+    "clear": "Wissen",
+    "reset": "Resetten",
+    "apply": "Toepassen",
+    "select": "Selecteren",
+    "selectAll": "Alles Selecteren",
+    "deselectAll": "Alles Deselecteren"
+  },
+  "tasks": {
+    "task": "Taak",
+    "tasks": "Taken",
+    "newTask": "Nieuwe taak",
+    "addTask": "Taak toevoegen",
+    "editTask": "Taak bewerken",
+    "deleteTask": "Taak verwijderen",
+    "completeTask": "Taak voltooien",
+    "taskName": "Taaknaam",
+    "taskDescription": "Beschrijving",
+    "noDescription": "Geen beschrijving",
+    "dueDate": "Vervaldatum",
+    "reminder": "Herinnering",
+    "reminders": "Herinneringen",
+    "priority": "Prioriteit",
+    "assignee": "Toegewezen aan",
+    "assignees": "Toegewezenen",
+    "unassigned": "Niet toegewezen",
+    "comments": "Opmerkingen",
+    "attachments": "Bijlagen",
+    "subtasks": "Subtaken",
+    "tags": "Tags",
+    "completed": "Voltooid",
+    "incomplete": "Onvoltooid",
+    "overdue": "Verlopen",
+    "noDueDate": "Geen vervaldatum",
+    "noReminder": "Geen herinnering",
+    "addReminder": "Herinnering toevoegen",
+    "addSubtask": "Subtaak toevoegen",
+    "addComment": "Opmerking toevoegen",
+    "addAttachment": "Bijlage toevoegen",
+    "moveToList": "Verplaats naar lijst",
+    "copyToList": "Kopieer naar lijst",
+    "deleteConfirm": "Weet je zeker dat je deze taak wilt verwijderen?",
+    "placeholder": {
+      "taskName": "Wat moet er gebeuren?",
+      "description": "Beschrijving toevoegen...",
+      "comment": "Schrijf een opmerking..."
+    }
+  },
+  "lists": {
+    "list": "Lijst",
+    "newList": "Nieuwe lijst",
+    "addList": "Lijst toevoegen",
+    "editList": "Lijst bewerken",
+    "deleteList": "Lijst verwijderen",
+    "listName": "Lijstnaam",
+    "listDescription": "Beschrijving",
+    "listSettings": "Lijstinstellingen",
+    "listDetails": "Lijstdetails",
+    "sortAndFilters": "Sorteren en Filteren",
+    "membership": "Lidmaatschap",
+    "adminSettings": "Beheerdersinstellingen",
+    "privacy": "Privacy",
+    "private": "Privé",
+    "shared": "Gedeeld",
+    "public": "Openbaar",
+    "owner": "Eigenaar",
+    "admin": "Beheerder",
+    "member": "Lid",
+    "viewer": "Kijker",
+    "members": "Leden",
+    "addMember": "Lid toevoegen",
+    "removeMember": "Lid verwijderen",
+    "leaveList": "Lijst verlaten",
+    "transferOwnership": "Eigendom Overdragen",
+    "selectNewOwner": "Selecteer Nieuwe Eigenaar",
+    "transferAndLeave": "Overdragen en Verlaten",
+    "deleteConfirm": "Weet je zeker dat je deze lijst wilt verwijderen?",
+    "placeholder": {
+      "listName": "Voer lijstnaam in...",
+      "description": "Beschrijving toevoegen..."
+    }
+  },
+  "priority": {
+    "none": "Geen",
+    "low": "Laag",
+    "medium": "Gemiddeld",
+    "high": "Hoog",
+    "urgent": "Urgent"
+  },
+  "time": {
+    "today": "Vandaag",
+    "tomorrow": "Morgen",
+    "yesterday": "Gisteren",
+    "thisWeek": "Deze week",
+    "nextWeek": "Volgende week",
+    "thisMonth": "Deze maand",
+    "nextMonth": "Volgende maand",
+    "custom": "Aangepast",
+    "noDate": "Geen datum",
+    "pickDate": "Kies een datum",
+    "pickTime": "Kies een tijd",
+    "atDueTime": "Op vervaltijd",
+    "minutesBefore": "{count} minuten eerder",
+    "hourBefore": "1 uur eerder",
+    "hoursBefore": "{count} uur eerder",
+    "dayBefore": "1 dag eerder",
+    "daysBefore": "{count} dagen eerder",
+    "weekBefore": "1 week eerder"
+  },
+  "weekdays": {
+    "sunday": "Zondag",
+    "monday": "Maandag",
+    "tuesday": "Dinsdag",
+    "wednesday": "Woensdag",
+    "thursday": "Donderdag",
+    "friday": "Vrijdag",
+    "saturday": "Zaterdag",
+    "sun": "Zo",
+    "mon": "Ma",
+    "tue": "Di",
+    "wed": "Wo",
+    "thu": "Do",
+    "fri": "Vr",
+    "sat": "Za"
+  },
+  "months": {
+    "january": "Januari",
+    "february": "Februari",
+    "march": "Maart",
+    "april": "April",
+    "may": "Mei",
+    "june": "Juni",
+    "july": "Juli",
+    "august": "Augustus",
+    "september": "September",
+    "october": "Oktober",
+    "november": "November",
+    "december": "December",
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mrt",
+    "apr": "Apr",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Okt",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  "settings": {
+    "settings": "Instellingen",
+    "account": "Account",
+    "accountAccess": "Account en Toegang",
+    "appearance": "Uiterlijk",
+    "language": "Taal",
+    "preferences": "Voorkeuren",
+    "notifications": "Meldingen",
+    "remindersNotifications": "Herinneringen en Meldingen",
+    "taskSettings": "Taakinstellingen",
+    "integrations": "Integraties",
+    "apiAccess": "API Toegang",
+    "debug": "Debug",
+    "about": "Over",
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Servicevoorwaarden",
+    "theme": {
+      "title": "Thema",
+      "light": "Licht",
+      "dark": "Donker",
+      "system": "Systeem"
+    },
+    "timezone": {
+      "title": "Tijdzone",
+      "auto": "Automatisch detecteren"
+    }
+  },
+  "auth": {
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "signOut": "Uitloggen",
+    "signInWith": "Inloggen met {provider}",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "resetPassword": "Wachtwoord resetten",
+    "createAccount": "Account aanmaken",
+    "alreadyHaveAccount": "Heb je al een account?",
+    "dontHaveAccount": "Heb je geen account?",
+    "continueWith": "Doorgaan met {provider}",
+    "orContinueWith": "Of doorgaan met"
+  },
+  "messages": {
+    "success": "Gelukt!",
+    "error": "Fout",
+    "warning": "Waarschuwing",
+    "info": "Info",
+    "loading": "Laden...",
+    "saving": "Opslaan...",
+    "saved": "Opgeslagen",
+    "deleting": "Verwijderen...",
+    "deleted": "Verwijderd",
+    "updating": "Bijwerken...",
+    "updated": "Bijgewerkt",
+    "creating": "Aanmaken...",
+    "created": "Aangemaakt",
+    "copying": "Kopiëren...",
+    "copied": "Gekopieerd",
+    "moving": "Verplaatsen...",
+    "moved": "Verplaatst",
+    "confirmDelete": "Weet je zeker dat je dit wilt verwijderen?",
+    "cannotUndo": "Deze actie kan niet ongedaan worden gemaakt.",
+    "noResults": "Geen resultaten gevonden",
+    "tryAgain": "Probeer het opnieuw",
+    "somethingWentWrong": "Er is iets misgegaan",
+    "cacheCleared": "Cache gewist",
+    "dataRefreshed": "Gegevens zijn vernieuwd. De app wordt opnieuw geladen met nieuwe gegevens.",
+    "settingsSaved": "Instellingen opgeslagen",
+    "changesSaved": "Wijzigingen opgeslagen"
+  },
+  "reminders": {
+    "general": [
+      "Hallo! Even tijd?",
+      "Kan ik je even spreken?",
+      "Heb je een paar minuten?",
+      "Ben je het vergeten?",
+      "Pardon!",
+      "Als je even tijd hebt:",
+      "Op je agenda:",
+      "Even vrij?",
+      "Astrid hier!",
+      "Hoi! Mag ik je storen?",
+      "Een minuutje van je tijd?",
+      "Het is een geweldige dag om"
+    ],
+    "due": [
+      "Tijd om te werken!",
+      "De deadline is hier!",
+      "Klaar om te beginnen?",
+      "Je zei dat je dit zou doen:",
+      "Je zou moeten beginnen met:",
+      "Tijd om te starten:",
+      "Het is zover!",
+      "Pardon! Tijd voor",
+      "Ben je vrij? Tijd om"
+    ],
+    "responses": [
+      "Ik heb iets voor je!",
+      "Klaar om dit achter je te laten?",
+      "Waarom maak je dit niet af?",
+      "Wat denk je? Klaar tijger?",
+      "Klaar om dit te doen?",
+      "Kun je dit aan?",
+      "Je kunt gelukkig zijn! Maak dit gewoon af!",
+      "Ik beloof dat je je beter voelt als je dit afmaakt!",
+      "Ga je dit vandaag niet doen?",
+      "Maak dit alsjeblieft af, ik ben het zat!",
+      "Kun je dit afmaken? Ja dat kun je!",
+      "Ga je dit ooit doen?",
+      "Voel je goed! Laten we gaan!",
+      "Ik ben zo trots op je! Laten we het afmaken!",
+      "Een kleine snack nadat je dit afmaakt?",
+      "Alleen deze ene taak? Alsjeblieft?",
+      "Tijd om je takenlijst korter te maken!",
+      "Ben je Team Orde of Team Chaos? Team Orde! Laten we gaan!",
+      "Heb ik gezegd dat je geweldig bent? Ga zo door!",
+      "Een taak per dag houdt de rommel weg... Dag rommel!",
+      "Hoe doe je het? Wow, ik ben onder de indruk!",
+      "Je kunt niet alleen op je goede looks vertrouwen. Aan de slag!",
+      "Mooi weer voor zo'n klus, nietwaar?",
+      "Een kopje thee terwijl je hieraan werkt?",
+      "Als je dit al had gedaan, kon je nu buiten spelen.",
+      "Het is tijd. Je kunt het onvermijdelijke niet uitstellen.",
+      "Ik sterf een beetje elke keer als je me negeert."
+    ],
+    "social": {
+      "one": "{name} rekent op je!",
+      "multiple": "Deze mensen rekenen op je!",
+      "multipleNames": "{name1}, {name2} en anderen rekenen op je!"
+    },
+    "ui": {
+      "title": "Herinnering:",
+      "snooze": "Snooze",
+      "complete": "Voltooien",
+      "completedToast": "Gefeliciteerd met het afronden!",
+      "snooze1day": "Snooze 1 dag",
+      "snooze1week": "Snooze 1 week"
+    }
+  },
+  "emptyState": {
+    "featured": "Deze lijst is momenteel leeg! Kopieer hem om hem je eigen te maken en begin met taken toevoegen.",
+    "today": "Niets gepland voor vandaag! Geniet van de vrije tijd of voeg iets nieuws toe.",
+    "myTasks": "Je bent helemaal bij! Geen taken aan jou toegewezen. Tijd om te ontspannen!",
+    "assigned": "Nog geen taken toegewezen! Kom later terug of maak taken voor je team.",
+    "notInList": "Geen wezen taken! Al je taken zijn georganiseerd in lijsten.",
+    "shared": "Begin met samenwerken! Voeg een taak toe om deze gedeelde lijst te starten.",
+    "public": "Deel je ideeën met de wereld! Voeg taken toe - iedereen kan deze openbare lijst zien.",
+    "personal": "Klaar om je gedachten vast te leggen? Tik op taak toevoegen om je eerste taak te maken!",
+    "default": "Laten we \"{listName}\" vullen! Voeg je eerste taak toe om te beginnen.",
+    "defaultNoName": "Tijd om georganiseerd te worden! Voeg je eerste taak toe om te beginnen.",
+    "addTaskHint": "Taak toevoegen",
+    "noLists": "Nog geen lijsten. Maak je eerste lijst om te beginnen!"
+  },
+  "common": {
+    "complete": "Voltooien",
+    "snooze": "Snooze",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "add": "Toevoegen",
+    "close": "Sluiten",
+    "settings": "Instellingen",
+    "language": "Taal",
+    "preferences": "Voorkeuren",
+    "or": "of",
+    "and": "en",
+    "yes": "Ja",
+    "no": "Nee",
+    "ok": "OK",
+    "all": "Alles",
+    "none": "Geen",
+    "more": "Meer",
+    "less": "Minder",
+    "show": "Tonen",
+    "hide": "Verbergen",
+    "optional": "Optioneel",
+    "required": "Verplicht",
+    "copiedToClipboard": "Gekopieerd naar klembord",
+    "unableToCopy": "Kan niet kopiëren naar klembord"
+  },
+  "search": {
+    "placeholder": "Zoek taken en gebruikers",
+    "noResults": "Geen resultaten gevonden",
+    "searching": "Zoeken..."
+  },
+  "listHeaders": {
+    "myTasks": "Mijn Taken",
+    "myTasksDescription": "Al je taken",
+    "today": "Vandaag",
+    "todayDescription": "Taken voor vandaag",
+    "assigned": "Toegewezen",
+    "assignedDescription": "Taken toegewezen aan anderen",
+    "notInList": "Geen Lijst",
+    "notInListDescription": "Wezen taken",
+    "public": "Openbaar",
+    "publicDescription": "Openbare taken"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "Account en Toegang",
+      "description": "Profiel, e-mailverificatie en wachtwoordinstellingen"
+    },
+    "remindersNotifications": {
+      "title": "Herinneringen en Meldingen",
+      "description": "Configureer herinneringen, pushmeldingen en agendaintegratie"
+    },
+    "codingAgent": {
+      "title": "Code Agent",
+      "description": "Volledige code agent met GitHub + Vercel integratie"
+    },
+    "aiAgents": {
+      "title": "AI en Agents",
+      "description": "Configureer AI-assistenten en code agents met je API-sleutels"
+    },
+    "apiAccess": {
+      "title": "API Toegang",
+      "description": "OAuth-applicaties en API-integraties"
+    },
+    "chatgpt": {
+      "title": "ChatGPT Integratie",
+      "description": "Verbind Astrid met aangepaste GPT-acties",
+      "loading": "ChatGPT integratie laden...",
+      "breadcrumb": "ChatGPT Integratie",
+      "howItWorks": {
+        "title": "Hoe Het Werkt",
+        "description": "Verbind Astrid met ChatGPT via OAuth 2.0 en OpenAPI",
+        "oauth": {
+          "title": "Veilige OAuth 2.0",
+          "description": "Authenticeer veilig zonder je wachtwoord te delen"
+        },
+        "openapi": {
+          "title": "OpenAPI Specificatie",
+          "description": "Standaard API-formaat dat ChatGPT begrijpt"
+        },
+        "shareable": {
+          "title": "Deelbare Integratie",
+          "description": "Deel je aangepaste GPT met anderen"
+        }
+      },
+      "step1": {
+        "badge": "Stap 1",
+        "title": "OAuth Client Aanmaken",
+        "description": "Maak een OAuth-client om je GPT te authenticeren met Astrid",
+        "manageButton": "Clients Beheren",
+        "instructions": {
+          "step1": "Ga naar API Toegang instellingen",
+          "step2": "Klik op 'OAuth Client Aanmaken'",
+          "step3": "Stel grant type in op 'authorization_code'",
+          "step4": "Voeg de redirect URI hieronder toe",
+          "step5": "Kopieer je Client ID en Secret"
+        },
+        "redirectUri": "Redirect URI",
+        "scopes": "Scopes"
+      },
+      "step2": {
+        "badge": "Stap 2",
+        "title": "Configureer Je GPT",
+        "description": "Gebruik deze URLs in je aangepaste GPT configuratie",
+        "manifestUrl": "Plugin Manifest URL",
+        "openapiSpec": "OpenAPI Specificatie",
+        "authUrl": "Autorisatie URL",
+        "tokenUrl": "Token URL",
+        "note": "Kopieer deze URLs naar je GPT actie configuratie",
+        "viewDocsButton": "Bekijk Documentatie",
+        "testApiButton": "Test API"
+      },
+      "step2b": {
+        "badge": "Alt",
+        "title": "MCP Server (Alternatief)",
+        "description": "Gebruik Model Context Protocol voor directe integratie",
+        "serverUrl": "MCP Server URL",
+        "postEndpoint": "POST Endpoint",
+        "note": "MCP biedt een gestandaardiseerde manier om AI-modellen te verbinden met externe tools"
+      },
+      "step3": {
+        "badge": "Stap 3",
+        "title": "Begin Je GPT Te Gebruiken",
+        "description": "Probeer deze voorbeeldprompts met je verbonden GPT",
+        "examples": {
+          "example1": "Toon mijn taken voor vandaag",
+          "example2": "Maak een nieuwe taak: Kwartaalrapport beoordelen",
+          "example3": "Wat staat er op mijn boodschappenlijst?"
+        },
+        "shareNote": "Je kunt je aangepaste GPT delen met anderen"
+      },
+      "moreDetails": {
+        "title": "Meer Informatie",
+        "reviewButton": "OAuth Instellingen Bekijken",
+        "openBuilderButton": "GPT Builder Openen"
+      }
+    },
+    "contacts": {
+      "title": "Contacten",
+      "description": "Importeer contacten voor samenwerkersuggesties",
+      "loading": "Contacten laden...",
+      "importSuccess": "{count} contacten succesvol geïmporteerd",
+      "importError": "Importeren van contacten mislukt. Probeer het opnieuw.",
+      "clearConfirmation": "Weet je zeker dat je alle contacten wilt verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "clearSuccess": "{count} contacten verwijderd",
+      "clearError": "Verwijderen van contacten mislukt. Probeer het opnieuw.",
+      "syncedTitle": "Gesynchroniseerde Contacten",
+      "syncedDescription": "Contacten geïmporteerd van externe diensten",
+      "contactsSynced": "contacten gesynchroniseerd",
+      "lastUpdated": "Laatst bijgewerkt",
+      "importTitle": "Contacten Importeren",
+      "importDescription": "Importeer contacten van externe diensten voor samenwerkersuggesties",
+      "googleContacts": "Google Contacten",
+      "googleDescription": "Importeer contacten van je Google-account",
+      "connecting": "Verbinden...",
+      "import": "Importeren",
+      "privacyNotice": "Je contacten worden veilig opgeslagen en alleen gebruikt om samenwerkers voor te stellen bij het delen van lijsten.",
+      "dangerZone": "Gevarenzone",
+      "irreversibleActions": "Deze acties kunnen niet ongedaan worden gemaakt",
+      "clearAll": "Alle Contacten Verwijderen",
+      "clearAllDescription": "Verwijder alle geïmporteerde contacten van je account",
+      "clearContacts": "Contacten Verwijderen"
+    },
+    "appearance": {
+      "title": "Uiterlijk",
+      "description": "Pas thema, kleuren en visuele voorkeuren aan"
+    },
+    "debug": {
+      "title": "Debug",
+      "description": "Ontwikkelaarsopties en debug-functies",
+      "loading": "Debug instellingen laden...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "Lijsten Hersteld",
+          "description": "{count} standaardlijsten hersteld"
+        },
+        "restoreError": {
+          "title": "Herstellen Mislukt",
+          "description": "Kan standaardlijsten niet herstellen"
+        },
+        "refreshSuccess": {
+          "title": "Gegevens Vernieuwd",
+          "description": "Cache gewist en gegevens vernieuwd"
+        },
+        "cacheCleared": {
+          "title": "Cache Gewist",
+          "description": "Lokale cache is gewist"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "Debug Opties",
+          "description": "Schakel debug-functies in voor ontwikkeling",
+          "toastDebugMode": {
+            "label": "Toast Debug Modus",
+            "description": "Toon gedetailleerde toast-meldingen voor debugging",
+            "current": "Huidig",
+            "debugOn": "Debug (gedetailleerd)",
+            "subtleOn": "Subtiel (minimaal)"
+          },
+          "reminderDebugMode": {
+            "label": "Herinnering Debug Modus",
+            "description": "Toon herinnering debug-informatie",
+            "current": "Huidig",
+            "debugOn": "Debug aan",
+            "debugOff": "Debug uit"
+          }
+        },
+        "dataManagement": {
+          "title": "Gegevensbeheer",
+          "description": "Beheer je lokale gegevens en cache",
+          "favoriteLists": {
+            "label": "Standaardlijsten Herstellen",
+            "description": "Herstel de standaard favorietenlijsten als ze zijn verwijderd",
+            "button": "Standaardlijsten Herstellen",
+            "restoring": "Herstellen..."
+          },
+          "refreshData": {
+            "label": "Gegevens Vernieuwen",
+            "description": "Wis cache en herlaad alle gegevens van de server",
+            "button": "Alle Gegevens Vernieuwen",
+            "refreshing": "Vernieuwen..."
+          }
+        }
+      }
+    },
+    "manageAccount": "Beheer je account en voorkeuren",
+    "profileInfo": {
+      "title": "Profielinformatie",
+      "description": "Werk je persoonlijke informatie bij",
+      "displayName": "Weergavenaam",
+      "emailAddress": "E-mailadres",
+      "saveChanges": "Wijzigingen Opslaan",
+      "saving": "Opslaan...",
+      "clickToChangePhoto": "Klik om profielfoto te wijzigen",
+      "viewPublicProfile": "Openbaar Profiel Bekijken"
+    },
+    "emailVerification": {
+      "title": "E-mailverificatie",
+      "description": "Verifieer je e-mailadres voor meer veiligheid",
+      "verified": "Geverifieerd",
+      "verifiedViaGoogle": "Geverifieerd via Google",
+      "notVerified": "Niet geverifieerd",
+      "verify": "Verifiëren",
+      "verificationSent": "Verificatie-e-mail Verzonden!",
+      "checkEmail": "Controleer je e-mail en klik op de verificatielink.",
+      "pendingChange": "E-mailwijziging in behandeling",
+      "waitingVerification": "Wachten op verificatie"
+    },
+    "passwordSection": {
+      "title": "Wachtwoord Wijzigen",
+      "description": "Werk je wachtwoord bij voor e-mail/wachtwoord authenticatie",
+      "currentPassword": "Huidig Wachtwoord",
+      "newPassword": "Nieuw Wachtwoord",
+      "confirmPassword": "Bevestig Nieuw Wachtwoord",
+      "changePassword": "Wachtwoord Wijzigen",
+      "passwordsDoNotMatch": "De nieuwe wachtwoorden komen niet overeen.",
+      "passwordTooShort": "Het nieuwe wachtwoord moet minimaal 6 tekens bevatten."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Gebruik passkeys voor sneller, veiliger inloggen zonder wachtwoorden",
+      "addPasskey": "Passkey Toevoegen",
+      "addingPasskey": "Passkey toevoegen...",
+      "noPasskeys": "Nog geen passkeys geregistreerd",
+      "addPasskeyHint": "Voeg een passkey toe voor sneller inloggen zonder wachtwoord",
+      "goPasswordless": "Wachtwoordloos gaan",
+      "removePassword": "Wachtwoord Verwijderen",
+      "removePasswordHint": "Verwijder je wachtwoord en log alleen in met passkey"
+    },
+    "accountInfo": {
+      "title": "Accountinformatie",
+      "created": "Account aangemaakt",
+      "lastUpdated": "Laatst bijgewerkt",
+      "accountId": "Account ID"
+    },
+    "exportData": {
+      "title": "Je Gegevens Exporteren",
+      "description": "Download al je taken, lijsten en accountgegevens",
+      "includes": "Export bevat:",
+      "allTasks": "Alle taken (aangemaakt en toegewezen)",
+      "allLists": "Alle lijsten (eigenaar en lid)",
+      "comments": "Opmerkingen en bijlage-metadata",
+      "settings": "Accountinstellingen en voorkeuren",
+      "exportJson": "Exporteren als JSON",
+      "exportCsv": "Exporteren als CSV",
+      "exporting": "Exporteren..."
+    },
+    "deleteAccount": {
+      "title": "Account Verwijderen",
+      "description": "Verwijder permanent je account en alle bijbehorende gegevens",
+      "warning": "Waarschuwing: Deze actie kan niet ongedaan worden gemaakt!",
+      "willRemove": "Het verwijderen van je account verwijdert permanent:",
+      "allTasks": "Alle taken, lijsten en opmerkingen",
+      "allFiles": "Alle geüploade bestanden en bijlagen",
+      "allIntegrations": "Alle integraties en instellingen",
+      "sharedAccess": "Toegang tot gedeelde lijsten en samenwerkingen",
+      "considerExporting": "Overweeg eerst je gegevens te exporteren (zie hierboven).",
+      "deleteMyAccount": "Mijn Account Verwijderen",
+      "confirmTitle": "Accountverwijdering Bevestigen",
+      "confirmDescription": "Deze actie is permanent en kan niet ongedaan worden gemaakt.",
+      "enterPassword": "Voer je wachtwoord in om te bevestigen",
+      "typeToConfirm": "Typ VERWIJDER MIJN ACCOUNT om te bevestigen",
+      "permanentlyDelete": "Account Permanent Verwijderen",
+      "deleting": "Verwijderen..."
+    },
+    "appearancePage": {
+      "title": "Uiterlijk en Gebruikerservaring",
+      "description": "Pas het uiterlijk, gevoel en flow van je interface aan",
+      "theme": {
+        "title": "Thema",
+        "description": "Kies tussen Ocean, licht en donker thema's",
+        "ocean": "Ocean",
+        "oceanDesc": "Licht thema met een verfrissende cyaan achtergrond",
+        "light": "Lichte Modus",
+        "lightDesc": "Een heldere, schone interface perfect voor daggebruik",
+        "dark": "Donkere Modus",
+        "darkDesc": "Een stijlvolle, donkere interface die prettiger is voor de ogen bij weinig licht",
+        "proTip": "Je themavoorkeur wordt automatisch opgeslagen en toegepast op al je apparaten."
+      },
+      "keyboard": {
+        "title": "Sneltoetsen",
+        "description": "Bekijk en leer sneltoetsen voor snellere navigatie",
+        "viewShortcuts": "Bekijk Sneltoetsen",
+        "viewTitle": "Sneltoetsen Bekijken",
+        "viewDesc": "Bekijk alle beschikbare sneltoetsen voor efficiënt taakbeheer",
+        "quickAccess": "Druk overal in de taakmanager op ? om sneltoetsen te openen."
+      },
+      "emailToTask": {
+        "title": "E-mail naar Taak",
+        "description": "Maak direct taken door e-mails te sturen naar remindme@astrid.cc",
+        "threeWays": "Drie Manieren om Taken te Maken",
+        "selfTask": "Eigen taak:",
+        "selfTaskDesc": "Stuur NAAR remindme@astrid.cc",
+        "assignedTask": "Toegewezen taak:",
+        "assignedTaskDesc": "CC remindme@astrid.cc met één ontvanger",
+        "groupTask": "Groepstaak:",
+        "groupTaskDesc": "CC remindme@astrid.cc met meerdere ontvangers",
+        "configure": "E-mailinstellingen Configureren",
+        "configureDesc": "Pas standaard vervaldatums aan, schakel de functie in/uit en meer",
+        "proTip": "Het e-mailonderwerp wordt de taaktitel en de body wordt de beschrijving. Perfect voor snel taken vastleggen vanuit je inbox!"
+      }
+    }
+  }
+}

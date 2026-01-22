@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "Mes Tâches",
+    "today": "Aujourd'hui",
+    "lists": "Listes",
+    "addList": "Ajouter une liste",
+    "publicSharedLists": "Listes Publiques Partagées",
+    "publicLists": "Listes Publiques",
+    "seeAllCollaborative": "Voir toutes les listes collaboratives →",
+    "seeAllSuggested": "Voir toutes les listes suggérées →"
+  },
+  "userMenu": {
+    "settings": "Paramètres",
+    "refreshData": "Actualiser les données",
+    "refreshing": "Actualisation",
+    "signOut": "Déconnexion",
+    "signingOut": "Déconnexion en cours"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "close": "Fermer",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "confirm": "Confirmer",
+    "done": "Terminé",
+    "back": "Retour",
+    "next": "Suivant",
+    "copy": "Copier",
+    "share": "Partager",
+    "move": "Déplacer",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "retry": "Réessayer",
+    "submit": "Soumettre",
+    "send": "Envoyer",
+    "upload": "Télécharger",
+    "download": "Télécharger",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "clear": "Effacer",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer",
+    "select": "Sélectionner",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner"
+  },
+  "tasks": {
+    "task": "Tâche",
+    "tasks": "Tâches",
+    "newTask": "Nouvelle tâche",
+    "addTask": "Ajouter une tâche",
+    "editTask": "Modifier la tâche",
+    "deleteTask": "Supprimer la tâche",
+    "completeTask": "Terminer la tâche",
+    "taskName": "Nom de la tâche",
+    "taskDescription": "Description",
+    "noDescription": "Pas de description",
+    "dueDate": "Date limite",
+    "reminder": "Rappel",
+    "reminders": "Rappels",
+    "priority": "Priorité",
+    "assignee": "Assigné à",
+    "assignees": "Assignés",
+    "unassigned": "Non assigné",
+    "comments": "Commentaires",
+    "attachments": "Pièces jointes",
+    "subtasks": "Sous-tâches",
+    "tags": "Étiquettes",
+    "completed": "Terminée",
+    "incomplete": "Incomplète",
+    "overdue": "En retard",
+    "noDueDate": "Pas de date limite",
+    "noReminder": "Pas de rappel",
+    "addReminder": "Ajouter un rappel",
+    "addSubtask": "Ajouter une sous-tâche",
+    "addComment": "Ajouter un commentaire",
+    "addAttachment": "Ajouter une pièce jointe",
+    "moveToList": "Déplacer vers la liste",
+    "copyToList": "Copier vers la liste",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
+    "placeholder": {
+      "taskName": "Que faut-il faire ?",
+      "description": "Ajouter une description...",
+      "comment": "Écrire un commentaire..."
+    }
+  },
+  "lists": {
+    "list": "Liste",
+    "newList": "Nouvelle liste",
+    "addList": "Ajouter une liste",
+    "editList": "Modifier la liste",
+    "deleteList": "Supprimer la liste",
+    "listName": "Nom de la liste",
+    "listDescription": "Description",
+    "listSettings": "Paramètres de la liste",
+    "listDetails": "Détails de la liste",
+    "sortAndFilters": "Tri et filtres",
+    "membership": "Membres",
+    "adminSettings": "Paramètres admin",
+    "privacy": "Confidentialité",
+    "private": "Privée",
+    "shared": "Partagée",
+    "public": "Publique",
+    "owner": "Propriétaire",
+    "admin": "Administrateur",
+    "member": "Membre",
+    "viewer": "Spectateur",
+    "members": "Membres",
+    "addMember": "Ajouter un membre",
+    "removeMember": "Retirer un membre",
+    "leaveList": "Quitter la liste",
+    "transferOwnership": "Transférer la propriété",
+    "selectNewOwner": "Sélectionner un nouveau propriétaire",
+    "transferAndLeave": "Transférer et quitter",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette liste ?",
+    "placeholder": {
+      "listName": "Entrez le nom de la liste...",
+      "description": "Ajouter une description..."
+    }
+  },
+  "priority": {
+    "none": "Aucune",
+    "low": "Basse",
+    "medium": "Moyenne",
+    "high": "Haute",
+    "urgent": "Urgente"
+  },
+  "time": {
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "yesterday": "Hier",
+    "thisWeek": "Cette semaine",
+    "nextWeek": "Semaine prochaine",
+    "thisMonth": "Ce mois-ci",
+    "nextMonth": "Mois prochain",
+    "custom": "Personnalisé",
+    "noDate": "Pas de date",
+    "pickDate": "Choisir une date",
+    "pickTime": "Choisir une heure",
+    "atDueTime": "À l'heure limite",
+    "minutesBefore": "{count} minutes avant",
+    "hourBefore": "1 heure avant",
+    "hoursBefore": "{count} heures avant",
+    "dayBefore": "1 jour avant",
+    "daysBefore": "{count} jours avant",
+    "weekBefore": "1 semaine avant"
+  },
+  "weekdays": {
+    "sunday": "Dimanche",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sun": "Dim",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mer",
+    "thu": "Jeu",
+    "fri": "Ven",
+    "sat": "Sam"
+  },
+  "months": {
+    "january": "Janvier",
+    "february": "Février",
+    "march": "Mars",
+    "april": "Avril",
+    "may": "Mai",
+    "june": "Juin",
+    "july": "Juillet",
+    "august": "Août",
+    "september": "Septembre",
+    "october": "Octobre",
+    "november": "Novembre",
+    "december": "Décembre",
+    "jan": "Jan",
+    "feb": "Fév",
+    "mar": "Mar",
+    "apr": "Avr",
+    "jun": "Juin",
+    "jul": "Juil",
+    "aug": "Août",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Déc"
+  },
+  "settings": {
+    "settings": "Paramètres",
+    "account": "Compte",
+    "accountAccess": "Compte et accès",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "preferences": "Préférences",
+    "notifications": "Notifications",
+    "remindersNotifications": "Rappels et notifications",
+    "taskSettings": "Paramètres des tâches",
+    "integrations": "Intégrations",
+    "apiAccess": "Accès API",
+    "debug": "Débogage",
+    "about": "À propos",
+    "help": "Aide",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d'utilisation",
+    "theme": {
+      "title": "Thème",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    },
+    "timezone": {
+      "title": "Fuseau horaire",
+      "auto": "Détection auto"
+    }
+  },
+  "auth": {
+    "signIn": "Connexion",
+    "signUp": "Inscription",
+    "signOut": "Déconnexion",
+    "signInWith": "Se connecter avec {provider}",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "createAccount": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "continueWith": "Continuer avec {provider}",
+    "orContinueWith": "Ou continuer avec"
+  },
+  "messages": {
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Avertissement",
+    "info": "Info",
+    "loading": "Chargement",
+    "saving": "Enregistrement",
+    "saved": "Enregistré",
+    "deleting": "Suppression",
+    "deleted": "Supprimé",
+    "updating": "Mise à jour",
+    "updated": "Mis à jour",
+    "creating": "Création",
+    "created": "Créé",
+    "copying": "Copie",
+    "copied": "Copié",
+    "moving": "Déplacement",
+    "moved": "Déplacé",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ceci ?",
+    "cannotUndo": "Cette action ne peut pas être annulée.",
+    "noResults": "Aucun résultat trouvé",
+    "tryAgain": "Veuillez réessayer",
+    "somethingWentWrong": "Une erreur s'est produite",
+    "cacheCleared": "Cache vidé",
+    "dataRefreshed": "Données actualisées. Rechargement...",
+    "settingsSaved": "Paramètres enregistrés",
+    "changesSaved": "Modifications enregistrées"
+  },
+  "reminders": {
+    "general": [
+      "Salut ! Tu as une seconde ?",
+      "Je peux te voir une seconde ?",
+      "Tu as quelques minutes ?",
+      "Tu as oublié ?",
+      "Excuse-moi !",
+      "Quand tu as une minute :",
+      "Sur ton agenda :",
+      "Tu es libre un moment ?",
+      "C'est Astrid !",
+      "Salut ! Je peux te déranger ?",
+      "Une minute de ton temps ?",
+      "C'est un beau jour pour"
+    ],
+    "due": [
+      "C'est l'heure de travailler !",
+      "La date limite est là !",
+      "Prêt à commencer ?",
+      "Tu as dit que tu ferais :",
+      "Tu es censé commencer :",
+      "Il est temps de commencer :",
+      "C'est le moment !",
+      "Excuse-moi ! C'est l'heure de",
+      "Tu es libre ? Il est temps de"
+    ],
+    "responses": [
+      "J'ai quelque chose pour toi !",
+      "Prêt à laisser ça derrière toi ?",
+      "Pourquoi ne pas finir ça ?",
+      "Qu'en dis-tu ? Prêt tigre ?",
+      "Prêt à faire ça ?",
+      "Tu peux gérer ça ?",
+      "Tu peux être heureux ! Finis juste ça !",
+      "Je te promets que tu te sentiras mieux si tu finis ça !",
+      "Tu ne vas pas faire ça aujourd'hui ?",
+      "S'il te plaît finis ça, j'en ai marre !",
+      "Tu peux finir ça ? Oui tu peux !",
+      "Tu vas un jour faire ça ?",
+      "Sens-toi bien ! Allons-y !",
+      "Je suis tellement fier de toi ! Finissons ça !",
+      "Un petit en-cas après avoir fini ça ?",
+      "Juste cette tâche ? S'il te plaît ?",
+      "Il est temps de raccourcir ta liste de tâches !",
+      "Tu es dans l'équipe Ordre ou l'équipe Chaos ? Équipe Ordre ! Allons-y !",
+      "Ai-je mentionné que tu es génial récemment ? Continue !",
+      "Une tâche par jour garde le désordre loin... Au revoir désordre !",
+      "Comment tu fais ? Wow, je suis impressionné !",
+      "Tu ne peux pas t'en sortir juste avec ton physique. Mettons-nous au travail !",
+      "Un temps magnifique pour un travail comme ça, n'est-ce pas ?",
+      "Une tasse de thé pendant que tu travailles là-dessus ?",
+      "Si seulement tu avais déjà fait ça, tu pourrais aller jouer dehors.",
+      "C'est le moment. Tu ne peux pas reporter l'inévitable.",
+      "Je meurs un peu chaque fois que tu m'ignores."
+    ],
+    "social": {
+      "one": "{name} compte sur toi !",
+      "multiple": "Ces personnes comptent sur toi !",
+      "multipleNames": "{name1}, {name2} et d'autres comptent sur toi !"
+    },
+    "ui": {
+      "title": "Rappel :",
+      "snooze": "Reporter",
+      "complete": "Terminer",
+      "completedToast": "Félicitations d'avoir terminé !",
+      "snooze1day": "Reporter 1 jour",
+      "snooze1week": "Reporter 1 semaine"
+    }
+  },
+  "emptyState": {
+    "featured": "Cette liste est vide pour le moment ! Copiez-la pour en faire la vôtre et commencer à ajouter des tâches.",
+    "today": "Rien de prévu aujourd'hui ! Profitez du temps libre ou ajoutez quelque chose de nouveau.",
+    "myTasks": "Vous êtes à jour ! Aucune tâche assignée pour le moment. Il est temps de se détendre !",
+    "assigned": "Aucune tâche assignée encore ! Revenez plus tard ou créez des tâches pour votre équipe.",
+    "notInList": "Aucune tâche orpheline ! Toutes vos tâches sont organisées en listes.",
+    "shared": "Commencez à collaborer ! Ajoutez une tâche pour lancer cette liste partagée.",
+    "public": "Partagez vos idées avec le monde ! Ajoutez des tâches - tout le monde peut voir cette liste publique.",
+    "personal": "Prêt à capturer vos pensées ? Appuyez sur ajouter une tâche pour créer votre première tâche !",
+    "default": "Remplissons \"{listName}\" ! Ajoutez votre première tâche pour commencer.",
+    "defaultNoName": "Il est temps de s'organiser ! Ajoutez votre première tâche pour commencer.",
+    "addTaskHint": "Ajouter une tâche",
+    "noLists": "Pas encore de listes. Créez votre première liste pour commencer !"
+  },
+  "common": {
+    "complete": "Terminer",
+    "snooze": "Reporter",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "close": "Fermer",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "preferences": "Préférences",
+    "or": "ou",
+    "and": "et",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "all": "Tout",
+    "none": "Aucun",
+    "more": "Plus",
+    "less": "Moins",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "optional": "Optionnel",
+    "required": "Requis",
+    "copiedToClipboard": "Copié dans le presse-papiers",
+    "unableToCopy": "Impossible de copier dans le presse-papiers"
+  },
+  "search": {
+    "placeholder": "Rechercher des tâches et des utilisateurs",
+    "noResults": "Aucun résultat trouvé",
+    "searching": "Recherche en cours..."
+  },
+  "listHeaders": {
+    "myTasks": "Mes Tâches",
+    "myTasksDescription": "Toutes vos tâches",
+    "today": "Aujourd'hui",
+    "todayDescription": "Tâches pour aujourd'hui",
+    "assigned": "Assignées",
+    "assignedDescription": "Tâches assignées à d'autres",
+    "notInList": "Sans Liste",
+    "notInListDescription": "Tâches orphelines",
+    "public": "Publiques",
+    "publicDescription": "Tâches publiques"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "Compte et Accès",
+      "description": "Profil, vérification d'email et paramètres de mot de passe"
+    },
+    "remindersNotifications": {
+      "title": "Rappels et Notifications",
+      "description": "Configurer les rappels, notifications push et intégration calendrier"
+    },
+    "codingAgent": {
+      "title": "Agent de Code",
+      "description": "Agent de code complet avec intégration GitHub + Vercel"
+    },
+    "aiAgents": {
+      "title": "IA et Agents",
+      "description": "Configurez les assistants IA et agents de code avec vos clés API"
+    },
+    "apiAccess": {
+      "title": "Accès API",
+      "description": "Applications OAuth et intégrations API"
+    },
+    "chatgpt": {
+      "title": "Intégration ChatGPT",
+      "description": "Connecter Astrid aux actions GPT personnalisées",
+      "loading": "Chargement de l'intégration ChatGPT...",
+      "breadcrumb": "Intégration ChatGPT",
+      "howItWorks": {
+        "title": "Comment ça fonctionne",
+        "description": "Connectez Astrid à ChatGPT avec OAuth 2.0 et OpenAPI",
+        "oauth": {
+          "title": "OAuth 2.0 sécurisé",
+          "description": "Authentifiez-vous en toute sécurité sans partager votre mot de passe"
+        },
+        "openapi": {
+          "title": "Spécification OpenAPI",
+          "description": "Format API standard que ChatGPT comprend"
+        },
+        "shareable": {
+          "title": "Intégration partageable",
+          "description": "Partagez votre GPT personnalisé avec d'autres"
+        }
+      },
+      "step1": {
+        "badge": "Étape 1",
+        "title": "Créer un client OAuth",
+        "description": "Créez un client OAuth pour authentifier votre GPT avec Astrid",
+        "manageButton": "Gérer les clients",
+        "instructions": {
+          "step1": "Allez dans les paramètres d'accès API",
+          "step2": "Cliquez sur 'Créer un client OAuth'",
+          "step3": "Définissez le type d'autorisation sur 'authorization_code'",
+          "step4": "Ajoutez l'URI de redirection ci-dessous",
+          "step5": "Copiez votre ID client et votre secret"
+        },
+        "redirectUri": "URI de redirection",
+        "scopes": "Portées"
+      },
+      "step2": {
+        "badge": "Étape 2",
+        "title": "Configurez votre GPT",
+        "description": "Utilisez ces URLs dans la configuration de votre GPT personnalisé",
+        "manifestUrl": "URL du manifeste du plugin",
+        "openapiSpec": "Spécification OpenAPI",
+        "authUrl": "URL d'autorisation",
+        "tokenUrl": "URL du token",
+        "note": "Copiez ces URLs dans la configuration des actions de votre GPT",
+        "viewDocsButton": "Voir la documentation",
+        "testApiButton": "Tester l'API"
+      },
+      "step2b": {
+        "badge": "Alt",
+        "title": "Serveur MCP (Alternative)",
+        "description": "Utilisez le protocole de contexte de modèle pour une intégration directe",
+        "serverUrl": "URL du serveur MCP",
+        "postEndpoint": "Point de terminaison POST",
+        "note": "MCP fournit un moyen standardisé de connecter les modèles d'IA aux outils externes"
+      },
+      "step3": {
+        "badge": "Étape 3",
+        "title": "Commencez à utiliser votre GPT",
+        "description": "Essayez ces exemples de prompts avec votre GPT connecté",
+        "examples": {
+          "example1": "Montre-moi mes tâches pour aujourd'hui",
+          "example2": "Crée une nouvelle tâche : Revoir le rapport trimestriel",
+          "example3": "Qu'y a-t-il sur ma liste de courses ?"
+        },
+        "shareNote": "Vous pouvez partager votre GPT personnalisé avec d'autres"
+      },
+      "moreDetails": {
+        "title": "En savoir plus",
+        "reviewButton": "Revoir les paramètres OAuth",
+        "openBuilderButton": "Ouvrir le constructeur GPT"
+      }
+    },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Importer des contacts pour des suggestions de collaborateurs",
+      "loading": "Chargement des contacts...",
+      "importSuccess": "{count} contacts importés avec succès",
+      "importError": "Échec de l'importation des contacts. Veuillez réessayer.",
+      "clearConfirmation": "Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action est irréversible.",
+      "clearSuccess": "{count} contacts supprimés",
+      "clearError": "Échec de la suppression des contacts. Veuillez réessayer.",
+      "syncedTitle": "Contacts synchronisés",
+      "syncedDescription": "Contacts importés depuis des services externes",
+      "contactsSynced": "contacts synchronisés",
+      "lastUpdated": "Dernière mise à jour",
+      "importTitle": "Importer des contacts",
+      "importDescription": "Importez des contacts depuis des services externes pour obtenir des suggestions de collaborateurs",
+      "googleContacts": "Contacts Google",
+      "googleDescription": "Importez des contacts depuis votre compte Google",
+      "connecting": "Connexion...",
+      "import": "Importer",
+      "privacyNotice": "Vos contacts sont stockés en toute sécurité et utilisés uniquement pour suggérer des collaborateurs lors du partage de listes.",
+      "dangerZone": "Zone dangereuse",
+      "irreversibleActions": "Ces actions sont irréversibles",
+      "clearAll": "Supprimer tous les contacts",
+      "clearAllDescription": "Supprimer tous les contacts importés de votre compte",
+      "clearContacts": "Supprimer les contacts"
+    },
+    "appearance": {
+      "title": "Apparence",
+      "description": "Personnaliser le thème, les couleurs et les préférences visuelles"
+    },
+    "debug": {
+      "title": "Débogage",
+      "description": "Options développeur et fonctionnalités de débogage",
+      "loading": "Chargement des paramètres de débogage...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "Listes restaurées",
+          "description": "{count} listes par défaut restaurées"
+        },
+        "restoreError": {
+          "title": "Échec de la restauration",
+          "description": "Échec de la restauration des listes par défaut"
+        },
+        "refreshSuccess": {
+          "title": "Données actualisées",
+          "description": "Cache vidé et données actualisées"
+        },
+        "cacheCleared": {
+          "title": "Cache vidé",
+          "description": "Le cache local a été vidé"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "Options de débogage",
+          "description": "Activer les fonctionnalités de débogage pour le développement",
+          "toastDebugMode": {
+            "label": "Mode débogage des notifications",
+            "description": "Afficher des notifications détaillées pour le débogage",
+            "current": "Actuel",
+            "debugOn": "Débogage (détaillé)",
+            "subtleOn": "Subtil (minimal)"
+          },
+          "reminderDebugMode": {
+            "label": "Mode débogage des rappels",
+            "description": "Afficher les informations de débogage des rappels",
+            "current": "Actuel",
+            "debugOn": "Débogage activé",
+            "debugOff": "Débogage désactivé"
+          }
+        },
+        "dataManagement": {
+          "title": "Gestion des données",
+          "description": "Gérer vos données locales et le cache",
+          "favoriteLists": {
+            "label": "Restaurer les listes par défaut",
+            "description": "Restaurer les listes favorites par défaut si elles ont été supprimées",
+            "button": "Restaurer les listes par défaut",
+            "restoring": "Restauration..."
+          },
+          "refreshData": {
+            "label": "Actualiser les données",
+            "description": "Vider le cache et recharger toutes les données depuis le serveur",
+            "button": "Actualiser toutes les données",
+            "refreshing": "Actualisation..."
+          }
+        }
+      }
+    },
+    "manageAccount": "Gérez votre compte et vos préférences",
+    "profileInfo": {
+      "title": "Informations du profil",
+      "description": "Mettre à jour vos informations personnelles",
+      "displayName": "Nom d'affichage",
+      "emailAddress": "Adresse e-mail",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "clickToChangePhoto": "Cliquez pour changer la photo de profil",
+      "viewPublicProfile": "Voir le profil public"
+    },
+    "emailVerification": {
+      "title": "Vérification de l'e-mail",
+      "description": "Vérifiez votre adresse e-mail pour plus de sécurité",
+      "verified": "Vérifié",
+      "verifiedViaGoogle": "Vérifié via Google",
+      "notVerified": "Non vérifié",
+      "verify": "Vérifier",
+      "verificationSent": "E-mail de vérification envoyé !",
+      "checkEmail": "Veuillez vérifier votre e-mail et cliquer sur le lien de vérification.",
+      "pendingChange": "Changement d'e-mail en attente",
+      "waitingVerification": "En attente de vérification"
+    },
+    "passwordSection": {
+      "title": "Changer le mot de passe",
+      "description": "Mettre à jour votre mot de passe pour l'authentification e-mail/mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "changePassword": "Changer le mot de passe",
+      "passwordsDoNotMatch": "Les nouveaux mots de passe ne correspondent pas.",
+      "passwordTooShort": "Le nouveau mot de passe doit contenir au moins 6 caractères."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Utilisez les passkeys pour une connexion plus rapide et plus sécurisée sans mot de passe",
+      "addPasskey": "Ajouter une passkey",
+      "addingPasskey": "Ajout de la passkey...",
+      "noPasskeys": "Aucune passkey enregistrée",
+      "addPasskeyHint": "Ajoutez une passkey pour une connexion plus rapide sans mot de passe",
+      "goPasswordless": "Passer sans mot de passe",
+      "removePassword": "Supprimer le mot de passe",
+      "removePasswordHint": "Supprimez votre mot de passe et connectez-vous uniquement avec une passkey"
+    },
+    "accountInfo": {
+      "title": "Informations du compte",
+      "created": "Compte créé",
+      "lastUpdated": "Dernière mise à jour",
+      "accountId": "ID du compte"
+    },
+    "exportData": {
+      "title": "Exporter vos données",
+      "description": "Télécharger toutes vos tâches, listes et données de compte",
+      "includes": "L'exportation inclut :",
+      "allTasks": "Toutes les tâches (créées et assignées)",
+      "allLists": "Toutes les listes (propriétaire et membre)",
+      "comments": "Commentaires et métadonnées des pièces jointes",
+      "settings": "Paramètres et préférences du compte",
+      "exportJson": "Exporter en JSON",
+      "exportCsv": "Exporter en CSV",
+      "exporting": "Exportation..."
+    },
+    "deleteAccount": {
+      "title": "Supprimer le compte",
+      "description": "Supprimer définitivement votre compte et toutes les données associées",
+      "warning": "Attention : Cette action est irréversible !",
+      "willRemove": "La suppression de votre compte supprimera définitivement :",
+      "allTasks": "Toutes les tâches, listes et commentaires",
+      "allFiles": "Tous les fichiers et pièces jointes téléchargés",
+      "allIntegrations": "Toutes les intégrations et paramètres",
+      "sharedAccess": "L'accès aux listes partagées et collaborations",
+      "considerExporting": "Pensez à exporter vos données d'abord (voir ci-dessus).",
+      "deleteMyAccount": "Supprimer mon compte",
+      "confirmTitle": "Confirmer la suppression du compte",
+      "confirmDescription": "Cette action est permanente et irréversible.",
+      "enterPassword": "Entrez votre mot de passe pour confirmer",
+      "typeToConfirm": "Tapez SUPPRIMER MON COMPTE pour confirmer",
+      "permanentlyDelete": "Supprimer définitivement le compte",
+      "deleting": "Suppression..."
+    },
+    "appearancePage": {
+      "title": "Apparence et expérience utilisateur",
+      "description": "Personnalisez l'aspect, le ressenti et le flux de votre interface",
+      "theme": {
+        "title": "Thème",
+        "description": "Choisissez entre les thèmes Ocean, clair et sombre",
+        "ocean": "Ocean",
+        "oceanDesc": "Thème clair avec un arrière-plan cyan rafraîchissant",
+        "light": "Mode clair",
+        "lightDesc": "Une interface lumineuse et épurée parfaite pour une utilisation diurne",
+        "dark": "Mode sombre",
+        "darkDesc": "Une interface élégante et sombre plus agréable pour les yeux en faible luminosité",
+        "proTip": "Votre préférence de thème est enregistrée automatiquement et sera appliquée sur tous vos appareils."
+      },
+      "keyboard": {
+        "title": "Raccourcis clavier",
+        "description": "Consultez et apprenez les raccourcis clavier pour naviguer plus rapidement",
+        "viewShortcuts": "Voir les raccourcis",
+        "viewTitle": "Voir les raccourcis clavier",
+        "viewDesc": "Voir tous les raccourcis clavier disponibles pour une gestion efficace des tâches",
+        "quickAccess": "Appuyez sur ? n'importe où dans le gestionnaire de tâches pour ouvrir les raccourcis clavier."
+      },
+      "emailToTask": {
+        "title": "E-mail vers tâche",
+        "description": "Créez des tâches instantanément en envoyant des e-mails à remindme@astrid.cc",
+        "threeWays": "Trois façons de créer des tâches",
+        "selfTask": "Auto-tâche :",
+        "selfTaskDesc": "Envoyez À remindme@astrid.cc",
+        "assignedTask": "Tâche assignée :",
+        "assignedTaskDesc": "CC remindme@astrid.cc avec un destinataire",
+        "groupTask": "Tâche de groupe :",
+        "groupTaskDesc": "CC remindme@astrid.cc avec plusieurs destinataires",
+        "configure": "Configurer les paramètres d'e-mail",
+        "configureDesc": "Personnalisez les dates d'échéance par défaut, activez/désactivez la fonctionnalité, et plus",
+        "proTip": "L'objet de l'e-mail devient le titre de votre tâche, et le corps devient la description. Parfait pour capturer rapidement des tâches depuis votre boîte de réception !"
+      }
+    }
+  }
+}

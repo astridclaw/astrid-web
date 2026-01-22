@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Task Sounds</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    h1 {
+      color: #333;
+    }
+    .file-info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔊 Test Task Sounds</h1>
+
+  <div class="test-card">
+    <h2>✅ Task Complete Sound</h2>
+    <p>Ascending major chord (C5→E5→G5)</p>
+    <div class="file-info">File: /sounds/task-complete.wav</div>
+    <button onclick="testSound('complete')">Play Complete Sound</button>
+    <div id="status-complete"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>➕ Task Create Sound</h2>
+    <p>Soft pop (800Hz with fast decay)</p>
+    <div class="file-info">File: /sounds/task-create.wav</div>
+    <button onclick="testSound('create')">Play Create Sound</button>
+    <div id="status-create"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>🗑️ Task Delete Sound</h2>
+    <p>Descending tone (600Hz→300Hz)</p>
+    <div class="file-info">File: /sounds/task-delete.wav</div>
+    <button onclick="testSound('delete')">Play Delete Sound</button>
+    <div id="status-delete"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>🔍 Diagnostic Info</h2>
+    <button onclick="runDiagnostics()">Run Diagnostics</button>
+    <div id="diagnostics"></div>
+  </div>
+
+  <script>
+    const audioElements = {
+      complete: null,
+      create: null,
+      delete: null
+    }
+
+    async function testSound(type) {
+      const statusEl = document.getElementById(`status-${type}`)
+      statusEl.className = 'status info'
+      statusEl.textContent = '▶️ Loading and playing...'
+
+      try {
+        // Create new audio element
+        const soundFiles = {
+          complete: '/sounds/task-complete.wav',
+          create: '/sounds/task-create.wav',
+          delete: '/sounds/task-delete.wav'
+        }
+
+        const audio = new Audio(soundFiles[type])
+        audio.volume = 0.4
+
+        // Wait for audio to load
+        await new Promise((resolve, reject) => {
+          audio.addEventListener('canplaythrough', resolve, { once: true })
+          audio.addEventListener('error', reject, { once: true })
+          audio.load()
+        })
+
+        // Play audio
+        await audio.play()
+
+        statusEl.className = 'status success'
+        statusEl.textContent = '✅ Sound played successfully!'
+
+        audioElements[type] = audio
+      } catch (error) {
+        statusEl.className = 'status error'
+        statusEl.textContent = `❌ Error: ${error.message}`
+        console.error('Sound playback error:', error)
+      }
+    }
+
+    async function runDiagnostics() {
+      const diagEl = document.getElementById('diagnostics')
+      diagEl.className = 'status info'
+      diagEl.innerHTML = '🔍 Running diagnostics...'
+
+      const results = []
+
+      // Check if Audio API is supported
+      results.push(`✅ Audio API: ${typeof Audio !== 'undefined' ? 'Supported' : '❌ Not supported'}`)
+
+      // Check if files exist
+      const soundFiles = [
+        '/sounds/task-complete.wav',
+        '/sounds/task-create.wav',
+        '/sounds/task-delete.wav'
+      ]
+
+      for (const file of soundFiles) {
+        try {
+          const response = await fetch(file, { method: 'HEAD' })
+          const size = response.headers.get('content-length')
+          results.push(`${response.ok ? '✅' : '❌'} ${file}: ${response.ok ? `${(size / 1024).toFixed(1)} KB` : 'Not found'}`)
+        } catch (error) {
+          results.push(`❌ ${file}: Error (${error.message})`)
+        }
+      }
+
+      // Check browser autoplay policy
+      results.push(`ℹ️ Browser: ${navigator.userAgent.split(' ').slice(-2).join(' ')}`)
+      results.push(`ℹ️ Volume: System volume must be on`)
+      results.push(`⚠️ Autoplay: May be blocked on first interaction`)
+
+      diagEl.className = 'status'
+      diagEl.innerHTML = results.join('<br>')
+    }
+
+    // Run diagnostics on load
+    window.addEventListener('load', runDiagnostics)
+  </script>
+</body>
+</html>

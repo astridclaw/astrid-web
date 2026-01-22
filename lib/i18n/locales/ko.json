@@ -1,0 +1,694 @@
+{
+  "navigation": {
+    "myTasks": "내 작업",
+    "today": "오늘",
+    "lists": "목록",
+    "addList": "목록 추가",
+    "publicSharedLists": "공개 공유 목록",
+    "publicLists": "공개 목록",
+    "seeAllCollaborative": "모든 협업 목록 보기 →",
+    "seeAllSuggested": "모든 추천 목록 보기 →"
+  },
+  "userMenu": {
+    "settings": "설정",
+    "refreshData": "데이터 새로고침",
+    "refreshing": "새로고침 중...",
+    "signOut": "로그아웃",
+    "signingOut": "로그아웃 중..."
+  },
+  "actions": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "편집",
+    "add": "추가",
+    "close": "닫기",
+    "create": "생성",
+    "update": "업데이트",
+    "confirm": "확인",
+    "done": "완료",
+    "back": "뒤로",
+    "next": "다음",
+    "copy": "복사",
+    "share": "공유",
+    "move": "이동",
+    "archive": "보관",
+    "restore": "복원",
+    "retry": "재시도",
+    "submit": "제출",
+    "send": "보내기",
+    "upload": "업로드",
+    "download": "다운로드",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "clear": "지우기",
+    "reset": "초기화",
+    "apply": "적용",
+    "select": "선택",
+    "selectAll": "모두 선택",
+    "deselectAll": "모두 해제"
+  },
+  "tasks": {
+    "task": "작업",
+    "tasks": "작업",
+    "newTask": "새 작업",
+    "addTask": "작업 추가",
+    "editTask": "작업 편집",
+    "deleteTask": "작업 삭제",
+    "completeTask": "작업 완료",
+    "taskName": "작업 이름",
+    "taskDescription": "설명",
+    "noDescription": "설명 없음",
+    "dueDate": "마감일",
+    "reminder": "알림",
+    "reminders": "알림",
+    "priority": "우선순위",
+    "assignee": "담당자",
+    "assignees": "담당자",
+    "unassigned": "미지정",
+    "comments": "댓글",
+    "attachments": "첨부파일",
+    "subtasks": "하위 작업",
+    "tags": "태그",
+    "completed": "완료됨",
+    "incomplete": "미완료",
+    "overdue": "기한 초과",
+    "noDueDate": "마감일 없음",
+    "noReminder": "알림 없음",
+    "addReminder": "알림 추가",
+    "addSubtask": "하위 작업 추가",
+    "addComment": "댓글 추가",
+    "addAttachment": "첨부파일 추가",
+    "moveToList": "목록으로 이동",
+    "copyToList": "목록에 복사",
+    "deleteConfirm": "이 작업을 삭제하시겠습니까?",
+    "placeholder": {
+      "taskName": "무엇을 해야 하나요?",
+      "description": "설명 추가...",
+      "comment": "댓글 작성..."
+    }
+  },
+  "lists": {
+    "list": "목록",
+    "newList": "새 목록",
+    "addList": "목록 추가",
+    "editList": "목록 편집",
+    "deleteList": "목록 삭제",
+    "listName": "목록 이름",
+    "listDescription": "설명",
+    "listSettings": "목록 설정",
+    "listDetails": "목록 세부정보",
+    "sortAndFilters": "정렬 및 필터",
+    "membership": "멤버십",
+    "adminSettings": "관리자 설정",
+    "privacy": "개인정보",
+    "private": "비공개",
+    "shared": "공유됨",
+    "public": "공개",
+    "owner": "소유자",
+    "admin": "관리자",
+    "member": "멤버",
+    "viewer": "뷰어",
+    "members": "멤버",
+    "addMember": "멤버 추가",
+    "removeMember": "멤버 제거",
+    "leaveList": "목록 나가기",
+    "transferOwnership": "소유권 이전",
+    "selectNewOwner": "새 소유자 선택",
+    "transferAndLeave": "이전하고 나가기",
+    "deleteConfirm": "이 목록을 삭제하시겠습니까?",
+    "placeholder": {
+      "listName": "목록 이름 입력...",
+      "description": "설명 추가..."
+    }
+  },
+  "priority": {
+    "none": "없음",
+    "low": "낮음",
+    "medium": "보통",
+    "high": "높음",
+    "urgent": "긴급"
+  },
+  "time": {
+    "today": "오늘",
+    "tomorrow": "내일",
+    "yesterday": "어제",
+    "thisWeek": "이번 주",
+    "nextWeek": "다음 주",
+    "thisMonth": "이번 달",
+    "nextMonth": "다음 달",
+    "custom": "사용자 지정",
+    "noDate": "날짜 없음",
+    "pickDate": "날짜 선택",
+    "pickTime": "시간 선택",
+    "atDueTime": "마감 시간에",
+    "minutesBefore": "{count}분 전",
+    "hourBefore": "1시간 전",
+    "hoursBefore": "{count}시간 전",
+    "dayBefore": "1일 전",
+    "daysBefore": "{count}일 전",
+    "weekBefore": "1주 전"
+  },
+  "weekdays": {
+    "sunday": "일요일",
+    "monday": "월요일",
+    "tuesday": "화요일",
+    "wednesday": "수요일",
+    "thursday": "목요일",
+    "friday": "금요일",
+    "saturday": "토요일",
+    "sun": "일",
+    "mon": "월",
+    "tue": "화",
+    "wed": "수",
+    "thu": "목",
+    "fri": "금",
+    "sat": "토"
+  },
+  "months": {
+    "january": "1월",
+    "february": "2월",
+    "march": "3월",
+    "april": "4월",
+    "may": "5월",
+    "june": "6월",
+    "july": "7월",
+    "august": "8월",
+    "september": "9월",
+    "october": "10월",
+    "november": "11월",
+    "december": "12월",
+    "jan": "1월",
+    "feb": "2월",
+    "mar": "3월",
+    "apr": "4월",
+    "jun": "6월",
+    "jul": "7월",
+    "aug": "8월",
+    "sep": "9월",
+    "oct": "10월",
+    "nov": "11월",
+    "dec": "12월"
+  },
+  "settings": {
+    "settings": "설정",
+    "account": "계정",
+    "accountAccess": "계정 및 액세스",
+    "appearance": "외관",
+    "language": "언어",
+    "preferences": "환경설정",
+    "notifications": "알림",
+    "remindersNotifications": "알림 및 리마인더",
+    "taskSettings": "작업 설정",
+    "integrations": "통합",
+    "apiAccess": "API 액세스",
+    "debug": "디버그",
+    "about": "정보",
+    "help": "도움말",
+    "privacy": "개인정보",
+    "terms": "서비스 약관",
+    "theme": {
+      "title": "테마",
+      "light": "라이트",
+      "dark": "다크",
+      "system": "시스템"
+    },
+    "timezone": {
+      "title": "시간대",
+      "auto": "자동 감지"
+    }
+  },
+  "auth": {
+    "signIn": "로그인",
+    "signUp": "회원가입",
+    "signOut": "로그아웃",
+    "signInWith": "{provider}로 로그인",
+    "email": "이메일",
+    "password": "비밀번호",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "resetPassword": "비밀번호 재설정",
+    "createAccount": "계정 만들기",
+    "alreadyHaveAccount": "이미 계정이 있으신가요?",
+    "dontHaveAccount": "계정이 없으신가요?",
+    "continueWith": "{provider}로 계속",
+    "orContinueWith": "또는 다음으로 계속"
+  },
+  "messages": {
+    "success": "성공!",
+    "error": "오류",
+    "warning": "경고",
+    "info": "정보",
+    "loading": "로딩 중...",
+    "saving": "저장 중...",
+    "saved": "저장됨",
+    "deleting": "삭제 중...",
+    "deleted": "삭제됨",
+    "updating": "업데이트 중...",
+    "updated": "업데이트됨",
+    "creating": "생성 중...",
+    "created": "생성됨",
+    "copying": "복사 중...",
+    "copied": "복사됨",
+    "moving": "이동 중...",
+    "moved": "이동됨",
+    "confirmDelete": "삭제하시겠습니까?",
+    "cannotUndo": "이 작업은 취소할 수 없습니다.",
+    "noResults": "결과를 찾을 수 없습니다",
+    "tryAgain": "다시 시도해 주세요",
+    "somethingWentWrong": "문제가 발생했습니다",
+    "cacheCleared": "캐시가 지워졌습니다",
+    "dataRefreshed": "데이터가 새로고침되었습니다. 앱이 새 데이터로 다시 로드됩니다.",
+    "settingsSaved": "설정이 저장되었습니다",
+    "changesSaved": "변경사항이 저장되었습니다"
+  },
+  "reminders": {
+    "general": [
+      "안녕하세요! 잠깐 시간 있으세요?",
+      "잠시 볼 수 있을까요?",
+      "몇 분 있으세요?",
+      "잊으셨나요?",
+      "실례합니다!",
+      "시간이 있으실 때:",
+      "일정에:",
+      "잠시 비셨나요?",
+      "아스트리드입니다!",
+      "안녕하세요! 방해해도 될까요?",
+      "1분만 시간 내주실래요?",
+      "오늘은 좋은 날입니다"
+    ],
+    "due": [
+      "일할 시간입니다!",
+      "마감일이 왔습니다!",
+      "시작할 준비가 되셨나요?",
+      "이것을 하겠다고 했었죠:",
+      "시작해야 합니다:",
+      "시작할 시간입니다:",
+      "그 시간입니다!",
+      "실례합니다! 시간입니다",
+      "시간 되세요? 시간입니다"
+    ],
+    "responses": [
+      "뭔가 있어요!",
+      "이것을 과거로 보낼 준비가 되셨나요?",
+      "이것을 끝내는 게 어떨까요?",
+      "어때요? 준비됐나요?",
+      "이것을 할 준비가 되셨나요?",
+      "이것을 처리할 수 있나요?",
+      "행복해질 수 있어요! 이것만 끝내면 돼요!",
+      "이것을 끝내면 기분이 좋아질 거라고 약속해요!",
+      "오늘 이것을 안 하실 건가요?",
+      "제발 이것을 끝내세요!",
+      "이것을 끝낼 수 있나요? 할 수 있어요!",
+      "언젠가 이것을 하실 건가요?",
+      "기분 좋게! 가자!",
+      "정말 자랑스러워요! 끝내봅시다!",
+      "이것을 끝낸 후에 간식 어때요?",
+      "이 작업만? 제발?",
+      "할 일 목록을 줄일 시간입니다!",
+      "질서 팀인가요 혼돈 팀인가요? 질서 팀! 가자!",
+      "최근에 당신이 대단하다고 말했나요? 계속 화이팅!",
+      "하루에 작업 하나면 어수선함이 사라져요... 안녕 어수선함!",
+      "어떻게 하세요? 와, 감동이에요!",
+      "외모만으로는 안 돼요. 시작합시다!",
+      "이런 일에 좋은 날씨네요, 그렇죠?",
+      "이것을 하면서 차 한 잔 어때요?",
+      "이미 끝냈다면, 밖에 나가 놀 수 있었을 텐데.",
+      "그 시간입니다. 피할 수 없는 것을 미룰 수 없어요.",
+      "무시할 때마다 조금씩 죽어가요."
+    ],
+    "social": {
+      "one": "{name}이(가) 당신을 믿고 있어요!",
+      "multiple": "이 사람들이 당신을 믿고 있어요!",
+      "multipleNames": "{name1}, {name2} 및 다른 사람들이 당신을 믿고 있어요!"
+    },
+    "ui": {
+      "title": "알림:",
+      "snooze": "다시 알림",
+      "complete": "완료",
+      "completedToast": "완료를 축하합니다!",
+      "snooze1day": "1일 후 알림",
+      "snooze1week": "1주 후 알림"
+    }
+  },
+  "emptyState": {
+    "featured": "이 목록은 현재 비어 있습니다! 복사해서 자신의 것으로 만들고 작업을 추가하세요.",
+    "today": "오늘 예정된 것이 없습니다! 자유 시간을 즐기거나 새로운 것을 추가하세요.",
+    "myTasks": "모두 완료했습니다! 현재 할당된 작업이 없습니다. 휴식할 시간입니다!",
+    "assigned": "아직 할당된 작업이 없습니다! 나중에 다시 확인하거나 팀을 위한 작업을 만드세요.",
+    "notInList": "고아 작업이 없습니다! 모든 작업이 목록에 정리되어 있습니다.",
+    "shared": "협업을 시작하세요! 이 공유 목록을 시작하기 위해 작업을 추가하세요.",
+    "public": "아이디어를 세상과 공유하세요! 작업 추가 - 누구나 이 공개 목록을 볼 수 있습니다.",
+    "personal": "생각을 기록할 준비가 되셨나요? 작업 추가를 눌러 첫 번째 작업을 만드세요!",
+    "default": "\"{listName}\"을(를) 채워봅시다! 첫 번째 작업을 추가하여 시작하세요.",
+    "defaultNoName": "정리할 시간입니다! 첫 번째 작업을 추가하여 시작하세요.",
+    "addTaskHint": "작업 추가",
+    "noLists": "아직 목록이 없습니다. 첫 번째 목록을 만들어 시작하세요!"
+  },
+  "common": {
+    "complete": "완료",
+    "snooze": "다시 알림",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "add": "추가",
+    "close": "닫기",
+    "settings": "설정",
+    "language": "언어",
+    "preferences": "환경설정",
+    "or": "또는",
+    "and": "그리고",
+    "yes": "예",
+    "no": "아니오",
+    "ok": "확인",
+    "all": "모두",
+    "none": "없음",
+    "more": "더 보기",
+    "less": "간략히",
+    "show": "표시",
+    "hide": "숨기기",
+    "optional": "선택사항",
+    "required": "필수",
+    "copiedToClipboard": "클립보드에 복사됨",
+    "unableToCopy": "클립보드에 복사할 수 없음"
+  },
+  "search": {
+    "placeholder": "작업 및 사용자 검색",
+    "noResults": "결과를 찾을 수 없습니다",
+    "searching": "검색 중..."
+  },
+  "listHeaders": {
+    "myTasks": "내 작업",
+    "myTasksDescription": "모든 작업",
+    "today": "오늘",
+    "todayDescription": "오늘의 작업",
+    "assigned": "할당됨",
+    "assignedDescription": "다른 사람에게 할당된 작업",
+    "notInList": "목록 없음",
+    "notInListDescription": "고아 작업",
+    "public": "공개",
+    "publicDescription": "공개 작업"
+  },
+  "settingsPages": {
+    "accountAccess": {
+      "title": "계정 및 액세스",
+      "description": "프로필, 이메일 인증 및 비밀번호 설정"
+    },
+    "remindersNotifications": {
+      "title": "알림 및 리마인더",
+      "description": "알림, 푸시 알림 및 캘린더 통합 설정"
+    },
+    "codingAgent": {
+      "title": "코딩 에이전트",
+      "description": "GitHub + Vercel 통합이 포함된 전체 코딩 에이전트"
+    },
+    "aiAgents": {
+      "title": "AI 및 에이전트",
+      "description": "API 키로 AI 어시스턴트 및 코딩 에이전트 구성"
+    },
+    "apiAccess": {
+      "title": "API 액세스",
+      "description": "OAuth 애플리케이션 및 API 통합"
+    },
+    "chatgpt": {
+      "title": "ChatGPT 통합",
+      "description": "Astrid를 맞춤 GPT 액션에 연결",
+      "loading": "ChatGPT 통합 로딩 중...",
+      "breadcrumb": "ChatGPT 통합",
+      "howItWorks": {
+        "title": "작동 방식",
+        "description": "OAuth 2.0 및 OpenAPI를 사용하여 Astrid를 ChatGPT에 연결",
+        "oauth": {
+          "title": "안전한 OAuth 2.0",
+          "description": "비밀번호를 공유하지 않고 안전하게 인증"
+        },
+        "openapi": {
+          "title": "OpenAPI 사양",
+          "description": "ChatGPT가 이해하는 표준 API 형식"
+        },
+        "shareable": {
+          "title": "공유 가능한 통합",
+          "description": "맞춤 GPT를 다른 사람과 공유"
+        }
+      },
+      "step1": {
+        "badge": "단계 1",
+        "title": "OAuth 클라이언트 생성",
+        "description": "GPT를 Astrid로 인증하기 위한 OAuth 클라이언트 생성",
+        "manageButton": "클라이언트 관리",
+        "instructions": {
+          "step1": "API 액세스 설정으로 이동",
+          "step2": "'OAuth 클라이언트 생성' 클릭",
+          "step3": "권한 부여 유형을 'authorization_code'로 설정",
+          "step4": "아래 리디렉션 URI 추가",
+          "step5": "클라이언트 ID와 시크릿 복사"
+        },
+        "redirectUri": "리디렉션 URI",
+        "scopes": "범위"
+      },
+      "step2": {
+        "badge": "단계 2",
+        "title": "GPT 구성",
+        "description": "맞춤 GPT 구성에서 이 URL 사용",
+        "manifestUrl": "플러그인 매니페스트 URL",
+        "openapiSpec": "OpenAPI 사양",
+        "authUrl": "인증 URL",
+        "tokenUrl": "토큰 URL",
+        "note": "이 URL을 GPT 액션 구성에 복사",
+        "viewDocsButton": "문서 보기",
+        "testApiButton": "API 테스트"
+      },
+      "step2b": {
+        "badge": "대안",
+        "title": "MCP 서버 (대안)",
+        "description": "직접 통합을 위해 Model Context Protocol 사용",
+        "serverUrl": "MCP 서버 URL",
+        "postEndpoint": "POST 엔드포인트",
+        "note": "MCP는 AI 모델을 외부 도구에 연결하는 표준화된 방법을 제공"
+      },
+      "step3": {
+        "badge": "단계 3",
+        "title": "GPT 사용 시작",
+        "description": "연결된 GPT로 이 샘플 프롬프트 시도",
+        "examples": {
+          "example1": "오늘 내 작업 보여줘",
+          "example2": "새 작업 생성: 분기별 보고서 검토",
+          "example3": "쇼핑 목록에 뭐가 있어?"
+        },
+        "shareNote": "맞춤 GPT를 다른 사람과 공유할 수 있습니다"
+      },
+      "moreDetails": {
+        "title": "자세히 보기",
+        "reviewButton": "OAuth 설정 검토",
+        "openBuilderButton": "GPT 빌더 열기"
+      }
+    },
+    "contacts": {
+      "title": "연락처",
+      "description": "협업자 제안을 위한 연락처 가져오기",
+      "loading": "연락처 로딩 중...",
+      "importSuccess": "{count}개의 연락처를 성공적으로 가져왔습니다",
+      "importError": "연락처 가져오기 실패. 다시 시도해 주세요.",
+      "clearConfirmation": "모든 연락처를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+      "clearSuccess": "{count}개의 연락처를 삭제했습니다",
+      "clearError": "연락처 삭제 실패. 다시 시도해 주세요.",
+      "syncedTitle": "동기화된 연락처",
+      "syncedDescription": "외부 서비스에서 가져온 연락처",
+      "contactsSynced": "연락처 동기화됨",
+      "lastUpdated": "최종 업데이트",
+      "importTitle": "연락처 가져오기",
+      "importDescription": "협업자 제안을 위해 외부 서비스에서 연락처 가져오기",
+      "googleContacts": "Google 연락처",
+      "googleDescription": "Google 계정에서 연락처 가져오기",
+      "connecting": "연결 중...",
+      "import": "가져오기",
+      "privacyNotice": "연락처는 안전하게 저장되며 목록 공유 시 협업자를 제안하는 데만 사용됩니다.",
+      "dangerZone": "위험 영역",
+      "irreversibleActions": "이 작업들은 취소할 수 없습니다",
+      "clearAll": "모든 연락처 삭제",
+      "clearAllDescription": "계정에서 가져온 모든 연락처 제거",
+      "clearContacts": "연락처 삭제"
+    },
+    "appearance": {
+      "title": "외관",
+      "description": "테마, 색상 및 시각적 환경설정 사용자 지정"
+    },
+    "debug": {
+      "title": "디버그",
+      "description": "개발자 옵션 및 디버깅 기능",
+      "loading": "디버그 설정 로딩 중...",
+      "toast": {
+        "restoreSuccess": {
+          "title": "목록 복원됨",
+          "description": "{count}개의 기본 목록을 복원했습니다"
+        },
+        "restoreError": {
+          "title": "복원 실패",
+          "description": "기본 목록 복원 실패"
+        },
+        "refreshSuccess": {
+          "title": "데이터 새로고침됨",
+          "description": "캐시를 지우고 데이터를 새로고침했습니다"
+        },
+        "cacheCleared": {
+          "title": "캐시 지워짐",
+          "description": "로컬 캐시가 지워졌습니다"
+        }
+      },
+      "sections": {
+        "debugOptions": {
+          "title": "디버그 옵션",
+          "description": "개발을 위한 디버그 기능 전환",
+          "toastDebugMode": {
+            "label": "토스트 디버그 모드",
+            "description": "디버깅을 위한 상세 토스트 알림 표시",
+            "current": "현재",
+            "debugOn": "디버그 (상세)",
+            "subtleOn": "미묘 (최소)"
+          },
+          "reminderDebugMode": {
+            "label": "알림 디버그 모드",
+            "description": "알림 디버그 정보 표시",
+            "current": "현재",
+            "debugOn": "디버그 활성화",
+            "debugOff": "디버그 비활성화"
+          }
+        },
+        "dataManagement": {
+          "title": "데이터 관리",
+          "description": "로컬 데이터 및 캐시 관리",
+          "favoriteLists": {
+            "label": "기본 목록 복원",
+            "description": "삭제된 경우 기본 즐겨찾기 목록 복원",
+            "button": "기본 목록 복원",
+            "restoring": "복원 중..."
+          },
+          "refreshData": {
+            "label": "데이터 새로고침",
+            "description": "캐시를 지우고 서버에서 모든 데이터 다시 로드",
+            "button": "모든 데이터 새로고침",
+            "refreshing": "새로고침 중..."
+          }
+        }
+      }
+    },
+    "manageAccount": "계정 및 환경설정 관리",
+    "profileInfo": {
+      "title": "프로필 정보",
+      "description": "개인 정보 업데이트",
+      "displayName": "표시 이름",
+      "emailAddress": "이메일 주소",
+      "saveChanges": "변경사항 저장",
+      "saving": "저장 중...",
+      "clickToChangePhoto": "클릭하여 프로필 사진 변경",
+      "viewPublicProfile": "공개 프로필 보기"
+    },
+    "emailVerification": {
+      "title": "이메일 인증",
+      "description": "보안을 위해 이메일 주소 인증",
+      "verified": "인증됨",
+      "verifiedViaGoogle": "Google로 인증됨",
+      "notVerified": "미인증",
+      "verify": "인증",
+      "verificationSent": "인증 이메일 발송됨!",
+      "checkEmail": "이메일을 확인하고 인증 링크를 클릭해 주세요.",
+      "pendingChange": "이메일 변경 대기 중",
+      "waitingVerification": "인증 대기 중"
+    },
+    "passwordSection": {
+      "title": "비밀번호 변경",
+      "description": "이메일/비밀번호 인증을 위한 비밀번호 업데이트",
+      "currentPassword": "현재 비밀번호",
+      "newPassword": "새 비밀번호",
+      "confirmPassword": "새 비밀번호 확인",
+      "changePassword": "비밀번호 변경",
+      "passwordsDoNotMatch": "새 비밀번호가 일치하지 않습니다.",
+      "passwordTooShort": "새 비밀번호는 최소 6자 이상이어야 합니다."
+    },
+    "passkeys": {
+      "title": "패스키",
+      "description": "비밀번호 없이 더 빠르고 안전한 로그인을 위해 패스키 사용",
+      "addPasskey": "패스키 추가",
+      "addingPasskey": "패스키 추가 중...",
+      "noPasskeys": "아직 등록된 패스키가 없습니다",
+      "addPasskeyHint": "비밀번호 없이 빠른 로그인을 위해 패스키 추가",
+      "goPasswordless": "비밀번호 없이 사용",
+      "removePassword": "비밀번호 제거",
+      "removePasswordHint": "비밀번호를 제거하고 패스키로만 로그인"
+    },
+    "accountInfo": {
+      "title": "계정 정보",
+      "created": "계정 생성일",
+      "lastUpdated": "최종 업데이트",
+      "accountId": "계정 ID"
+    },
+    "exportData": {
+      "title": "데이터 내보내기",
+      "description": "모든 작업, 목록 및 계정 데이터 다운로드",
+      "includes": "내보내기에 포함:",
+      "allTasks": "모든 작업 (생성 및 할당된)",
+      "allLists": "모든 목록 (소유 및 멤버)",
+      "comments": "댓글 및 첨부파일 메타데이터",
+      "settings": "계정 설정 및 환경설정",
+      "exportJson": "JSON으로 내보내기",
+      "exportCsv": "CSV로 내보내기",
+      "exporting": "내보내기 중..."
+    },
+    "deleteAccount": {
+      "title": "계정 삭제",
+      "description": "계정 및 모든 관련 데이터를 영구적으로 삭제",
+      "warning": "경고: 이 작업은 취소할 수 없습니다!",
+      "willRemove": "계정 삭제 시 영구적으로 제거됩니다:",
+      "allTasks": "모든 작업, 목록 및 댓글",
+      "allFiles": "모든 업로드된 파일 및 첨부파일",
+      "allIntegrations": "모든 통합 및 설정",
+      "sharedAccess": "공유 목록 및 협업에 대한 액세스",
+      "considerExporting": "먼저 데이터 내보내기를 고려해 주세요 (위 참조).",
+      "deleteMyAccount": "내 계정 삭제",
+      "confirmTitle": "계정 삭제 확인",
+      "confirmDescription": "이 작업은 영구적이며 취소할 수 없습니다.",
+      "enterPassword": "확인을 위해 비밀번호 입력",
+      "typeToConfirm": "확인을 위해 계정 삭제 입력",
+      "permanentlyDelete": "계정 영구 삭제",
+      "deleting": "삭제 중..."
+    },
+    "appearancePage": {
+      "title": "외관 및 사용자 경험",
+      "description": "인터페이스의 모양, 느낌 및 흐름 사용자 지정",
+      "theme": {
+        "title": "테마",
+        "description": "Ocean, 라이트, 다크 테마 중 선택",
+        "ocean": "Ocean",
+        "oceanDesc": "상쾌한 시안 배경의 라이트 테마",
+        "light": "라이트 모드",
+        "lightDesc": "낮 시간 사용에 완벽한 밝고 깨끗한 인터페이스",
+        "dark": "다크 모드",
+        "darkDesc": "저조도에서 눈에 편한 세련된 다크 인터페이스",
+        "proTip": "테마 환경설정은 자동으로 저장되며 모든 기기에 적용됩니다."
+      },
+      "keyboard": {
+        "title": "키보드 단축키",
+        "description": "더 빠른 탐색을 위한 키보드 단축키 보기 및 학습",
+        "viewShortcuts": "단축키 보기",
+        "viewTitle": "키보드 단축키 보기",
+        "viewDesc": "효율적인 작업 관리를 위한 모든 사용 가능한 키보드 단축키 보기",
+        "quickAccess": "작업 관리자 어디서나 ?를 눌러 키보드 단축키를 엽니다."
+      },
+      "emailToTask": {
+        "title": "이메일에서 작업",
+        "description": "remindme@astrid.cc로 이메일을 보내 즉시 작업 생성",
+        "threeWays": "작업을 만드는 세 가지 방법",
+        "selfTask": "자기 작업:",
+        "selfTaskDesc": "remindme@astrid.cc로 보내기",
+        "assignedTask": "할당된 작업:",
+        "assignedTaskDesc": "한 명의 수신자와 remindme@astrid.cc를 참조",
+        "groupTask": "그룹 작업:",
+        "groupTaskDesc": "여러 수신자와 remindme@astrid.cc를 참조",
+        "configure": "이메일 설정 구성",
+        "configureDesc": "기본 마감일 사용자 지정, 기능 활성화/비활성화 등",
+        "proTip": "이메일 제목이 작업 제목이 되고 본문이 설명이 됩니다. 받은 편지함에서 빠른 작업 캡처에 완벽합니다!"
+      }
+    }
+  }
+}

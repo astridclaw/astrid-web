@@ -1,0 +1,455 @@
+import { type NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authConfig } from "@/lib/auth-config"
+import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
+import { getAllListMembers } from "@/lib/list-member-utils"
+import { RedisCache } from "@/lib/redis"
+import type { RouteContextParams } from "@/types/next"
+import { trackEventFromRequest, AnalyticsEventType } from "@/lib/analytics-events"
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: NextRequest, context: RouteContextParams<{ id: string }>) {
+  try {
+    const session = await getServerSession(authConfig)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { id: listId } = await context.params
+
+    const list = await prisma.taskList.findUnique({
+      where: { id: listId },
+      include: {
+        owner: true,
+        listMembers: {
+          include: {
+            user: true
+          }
+        },
+        tasks: {
+          include: {
+            assignee: true,
+            creator: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    })
+
+    if (!list) {
+      return NextResponse.json({ error: "List not found" }, { status: 404 })
+    }
+
+    // Manually fetch defaultAssignee if it's a valid user ID (not "unassigned")
+    let defaultAssignee = null
+    if (list.defaultAssigneeId && list.defaultAssigneeId !== "unassigned") {
+      defaultAssignee = await prisma.user.findUnique({
+        where: { id: list.defaultAssigneeId }
+      })
+    }
+
+    const listWithDefaultAssignee = {
+      ...list,
+      defaultAssignee
+    }
+
+
+    // Check if user has access to this list using comprehensive member utils
+    const { hasListAccess } = await import("@/lib/list-member-utils")
+    const hasAccess = (session.user.id && hasListAccess(listWithDefaultAssignee as any, session.user.id)) || listWithDefaultAssignee.privacy === "PUBLIC"
+
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    return NextResponse.json(listWithDefaultAssignee)
+  } catch (error) {
+    console.error("Error fetching list:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+export async function PUT(request: NextRequest, context: RouteContextParams<{ id: string }>) {
+  try {
+    const session = await getServerSession(authConfig)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const data = await request.json()
+    const { id: listId } = await context.params
+
+    // Check if user has permission to update this list
+    const existingList = await prisma.taskList.findUnique({
+      where: { id: listId },
+      include: {
+        owner: true,
+        listMembers: {
+          include: {
+            user: true
+          }
+        }
+      },
+    })
+
+    if (!existingList) {
+      return NextResponse.json({ error: "List not found" }, { status: 404 })
+    }
+
+    // Check if user is owner or admin (from listMembers table)
+    const canUpdate =
+      existingList.ownerId === session.user.id ||
+      existingList.listMembers?.some((lm: any) => lm.userId === session.user.id && lm.role === 'admin')
+
+    if (!canUpdate) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+
+    // Validate default assignee is a current member if specified
+    if (data.defaultAssigneeId && data.defaultAssigneeId !== "unassigned") {
+      // Check if the user exists
+      const user = await prisma.user.findUnique({
+        where: { id: data.defaultAssigneeId }
+      })
+
+      if (!user) {
+        return NextResponse.json({ 
+          error: "Default assignee user not found" 
+        }, { status: 400 })
+      }
+
+      // Use the comprehensive member utility to check if user is a member
+      const allMembers = getAllListMembers(existingList as any)
+      const isMember = allMembers.some(member => member.id === data.defaultAssigneeId)
+
+      if (!isMember) {
+        return NextResponse.json({ 
+          error: "Default assignee must be a current member of the list" 
+        }, { status: 400 })
+      }
+    }
+
+    let manualSortOrderUpdate: string[] | undefined
+    if (data.sortBy === 'manual') {
+      const tasksInList = await prisma.task.findMany({
+        where: {
+          lists: {
+            some: {
+              id: listId
+            }
+          }
+        },
+        select: {
+          id: true,
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      })
+
+      manualSortOrderUpdate = tasksInList.map(task => task.id)
+    }
+
+    // Update the list
+    const updateData: any = {
+      name: data.name,
+      description: data.description,
+      color: data.color,
+      imageUrl: data.imageUrl,
+      privacy: data.privacy,
+      publicListType: data.publicListType,
+      defaultAssigneeId: data.defaultAssigneeId,
+      defaultPriority: data.defaultPriority,
+      defaultRepeating: data.defaultRepeating,
+      defaultIsPrivate: data.defaultIsPrivate,
+      defaultDueDate: data.defaultDueDate,
+      defaultDueTime: data.defaultDueTime,
+      // Filter settings
+      filterCompletion: data.filterCompletion,
+      filterDueDate: data.filterDueDate,
+      filterAssignee: data.filterAssignee,
+      filterAssignedBy: data.filterAssignedBy,
+      filterRepeating: data.filterRepeating,
+      filterPriority: data.filterPriority,
+      filterInLists: data.filterInLists,
+      sortBy: data.sortBy,
+      virtualListType: data.virtualListType,
+      isVirtual: data.isVirtual,
+      aiAstridEnabled: data.aiAstridEnabled,
+      mcpEnabled: data.mcpEnabled,
+      mcpAccessLevel: data.mcpAccessLevel,
+      // AI Coding Agent Configuration
+      preferredAiProvider: data.preferredAiProvider,
+      fallbackAiProvider: data.fallbackAiProvider,
+      githubRepositoryId: data.githubRepositoryId,
+      aiAgentsEnabled: data.aiAgentsEnabled,
+    }
+
+    if (data.sortBy === 'manual' && manualSortOrderUpdate) {
+      updateData.manualSortOrder = manualSortOrderUpdate as Prisma.JsonArray
+    }
+
+    // Handle admin/member updates using ListMember table
+    if (data.adminIds !== undefined) {
+      // Remove all existing admin members
+      await prisma.listMember.deleteMany({
+        where: {
+          listId: listId,
+          role: 'admin'
+        }
+      })
+
+      // Add new admins
+      if (data.adminIds.length > 0) {
+        await Promise.all(
+          data.adminIds.map((userId: string) =>
+            prisma.listMember.create({
+              data: {
+                listId: listId,
+                userId: userId,
+                role: 'admin'
+              }
+            })
+          )
+        )
+      }
+    }
+
+    if (data.memberIds !== undefined) {
+      // Remove all existing regular members
+      await prisma.listMember.deleteMany({
+        where: {
+          listId: listId,
+          role: 'member'
+        }
+      })
+
+      // Add new members
+      if (data.memberIds.length > 0) {
+        await Promise.all(
+          data.memberIds.map((userId: string) =>
+            prisma.listMember.create({
+              data: {
+                listId: listId,
+                userId: userId,
+                role: 'member'
+              }
+            })
+          )
+        )
+      }
+    }
+
+    // If changing privacy to PUBLIC, unassign all tasks
+    if (data.privacy === 'PUBLIC' && existingList.privacy !== 'PUBLIC') {
+      console.log(`🔓 List ${listId} becoming public - unassigning all tasks`)
+
+      // Unassign all tasks in this list
+      await prisma.task.updateMany({
+        where: {
+          lists: {
+            some: {
+              id: listId
+            }
+          }
+        },
+        data: {
+          assigneeId: null
+        }
+      })
+
+      console.log(`✅ Unassigned all tasks in list ${listId}`)
+    }
+
+    const updatedList = await prisma.taskList.update({
+      where: { id: listId },
+      data: updateData,
+      include: {
+        owner: true,
+        listMembers: {
+          include: {
+            user: true
+          }
+        },
+        _count: {
+          select: {
+            tasks: true,
+          },
+        },
+      },
+    })
+
+    // Manually fetch defaultAssignee if it's a valid user ID (not "unassigned")
+    let defaultAssignee = null
+    if (updatedList.defaultAssigneeId && updatedList.defaultAssigneeId !== "unassigned") {
+      defaultAssignee = await prisma.user.findUnique({
+        where: { id: updatedList.defaultAssigneeId }
+      })
+    }
+
+    const updatedListWithDefaultAssignee = {
+      ...updatedList,
+      defaultAssignee
+    }
+
+    // Invalidate caches for all list members to ensure they see updates
+    const { RedisCache } = await import('@/lib/redis')
+
+    // Invalidate public lists cache if privacy changed to/from PUBLIC
+    if (data.privacy === 'PUBLIC' || existingList.privacy === 'PUBLIC') {
+      console.log(`🗑️ Invalidating public lists cache due to privacy change`)
+      await RedisCache.delPattern('public_lists:*').catch(err =>
+        console.error('Failed to invalidate public lists cache:', err)
+      )
+    }
+
+    // ALWAYS invalidate user lists cache for all members to prevent stale data on SSE reconnect
+    const allMembers = getAllListMembers(updatedListWithDefaultAssignee as any)
+    const userIdsToInvalidate = [
+      updatedListWithDefaultAssignee.ownerId,
+      ...allMembers.map(m => m.id)
+    ].filter((id, index, self) => id && self.indexOf(id) === index) // Dedupe
+
+    console.log(`🗑️ Invalidating lists cache for ${userIdsToInvalidate.length} users after list update`)
+    await Promise.all(
+      userIdsToInvalidate.map(async (userId) => {
+        try {
+          await RedisCache.del(RedisCache.keys.userLists(userId))
+        } catch (error) {
+          console.error(`❌ Failed to invalidate cache for user ${userId}:`, error)
+        }
+      })
+    )
+
+    // Broadcast SSE event for list update to all list members
+    try {
+      const allMembers = getAllListMembers(updatedListWithDefaultAssignee as any)
+      const userIdsToNotify = [
+        updatedListWithDefaultAssignee.ownerId, // Owner
+        ...allMembers.map(member => member.id) // All members/admins
+      ]
+
+      // Remove the user who made the update (they already see it)
+      const userIdsFiltered = userIdsToNotify.filter(userId => userId !== session.user.id)
+
+      if (userIdsFiltered.length > 0) {
+        console.log(`[SSE] Broadcasting list update to ${userIdsFiltered.length} users`)
+        const { broadcastToUsers } = await import("@/lib/sse-utils")
+        broadcastToUsers(userIdsFiltered, {
+          type: 'list_updated',
+          timestamp: new Date().toISOString(),
+          data: updatedListWithDefaultAssignee
+        })
+      }
+    } catch (sseError) {
+      console.error("Failed to send list update SSE notifications:", sseError)
+      // Continue - list was still updated
+    }
+
+    // Track analytics event (fire-and-forget)
+    trackEventFromRequest(request, session.user.id, AnalyticsEventType.LIST_EDITED, { listId })
+
+    return NextResponse.json(updatedListWithDefaultAssignee)
+  } catch (error) {
+    console.error("Error updating list:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest, context: RouteContextParams<{ id: string }>) {
+  try {
+    const session = await getServerSession(authConfig)
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { id: listId } = await context.params
+
+    // Check if user is the owner of this list
+    const existingList = await prisma.taskList.findUnique({
+      where: { id: listId },
+      include: {
+        owner: true,
+        listMembers: {
+          include: {
+            user: true
+          }
+        }
+      }
+    })
+
+    if (!existingList) {
+      return NextResponse.json({ error: "List not found" }, { status: 404 })
+    }
+
+    if (existingList.ownerId !== session.user.id) {
+      return NextResponse.json({ error: "Only the owner can delete a list" }, { status: 403 })
+    }
+
+    // Get all users who had access to this list before deletion for cache invalidation
+    const allMembers = getAllListMembers(existingList as any)
+    const userIdsToInvalidate = [
+      existingList.ownerId, // Owner
+      ...allMembers.map(member => member.id) // All members/admins
+    ]
+
+    await prisma.taskList.delete({
+      where: { id: listId },
+    })
+
+    // Invalidate cache for all users who had access to this list
+    console.log("🗄️ Invalidating cache for users after list deletion:", userIdsToInvalidate.length, "users")
+    await Promise.all(
+      userIdsToInvalidate.map(async (userId) => {
+        try {
+          await RedisCache.del(RedisCache.keys.userLists(userId))
+          console.log(`✅ Cache invalidated for user: ${userId}`)
+        } catch (error) {
+          console.error(`❌ Failed to invalidate cache for user ${userId}:`, error)
+        }
+      })
+    )
+
+    // Broadcast SSE event for list deletion to all list members
+    try {
+      // Remove the user who deleted the list (they already see it)
+      const userIdsToNotify = userIdsToInvalidate.filter(userId => userId !== session.user.id)
+
+      if (userIdsToNotify.length > 0) {
+        console.log(`[SSE] Broadcasting list deletion to ${userIdsToNotify.length} users`)
+        const { broadcastToUsers } = await import("@/lib/sse-utils")
+        broadcastToUsers(userIdsToNotify, {
+          type: 'list_deleted',
+          timestamp: new Date().toISOString(),
+          data: {
+            id: listId,
+            listId: listId,
+            listName: existingList.name,
+            deleterName: session.user.name || session.user.email || "Someone",
+            userId: session.user.id
+          }
+        })
+      }
+    } catch (sseError) {
+      console.error("Failed to send list deletion SSE notifications:", sseError)
+      // Continue - list was still deleted
+    }
+
+    // Track analytics event (fire-and-forget)
+    trackEventFromRequest(request, session.user.id, AnalyticsEventType.LIST_DELETED, { listId })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("Error deleting list:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Complete Sound</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      margin: 10px 0;
+    }
+    button:hover {
+      background: #059669;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 Test Task Complete Sound</h1>
+  <p>Click the button to test if the task complete sound plays</p>
+
+  <button onclick="testSound()">▶️ Play Task Complete Sound</button>
+  <div id="status"></div>
+
+  <script>
+    let audio = null
+
+    async function testSound() {
+      const statusEl = document.getElementById('status')
+      statusEl.className = 'status info'
+      statusEl.innerHTML = '🔄 Loading sound...'
+
+      try {
+        // Create audio element
+        audio = new Audio('/sounds/task-complete.wav')
+        audio.volume = 0.4
+
+        console.log('Created audio element:', audio.src)
+
+        // Wait for it to load
+        await new Promise((resolve, reject) => {
+          audio.addEventListener('canplaythrough', () => {
+            console.log('Audio can play through')
+            resolve()
+          }, { once: true })
+          audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e)
+            reject(e)
+          }, { once: true })
+          audio.load()
+        })
+
+        console.log('Audio loaded, attempting to play...')
+        statusEl.innerHTML = '▶️ Playing...'
+
+        // Play the sound
+        await audio.play()
+
+        console.log('✅ Audio playing!')
+        statusEl.className = 'status success'
+        statusEl.innerHTML = `
+          ✅ Sound played successfully!<br>
+          Duration: ${audio.duration.toFixed(2)}s<br>
+          Volume: ${audio.volume}<br>
+          <br>
+          <strong>Did you hear a sound?</strong><br>
+          - If YES: Sound system works!<br>
+          - If NO: Check system volume or browser audio settings
+        `
+
+        // Add ended event
+        audio.onended = () => {
+          console.log('Sound finished playing')
+        }
+
+      } catch (error) {
+        console.error('Failed to play sound:', error)
+        statusEl.className = 'status error'
+        statusEl.innerHTML = `
+          ❌ Error: ${error.message}<br>
+          <br>
+          Common causes:<br>
+          - Browser blocked autoplay (try clicking again)<br>
+          - Sound file not found<br>
+          - System volume is off
+        `
+      }
+    }
+
+    // Auto-run on load (might fail due to autoplay policy)
+    window.addEventListener('load', () => {
+      console.log('Page loaded. Click button to test sound.')
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_DIRECT")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                           String             @id @default(cuid())
+  name                         String?
+  email                        String             @unique
+  emailVerified                DateTime?
+  image                        String?
+  createdAt                    DateTime           @default(now())
+  updatedAt                    DateTime           @updatedAt
+  isActive                     Boolean            @default(true)
+  pendingEmail                 String?
+  emailVerificationToken       String?            @unique
+  emailTokenExpiresAt          DateTime?
+  password                     String?
+  aiAssistantSettings          String?
+  defaultDueTime               String?            @default("17:00")
+  mcpEnabled                   Boolean            @default(true)
+  mcpSettings                  String?
+  aiAgentConfig                String?
+  aiAgentType                  String?
+  isAIAgent                    Boolean            @default(false)
+  webhookUrl                   String?
+  defaultNewListMcpAccessLevel String             @default("WRITE")
+  defaultNewListMcpEnabled     Boolean            @default(true)
+  defaultTaskDueOffset         String?            @default("1_week")
+  emailToTaskEnabled           Boolean            @default(true)
+  emailToTaskListId            String?
+  smartTaskCreationEnabled     Boolean            @default(true)
+  invitedBy                    String?
+  isPlaceholder                Boolean            @default(false)
+  statsCompletedTasks          Int                @default(0)
+  statsInspiredTasks           Int                @default(0)
+  statsSupportedTasks          Int                @default(0)
+  statsLastCalculated          DateTime?
+  myTasksPreferences           String?
+  accounts                     Account[]
+  authenticators               Authenticator[]
+  comments                     Comment[]
+  githubIntegrations           GitHubIntegration[]
+  receivedInvitations          Invitation[]       @relation("InvitationReceiver")
+  sentInvitations              Invitation[]       @relation("InvitationSender")
+  createdInvites               ListInvite[]       @relation("ListInviteCreator")
+  listMemberships              ListMember[]       @relation("ListMembership")
+  mcpTokens                    MCPToken[]
+  oauthClients                 OAuthClient[]      @relation("OAuthClients")
+  oauthTokens                  OAuthToken[]       @relation("OAuthTokens")
+  pushSubscriptions            PushSubscription[]
+  reminderQueue                ReminderQueue[]
+  reminderSettings             ReminderSettings?
+  webhookConfig                UserWebhookConfig?
+  secureFiles                  SecureFile[]
+  sessions                     Session[]
+  assignedTasks                Task[]             @relation("TaskAssignee")
+  createdTasks                 Task[]             @relation("TaskCreator")
+  ownedLists                   TaskList[]         @relation("ListOwner")
+  analyticsEvents              AnalyticsEvent[]   @relation("AnalyticsEvents")
+  adminUser                    AdminUser?         @relation("AdminUsers")
+
+  @@index([email])
+  @@index([emailVerified])
+  @@index([createdAt])
+  @@index([isActive])
+  @@index([emailVerificationToken])
+  @@index([isAIAgent])
+  @@index([aiAgentType])
+  @@index([isAIAgent, aiAgentType])
+  @@index([isPlaceholder])
+  @@index([invitedBy])
+  @@index([emailToTaskEnabled])
+  @@index([statsLastCalculated])
+  addressBookContacts      AddressBookContact[] @relation("AddressBookContacts")
+}
+
+model AddressBookContact {
+  id          String   @id @default(cuid())
+  userId      String
+  email       String   // Normalized to lowercase
+  name        String?
+  phoneNumber String?
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation("AddressBookContacts", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, email])
+  @@index([email])
+  @@index([userId])
+}
+
+model AIAgent {
+  id            String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  name          String
+  service       String
+  agentType     String   @map("agent_type")
+  description   String?
+  isActive      Boolean  @default(true) @map("is_active")
+  config        Json?
+  webhookUrl    String?  @map("webhook_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  assignedTasks Task[]
+
+  @@unique([service, agentType])
+  @@index([isActive])
+  @@index([service])
+  @@map("ai_agents")
+}
+
+model TaskList {
+  id                  String          @id @default(dbgenerated("(gen_random_uuid())::text"))
+  name                String
+  description         String?
+  color               String          @default("#3b82f6")
+  imageUrl            String?
+  privacy             TaskListPrivacy @default(PRIVATE)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  ownerId             String
+  defaultAssigneeId   String?
+  defaultPriority     Int?            @default(0)
+  defaultRepeating    String?         @default("never")
+  defaultIsPrivate    Boolean?        @default(true)
+  defaultDueDate      String?         @default("none")
+  aiAstridEnabled     Boolean         @default(false)
+  copyCount           Int             @default(0)
+  defaultDueTime      String?
+  favoriteOrder       Int?
+  filterAssignedBy    String?
+  filterAssignee      String?
+  filterCompletion    String?
+  filterDueDate       String?
+  filterInLists       String?
+  filterPriority      String?
+  filterRepeating     String?
+  isFavorite          Boolean         @default(false)
+  isVirtual           Boolean         @default(false)
+  sortBy              String?
+  virtualListType     String?
+  mcpAccessLevel      MCPAccessLevel  @default(WRITE)
+  mcpEnabled          Boolean         @default(false)
+  aiAgentsEnabled     Json?           @default("[]")
+  fallbackAiProvider  String?
+  githubRepositoryId  String?
+  preferredAiProvider String?
+  aiAgentConfiguredBy String?
+  manualSortOrder     Json?
+  publicListType      String?
+  listInvites         ListInvite[]
+  listMembers         ListMember[]
+  mcpTokens           MCPToken[]
+  secureFiles         SecureFile[]
+  owner               User            @relation("ListOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  tasks               Task[]          @relation("TaskToTaskList")
+
+  @@index([ownerId])
+  @@index([privacy])
+  @@index([createdAt])
+  @@index([defaultAssigneeId])
+  @@index([isFavorite, favoriteOrder])
+  @@index([ownerId, isFavorite])
+  @@index([virtualListType])
+  @@index([mcpEnabled])
+}
+
+model Task {
+  id              String              @id @default(dbgenerated("(gen_random_uuid())::text"))
+  title           String
+  description     String              @default("")
+  priority        Int                 @default(0)
+  repeating       String              @default("never")
+  repeatingData   Json?
+  isPrivate       Boolean             @default(true)
+  completed       Boolean             @default(false)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  assigneeId      String?
+  creatorId       String?
+  originalTaskId  String?
+  sourceListId    String?
+  dueDateTime     DateTime?
+  isAllDay        Boolean             @default(false)
+  reminderSent    Boolean             @default(false)
+  reminderTime    DateTime?
+  reminderType    String?
+  aiAgentId       String?
+  occurrenceCount Int                 @default(0)
+  repeatFrom      RepeatFromMode      @default(COMPLETION_DATE)
+  timerDuration   Int?
+  lastTimerValue  String?
+  attachments     Attachment[]
+  codingWorkflow  CodingTaskWorkflow?
+  comments        Comment[]
+  reminderQueue   ReminderQueue[]
+  secureFiles     SecureFile[]
+  aiAgent         AIAgent?            @relation(fields: [aiAgentId], references: [id])
+  assignee        User?               @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  creator         User?               @relation("TaskCreator", fields: [creatorId], references: [id])
+  lists           TaskList[]          @relation("TaskToTaskList")
+
+  @@index([assigneeId])
+  @@index([aiAgentId])
+  @@index([creatorId])
+  @@index([completed])
+  @@index([createdAt])
+  @@index([dueDateTime])
+  @@index([reminderTime])
+  @@index([priority])
+  @@index([assigneeId, completed])
+  @@index([createdAt, completed])
+  @@index([dueDateTime, completed])
+  @@index([reminderTime, reminderSent])
+  @@index([repeating])
+}
+
+model Comment {
+  id              String       @id @default(cuid())
+  content         String
+  type            CommentType  @default(TEXT)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  authorId        String?
+  taskId          String
+  attachmentUrl   String?
+  attachmentName  String?
+  attachmentType  String?
+  attachmentSize  Int?
+  parentCommentId String?
+  author          User?        @relation(fields: [authorId], references: [id])
+  parentComment   Comment?     @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         Comment[]    @relation("CommentReplies")
+  task            Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  secureFiles     SecureFile[]
+
+  @@index([taskId])
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([taskId, createdAt])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  type      String
+  size      Int
+  createdAt DateTime @default(now())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([createdAt])
+}
+
+model SecureFile {
+  id           String    @id @default(cuid())
+  blobUrl      String    @unique
+  originalName String
+  mimeType     String
+  fileSize     Int
+  uploadedBy   String
+  taskId       String?
+  listId       String?
+  commentId    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  comment      Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  list         TaskList? @relation(fields: [listId], references: [id], onDelete: Cascade)
+  task         Task?     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploader     User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@index([uploadedBy])
+  @@index([taskId])
+  @@index([listId])
+  @@index([commentId])
+  @@index([createdAt])
+  @@index([blobUrl])
+}
+
+model Invitation {
+  id         String           @id @default(cuid())
+  email      String
+  token      String           @unique
+  status     InvitationStatus @default(PENDING)
+  type       InvitationType   @default(TASK_ASSIGNMENT)
+  role       String?
+  expiresAt  DateTime
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  senderId   String?
+  receiverId String?
+  taskId     String?
+  listId     String?
+  message    String?
+  receiver   User?            @relation("InvitationReceiver", fields: [receiverId], references: [id])
+  sender     User?            @relation("InvitationSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([status])
+  @@index([token])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([type])
+  @@index([expiresAt])
+  @@index([email, status])
+  @@index([senderId, status])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Authenticator {
+  id                   String   @id @default(cuid())
+  credentialID         String   @unique
+  credentialPublicKey  String
+  counter              BigInt
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  userId               String
+  name                 String?
+  createdAt            DateTime @default(now())
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model WebAuthnChallenge {
+  id        String   @id
+  challenge String
+  userId    String?
+  email     String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model ListMember {
+  id        String   @id @default(cuid())
+  listId    String
+  userId    String
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  list      TaskList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user      User     @relation("ListMembership", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, userId])
+  @@index([listId])
+  @@index([userId])
+  @@index([listId, role])
+}
+
+model ListInvite {
+  id        String   @id @default(cuid())
+  listId    String
+  email     String
+  token     String   @unique
+  role      String   @default("member")
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creator   User     @relation("ListInviteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  list      TaskList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, email])
+  @@index([listId])
+  @@index([email])
+  @@index([token])
+  @@index([createdBy])
+}
+
+model ReminderSettings {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  enablePushReminders  Boolean  @default(true)
+  enableEmailReminders Boolean  @default(true)
+  defaultReminderTime  Int      @default(60)
+  enableDailyDigest    Boolean  @default(true)
+  dailyDigestTime      String   @default("09:00")
+  dailyDigestTimezone  String   @default("UTC")
+  quietHoursStart      String?
+  quietHoursEnd        String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  calendarSyncType     String   @default("all")
+  enableCalendarSync   Boolean  @default(false)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model UserWebhookConfig {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  webhookUrl    String    // Encrypted - URL for Code Remote server
+  webhookSecret String    // Encrypted - HMAC secret for signing requests
+  enabled       Boolean   @default(true)
+  events        String[]  @default(["task.assigned", "comment.created"])
+  agents        String[]  @default([]) // Which agents this webhook handles (opt-in, empty = none)
+  lastFiredAt   DateTime?
+  failureCount  Int       @default(0)
+  maxRetries    Int       @default(3)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([enabled])
+  @@map("user_webhook_configs")
+}
+
+// Webhook delivery audit log for reliability tracking
+model WebhookDeliveryLog {
+  id             String    @id @default(cuid())
+  userId         String
+  taskId         String
+  event          String    // task.assigned, comment.created, etc.
+  webhookUrl     String    // Target URL (not encrypted for debugging)
+  status         String    // pending, success, failed
+  attempts       Int       @default(0)
+  responseCode   Int?      // HTTP status code if received
+  responseTimeMs Int?      // Response time in milliseconds
+  errorMessage   String?   // Error details if failed
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([taskId])
+  @@index([status])
+  @@map("webhook_delivery_logs")
+}
+
+model ReminderQueue {
+  id           String   @id @default(cuid())
+  taskId       String
+  userId       String
+  scheduledFor DateTime
+  type         String
+  status       String   @default("pending")
+  retryCount   Int      @default(0)
+  data         Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  task         Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledFor, status])
+  @@index([userId, status])
+  @@index([taskId])
+  @@index([type, status])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String
+  p256dh    String
+  auth      String
+  userAgent String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+  @@index([userId, isActive])
+  @@index([endpoint])
+}
+
+model MCPToken {
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  token       String    @unique
+  listId      String?
+  userId      String
+  permissions String[]
+  description String?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isActive    Boolean   @default(true)
+  list        TaskList? @relation(fields: [listId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([listId])
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([isActive])
+}
+
+model OAuthClient {
+  id                 String                   @id @default(cuid())
+  clientId           String                   @unique
+  clientSecret       String
+  name               String
+  description        String?
+  userId             String
+  redirectUris       String[]
+  grantTypes         String[]                 @default(["client_credentials"])
+  scopes             String[]                 @default(["tasks:read", "tasks:write", "lists:read", "lists:write"])
+  isActive           Boolean                  @default(true)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  lastUsedAt         DateTime?
+  authorizationCodes OAuthAuthorizationCode[]
+  user               User                     @relation("OAuthClients", fields: [userId], references: [id], onDelete: Cascade)
+  tokens             OAuthToken[]
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([isActive])
+}
+
+model OAuthToken {
+  id               String      @id @default(cuid())
+  accessToken      String      @unique
+  refreshToken     String?     @unique
+  tokenType        String      @default("Bearer")
+  clientId         String
+  userId           String
+  scopes           String[]
+  expiresAt        DateTime
+  refreshExpiresAt DateTime?
+  createdAt        DateTime    @default(now())
+  revokedAt        DateTime?
+  client           OAuthClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user             User        @relation("OAuthTokens", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([clientId])
+  @@index([accessToken])
+  @@index([expiresAt])
+  @@index([revokedAt])
+}
+
+model OAuthAuthorizationCode {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  clientId    String
+  userId      String
+  redirectUri String
+  scopes      String[]
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime    @default(now())
+  client      OAuthClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@index([clientId])
+  @@index([expiresAt])
+}
+
+model GitHubIntegration {
+  id             String   @id @default(cuid())
+  userId         String
+  installationId Int?
+  appId          Int?
+  privateKey     String?
+  webhookSecret  String?
+  repositories   Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  isSharedApp    Boolean  @default(false)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, installationId])
+  @@index([userId])
+}
+
+model CodingTaskWorkflow {
+  id                String               @id @default(cuid())
+  taskId            String               @unique
+  repositoryId      String?
+  baseBranch        String               @default("main")
+  workingBranch     String?
+  pullRequestNumber Int?
+  status            CodingWorkflowStatus @default(PENDING)
+  aiService         String?
+  planApproved      Boolean              @default(false)
+  deploymentUrl     String?
+  previewUrl        String?
+  metadata          Json?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  task              Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([status])
+}
+
+model Shortcode {
+  id         String    @id @default(cuid())
+  code       String    @unique
+  targetType String
+  targetId   String
+  userId     String
+  clicks     Int       @default(0)
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  isActive   Boolean   @default(true)
+
+  @@index([code])
+  @@index([targetId, targetType])
+  @@index([userId])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+enum CommentType {
+  TEXT
+  MARKDOWN
+  ATTACHMENT
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum InvitationType {
+  TASK_ASSIGNMENT
+  LIST_SHARING
+  WORKSPACE_INVITE
+}
+
+enum TaskListPrivacy {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
+enum MCPAccessLevel {
+  READ
+  WRITE
+  BOTH
+}
+
+enum CodingWorkflowStatus {
+  PENDING
+  PLANNING
+  AWAITING_APPROVAL
+  IMPLEMENTING
+  TESTING
+  READY_TO_MERGE
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum RepeatFromMode {
+  DUE_DATE
+  COMPLETION_DATE
+}
+
+// ==========================================
+// Analytics Models
+// ==========================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  eventType String   // task_created, task_edited, task_completed, task_deleted,
+                     // comment_added, comment_deleted, list_added, list_edited,
+                     // list_deleted, settings_updated
+  platform  String   // web-desktop, web-iPhone, web-android, iOS-app, API-other, unknown
+  metadata  Json?    // Optional additional context
+  createdAt DateTime @default(now())
+
+  user User @relation("AnalyticsEvents", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([eventType, createdAt])
+  @@index([platform, createdAt])
+}
+
+model AnalyticsDailyStats {
+  id   String   @id @default(cuid())
+  date DateTime @unique @db.Date // Day (midnight UTC)
+  dau  Int      // Distinct users active that day
+  wau  Int      // Distinct users active in trailing 7 days
+  mau  Int      // Distinct users active in trailing 30 days
+
+  // Platform breakdown for DAU
+  dauWebDesktop Int @default(0)
+  dauWebIPhone  Int @default(0)
+  dauWebAndroid Int @default(0)
+  dauIOSApp     Int @default(0)
+  dauAPIOther   Int @default(0)
+  dauUnknown    Int @default(0)
+
+  // Event counts for the day
+  taskCreated     Int @default(0)
+  taskEdited      Int @default(0)
+  taskCompleted   Int @default(0)
+  taskDeleted     Int @default(0)
+  commentAdded    Int @default(0)
+  commentDeleted  Int @default(0)
+  listAdded       Int @default(0)
+  listEdited      Int @default(0)
+  listDeleted     Int @default(0)
+  settingsUpdated Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  grantedBy String?  // userId of admin who granted access (null for initial admin)
+  createdAt DateTime @default(now())
+
+  user User @relation("AdminUsers", fields: [userId], references: [id], onDelete: Cascade)
+}

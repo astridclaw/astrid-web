@@ -1,0 +1,20 @@
+{
+  "webcredentials": {
+    "apps": [
+      "34K3P7PD2W.Graceful-Tools-Inc.Astrid-App"
+    ]
+  },
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "34K3P7PD2W.Graceful-Tools-Inc.Astrid-App",
+        "paths": [
+          "/s/*",
+          "/tasks/*",
+          "/lists/*"
+        ]
+      }
+    ]
+  }
+}

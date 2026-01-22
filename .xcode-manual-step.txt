@@ -1,0 +1,30 @@
+🚨 MANUAL STEP REQUIRED: Add GitHubRepository.swift to Xcode Project
+
+## Root Cause of Build Error
+
+The file GitHubRepository.swift exists in the filesystem but is NOT added to the Xcode project.
+This causes ListAdminTab.swift to fail compilation with:
+"trailing closure passed to parameter of type 'FormStyleConfiguration'"
+
+The Form error is a CASCADING error from GitHubRepository type not being found.
+
+## How to Fix
+
+1. Open Xcode: ios-app/Astrid App.xcodeproj
+2. In the Project Navigator, right-click on "Astrid App/Models" folder
+3. Select "Add Files to 'Astrid App'..."
+4. Navigate to: ios-app/Astrid App/Models/GitHubRepository.swift
+5. Make sure "Copy items if needed" is UNCHECKED (file is already in correct location)
+6. Make sure "Astrid App" target is CHECKED
+7. Click "Add"
+8. Clean build folder (⇧⌘K)
+9. Build (⌘B)
+
+## Verification
+
+After adding the file, the build should succeed. The file contains:
+- struct GitHubRepository
+- struct GitHubRepositoriesResponse
+- struct GitHubStatusResponse
+
+File location: ios-app/Astrid App/Models/GitHubRepository.swift

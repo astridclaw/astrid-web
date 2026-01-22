@@ -1,0 +1,106 @@
+{
+  "permissions": {
+    "allow": [
+      // === Development & Build Tools ===
+      "Bash(npm run *)",
+      "Bash(npm run dev)",                        // All npm scripts (dev, test, build, lint, etc.)
+      "Bash(npx *)",                         // All npx commands (prisma, tsx, tsc, etc.)
+      "Bash(pnpm *)",                        // pnpm package manager commands
+      "Bash(node *)",                        // Node.js script execution
+      "Bash(DATABASE_URL=\"postgresql://postgres:password@localhost:5432/astrid_dev\" npx tsx scripts/check-claude-agent-user.ts)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:password@localhost:5432/astrid_dev\" npx tsx scripts/test-claude-api.ts)",
+      "Bash(npm run predeploy)",
+      "Bash(npm run predeploy:quick)",
+      "Bash(npx tsx scripts/get-astrid-tasks.ts)",
+      "Read(//dev/**)",
+      "Bash(npm test:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run monitor:vercel:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npm install)",
+      "Bash(npm run typecheck)",
+      "Bash(npx tsc --noEmit)",
+      "Bask(npm install --ignore-scripts)", 
+      "Bash(curl -X POST http://localhost:300*)",
+      "Bash(npm run dev:*)",
+      "Bash(echo \"LIST_IMAGE_GEN_API_KEY length: $#LIST_IMAGE_GEN_API_KEY\")",
+      "Bash(echo \"First 10 chars: $LIST_IMAGE_GEN_API_KEY:0:10\")",
+      "Bash(npx tsx scripts/get-astrid-tasks.ts)",
+      "Bash(echo \"🔍 Checking for deployment issues...\" && npm run monitor:vercel)",
+
+      // === Database Operations ===
+      "Bash(DATABASE_URL=* npx prisma *)",   // Prisma with any database URL
+      "Bash(DATABASE_URL=* npx tsx scripts/*)", // Script execution with database
+      "Bash(DATABASE_URL=* node scripts/*)", // Node script execution with database
+
+      // === Source Control & Development ===
+      "Bash(git *)",                         // All git operations
+      "Bash(curl *)",                        // HTTP requests and API testing
+
+      // === File & Text Operations ===
+      "Bash(grep *)",                        // Text search operations
+      "Bash(find *)",                        // File system search
+      "Bash(sed *)",                         // Text manipulation
+      "Bash(ls *)",                          // Directory listing
+      "Bash(cat *)",                         // File content viewing
+      "Bash(head *)",                        // File head viewing
+      "Bash(tail *)",                        // File tail viewing
+      "Bash(wc *)",                          // Word/line counting
+      "Bash(sort *)",                        // Sorting operations
+
+      // === Process Management ===
+      "Bash(lsof *)",                        // List open files/processes
+      "Bash(pkill *)",                       // Process termination
+      "Bash(kill *)",                        // Process termination
+      "Bash(ps *)",                          // Process listing
+
+      // === Environment & System ===
+      "Bash(export *)",                      // Environment variable setting
+      "Bash(echo *)",                        // Output commands
+      "Bash(env *)",                         // Environment inspection
+      "Bash(which *)",                       // Command location
+      "Bash(pwd)",                           // Working directory
+      "Bash(cd *)",                          // Directory navigation
+      "Bash(mkdir *)",                       // Directory creation
+      "Bash(rm *)",                          // File removal
+      "Bash(mv *)",                          // File moving
+      "Bash(cp *)",                          // File copying
+      "Bash(chmod *)",                       // Permission changes
+
+      // === Testing & Development Servers ===
+      "Bash(psql *)",                        // PostgreSQL client
+      "Bash(redis-cli *)",                   // Redis client
+      "Bash(source *)",                      // Script sourcing
+
+      // === Web Research & External APIs ===
+      "WebSearch",                           // Web search capabilities
+      "WebFetch(domain:github.com)",         // GitHub API access
+      "WebFetch(domain:api.github.com)",     // GitHub API access
+      "WebFetch(domain:raw.githubusercontent.com)", // GitHub raw content
+      "WebFetch(domain:docs.claude.com)",    // Claude documentation
+
+      // === Astrid-Specific Development ===
+      "Bash(npx tsx scripts/get-astrid-tasks.ts)", // Pull tasks from astrid.cc
+      "Bash(npm run docs:review)",          // Documentation review helper
+
+      // === Tree Command (if available) ===
+      "Bash(tree *)"                        // Directory tree visualization
+    ],
+    "deny": [
+      // Explicitly deny potentially destructive operations
+      "Bash(rm -rf /)",                      // Prevent system destruction
+      "Bash(sudo *)",                        // Prevent sudo operations
+      "Bash(su *)",                          // Prevent user switching
+      "Bash(chmod 777 *)",                   // Prevent overly permissive permissions
+      "Bash(dd *)"                           // Prevent disk operations
+    ],
+    "ask": [
+      // Operations that require user confirmation
+      "Bash(npm publish *)",                 // Package publishing
+      "Bash(git push origin main)",          // Main branch pushes
+      "Bash(git push origin master)",        // Master branch pushes
+      "Bash(npx prisma migrate reset *)",    // Destructive database operations
+      "Bash(npx prisma db push --force-reset *)" // Destructive database operations
+    ]
+  }
+}
