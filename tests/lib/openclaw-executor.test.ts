@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment node
+ */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // Mock the RPC client
@@ -16,25 +19,21 @@ vi.mock('@/lib/ai/openclaw-rpc-client', () => ({
   }),
 }))
 
-// Mock fs/promises
-vi.mock('fs/promises', async (importOriginal) => {
-  const actual = (await importOriginal()) as object
-  return {
-    ...actual,
-    readFile: vi.fn().mockImplementation((path: string) => {
-      if (path.includes('ASTRID.md')) {
-        return Promise.resolve('# Test Project\n\nThis is a test project.')
-      }
-      if (path.includes('.astrid.config.json')) {
-        return Promise.reject(new Error('File not found'))
-      }
-      return Promise.resolve('mock file content')
-    }),
-    writeFile: vi.fn(),
-    access: vi.fn(),
-    mkdir: vi.fn(),
-  }
-})
+// Mock fs/promises for Node environment
+vi.mock('fs/promises', () => ({
+  readFile: vi.fn().mockImplementation((filePath: string) => {
+    if (filePath.includes('ASTRID.md')) {
+      return Promise.resolve('# Test Project\n\nThis is a test project.')
+    }
+    if (filePath.includes('.astrid.config.json')) {
+      return Promise.reject(new Error('File not found'))
+    }
+    return Promise.resolve('mock file content')
+  }),
+  writeFile: vi.fn(),
+  access: vi.fn().mockRejectedValue(new Error('Not found')),
+  mkdir: vi.fn(),
+}))
 
 import {
   planWithOpenClaw,
