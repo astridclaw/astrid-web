@@ -11,11 +11,11 @@ import type { PrismaClient } from '@prisma/client'
  * or from agent name (e.g., "Claude" -> claude, "OpenAI" -> openai)
  */
 function getAgentType(email?: string, name?: string): string | null {
-  // Try email first (e.g., claude@astrid.cc, openai@astrid.cc, gemini@astrid.cc)
+  // Try email first (e.g., claude@astrid.cc, openai@astrid.cc, gemini@astrid.cc, openclaw@astrid.cc)
   if (email?.endsWith('@astrid.cc')) {
     const prefix = email.split('@')[0].toLowerCase()
-    // Normalize: claude, openai, gemini are the standard types
-    if (['claude', 'openai', 'gemini'].includes(prefix)) {
+    // Normalize: claude, openai, gemini, openclaw are the standard types
+    if (['claude', 'openai', 'gemini', 'openclaw'].includes(prefix)) {
       return prefix
     }
   }
@@ -26,6 +26,7 @@ function getAgentType(email?: string, name?: string): string | null {
     if (lowerName.includes('claude')) return 'claude'
     if (lowerName.includes('openai') || lowerName.includes('gpt')) return 'openai'
     if (lowerName.includes('gemini')) return 'gemini'
+    if (lowerName.includes('openclaw') || lowerName.includes('claw')) return 'openclaw'
   }
 
   return null

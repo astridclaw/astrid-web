@@ -110,6 +110,13 @@ function CodingAgentsContent() {
                       <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                       gemini@astrid.cc
                     </span>
+                    <Link
+                      href="/settings/openclaw"
+                      className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors"
+                    >
+                      <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                      openclaw@astrid.cc
+                    </Link>
                   </div>
                 </div>
               </div>
