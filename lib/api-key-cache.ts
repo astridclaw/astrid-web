@@ -3,11 +3,9 @@
  * Securely retrieves and caches API keys for AI orchestration
  */
 
-import { PrismaClient } from '@prisma/client'
 import CryptoJS from 'crypto-js'
 import crypto from 'crypto'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
 
 // Cache to avoid repeated database queries
 const apiKeyCache = new Map<string, { key: string; timestamp: number }>()
