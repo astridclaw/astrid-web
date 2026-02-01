@@ -130,7 +130,7 @@ function CodingAgentsContent() {
                     <p className="text-sm theme-text-primary font-medium flex items-center gap-2">
                       OpenClaw Workers
                       <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                        Recommended
+                        New in Alpha
                       </span>
                     </p>
                     <p className="text-sm theme-text-muted mt-1">

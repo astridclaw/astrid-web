@@ -89,7 +89,7 @@ function AgentsSettingsContent() {
               <div className="absolute top-2 right-2">
                 <span className="text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-full flex items-center gap-1">
                   <Zap className="w-3 h-3" />
-                  Recommended
+                  New in Alpha
                 </span>
               </div>
               <CardContent className="p-6 pt-10">
