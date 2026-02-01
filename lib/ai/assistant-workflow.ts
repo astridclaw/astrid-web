@@ -168,6 +168,14 @@ Format your response in clear markdown. Be thorough but concise.`
           }
         }
       }
+
+      case 'openclaw':
+      default:
+        return {
+          success: false,
+          response: '',
+          error: `Unsupported AI service: ${service}. OpenClaw uses a different execution path.`
+        }
     }
   } catch (error) {
     return {
