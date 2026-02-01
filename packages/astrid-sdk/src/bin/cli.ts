@@ -33,6 +33,7 @@ import {
 } from '../executors/terminal-claude.js'
 import { TerminalOpenAIExecutor } from '../executors/terminal-openai.js'
 import { TerminalGeminiExecutor } from '../executors/terminal-gemini.js'
+import { TerminalOpenClawExecutor } from '../executors/terminal-openclaw.js'
 import type { TerminalExecutor } from '../executors/terminal-base.js'
 import {
   planWithOpenAI,
@@ -93,6 +94,11 @@ const CONFIG = {
   // Gemini terminal settings
   geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
   geminiMaxTurns: parseInt(process.env.GEMINI_MAX_TURNS || '50', 10),
+  // OpenClaw terminal settings
+  openclawGatewayUrl: process.env.OPENCLAW_GATEWAY_URL || '',
+  openclawAuthToken: process.env.OPENCLAW_AUTH_TOKEN,
+  openclawModel: process.env.OPENCLAW_MODEL || 'anthropic/claude-opus-4-5',
+  openclawMaxTurns: parseInt(process.env.OPENCLAW_MAX_TURNS || '50', 10),
 }
 
 function getApiKeyForService(service: AIService): string | undefined {
@@ -100,6 +106,7 @@ function getApiKeyForService(service: AIService): string | undefined {
     case 'claude': return CONFIG.anthropicApiKey
     case 'openai': return CONFIG.openaiApiKey
     case 'gemini': return CONFIG.geminiApiKey
+    case 'openclaw': return CONFIG.openclawGatewayUrl || undefined // OpenClaw uses gateway URL, not API key
   }
 }
 
@@ -126,6 +133,13 @@ function createTerminalExecutor(service: AIService): TerminalExecutor {
         model: CONFIG.geminiModel,
         maxTurns: CONFIG.geminiMaxTurns,
       })
+    case 'openclaw':
+      return new TerminalOpenClawExecutor({
+        gatewayUrl: CONFIG.openclawGatewayUrl,
+        authToken: CONFIG.openclawAuthToken,
+        model: CONFIG.openclawModel,
+        maxTurns: CONFIG.openclawMaxTurns,
+      })
   }
 }
 
@@ -146,6 +160,10 @@ async function getAvailableTerminalProviders(): Promise<{ service: AIService; av
   // Check Gemini API key
   const geminiExecutor = new TerminalGeminiExecutor()
   providers.push({ service: 'gemini', available: await geminiExecutor.checkAvailable() })
+
+  // Check OpenClaw Gateway
+  const openclawExecutor = new TerminalOpenClawExecutor()
+  providers.push({ service: 'openclaw', available: await openclawExecutor.checkAvailable() })
 
   return providers
 }
@@ -188,6 +206,9 @@ async function routePlanningToService(
       return planWithOpenAI(taskTitle, taskDescription, config as OpenAIExecutorConfig)
     case 'gemini':
       return planWithGemini(taskTitle, taskDescription, config as GeminiExecutorConfig)
+    case 'openclaw':
+      // OpenClaw tasks should use terminal mode, not API mode
+      throw new Error('OpenClaw tasks must be processed in terminal mode (--terminal). Use: npx astrid-agent --terminal')
     default:
       throw new Error(`Unknown service: ${service}`)
   }
@@ -207,6 +228,9 @@ async function routeExecutionToService(
       return executeWithOpenAI(plan, taskTitle, taskDescription, config as OpenAIExecutorConfig)
     case 'gemini':
       return executeWithGemini(plan, taskTitle, taskDescription, config as GeminiExecutorConfig)
+    case 'openclaw':
+      // OpenClaw tasks should use terminal mode, not API mode
+      throw new Error('OpenClaw tasks must be processed in terminal mode (--terminal). Use: npx astrid-agent --terminal')
     default:
       throw new Error(`Unknown service: ${service}`)
   }
@@ -376,6 +400,7 @@ async function processTaskTerminal(
       claude: 'Claude Code CLI not found. Install it with: npm install -g @anthropic-ai/claude-code',
       openai: 'OpenAI API key not configured. Set OPENAI_API_KEY environment variable.',
       gemini: 'Gemini API key not configured. Set GEMINI_API_KEY environment variable.',
+      openclaw: 'OpenClaw Gateway not configured or not reachable. Set OPENCLAW_GATEWAY_URL environment variable.',
     }
     return {
       success: false,
@@ -388,6 +413,7 @@ async function processTaskTerminal(
     claude: { model: CONFIG.claudeModel, maxTurns: CONFIG.claudeMaxTurns },
     openai: { model: CONFIG.openaiModel, maxTurns: CONFIG.openaiMaxTurns },
     gemini: { model: CONFIG.geminiModel, maxTurns: CONFIG.geminiMaxTurns },
+    openclaw: { model: CONFIG.openclawModel, maxTurns: CONFIG.openclawMaxTurns },
   }
   const { model, maxTurns } = modelConfig[service]
 
@@ -1323,6 +1349,7 @@ async function runWorkerTerminal(): Promise<void> {
     console.error('   • Claude: Install Claude Code CLI (npm install -g @anthropic-ai/claude-code)')
     console.error('   • OpenAI: Set OPENAI_API_KEY environment variable')
     console.error('   • Gemini: Set GEMINI_API_KEY environment variable')
+    console.error('   • OpenClaw: Set OPENCLAW_GATEWAY_URL environment variable')
     console.error('')
     console.error('   Or use API mode: npx astrid-agent (without --terminal)')
     process.exit(1)
@@ -1336,11 +1363,21 @@ async function runWorkerTerminal(): Promise<void> {
   console.log('   Available providers:')
   for (const provider of providers) {
     const status = provider.available ? '✅' : '❌'
-    const config = provider.service === 'claude'
-      ? `(model: ${CONFIG.claudeModel})`
-      : provider.service === 'openai'
-      ? `(model: ${CONFIG.openaiModel})`
-      : `(model: ${CONFIG.geminiModel})`
+    let config = ''
+    switch (provider.service) {
+      case 'claude':
+        config = `(model: ${CONFIG.claudeModel})`
+        break
+      case 'openai':
+        config = `(model: ${CONFIG.openaiModel})`
+        break
+      case 'gemini':
+        config = `(model: ${CONFIG.geminiModel})`
+        break
+      case 'openclaw':
+        config = `(gateway: ${CONFIG.openclawGatewayUrl || 'not set'})`
+        break
+    }
     console.log(`   ${status} ${provider.service.toUpperCase()} ${provider.available ? config : '(not configured)'}`)
   }
   console.log('')
@@ -1692,6 +1729,11 @@ Common Environment Variables:
   ANTHROPIC_API_KEY            For Claude tasks (required)
   OPENAI_API_KEY               For OpenAI tasks (optional)
   GEMINI_API_KEY               For Gemini tasks (optional)
+
+  # OpenClaw Configuration
+  OPENCLAW_GATEWAY_URL         WebSocket URL (e.g., ws://localhost:18789)
+  OPENCLAW_AUTH_TOKEN          Optional gateway auth token
+  OPENCLAW_MODEL               Model to use (default: anthropic/claude-opus-4-5)
 
   # GitHub (for repository access)
   GITHUB_TOKEN                 For cloning private repositories
