@@ -42,8 +42,27 @@ This file covers contributing to the **web repository**. For iOS contributions, 
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your configuration
-   # At minimum: DATABASE_URL, NEXTAUTH_SECRET
    ```
+
+   **Minimum required for tests:**
+   ```bash
+   # .env.local
+   NEXTAUTH_SECRET=any-secret-for-testing
+   NEXTAUTH_URL=http://localhost:3000
+   ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+   ```
+
+   **For full local development (with database):**
+   ```bash
+   # PostgreSQL connection string
+   DATABASE_URL=postgresql://user:password@localhost:5432/astrid_dev
+
+   # Google OAuth (optional, for sign-in)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
+
+   > **Note:** Tests run with mocked database by default. You only need PostgreSQL for running the full app locally.
 
 4. **Set up the database**
    ```bash
