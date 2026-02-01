@@ -457,56 +457,95 @@ function OpenClawSettingsContent() {
             </CardContent>
           </Card>
 
-          {/* Setup Instructions */}
+          {/* Setup Instructions - Two Options */}
           <Card className="theme-bg-secondary theme-border">
             <CardHeader>
               <CardTitle className="theme-text-primary">Setup Instructions</CardTitle>
               <CardDescription className="theme-text-muted">
-                How to set up an OpenClaw worker
+                Connect Astrid and OpenClaw in either direction
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium theme-text-primary mb-2">1. Install OpenClaw</p>
-                <code className="block p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">
-                  pip install openclaw
-                </code>
+            <CardContent className="space-y-6">
+              {/* Option A: Configure from Astrid */}
+              <div className="border-l-4 border-orange-500 pl-4">
+                <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
+                  <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">A</span>
+                  Configure from Astrid (you&apos;re here)
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="font-medium theme-text-primary">1. Install & start OpenClaw</p>
+                    <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
+                      pip install openclaw && openclaw gateway
+                    </code>
+                  </div>
+                  <div>
+                    <p className="font-medium theme-text-primary">2. Add worker above</p>
+                    <p className="text-xs theme-text-muted">
+                      Gateway URL: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium theme-text-primary">3. Assign tasks</p>
+                    <p className="text-xs theme-text-muted">
+                      Assign to{' '}
+                      <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
+                        openclaw@astrid.cc
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <p className="text-sm font-medium theme-text-primary mb-2">2. Start the Gateway</p>
-                <code className="block p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono whitespace-pre-wrap">
-{`# Local development (no auth)
-openclaw gateway
-
-# With authentication token
-openclaw gateway --auth-token your-secret-token
-
-# For remote access via Tailscale Funnel
-tailscale funnel 18789`}
-                </code>
+              {/* Option B: Configure from OpenClaw */}
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
+                  <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">B</span>
+                  Configure from OpenClaw
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="font-medium theme-text-primary">1. Get OAuth credentials</p>
+                    <p className="text-xs theme-text-muted">
+                      Go to{' '}
+                      <Link href="/settings/api-access" className="text-blue-500 hover:underline">
+                        Settings → API Access
+                      </Link>
+                      {' '}and create OAuth credentials
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium theme-text-primary">2. Add Astrid channel to OpenClaw</p>
+                    <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1 whitespace-pre-wrap">
+{`# In your OpenClaw config (openclaw.yaml):
+channels:
+  astrid:
+    clientId: "your-client-id"
+    clientSecret: "your-secret"
+    agentEmail: "openclaw@astrid.cc"
+    pollIntervalMs: 30000`}
+                    </code>
+                  </div>
+                  <div>
+                    <p className="font-medium theme-text-primary">3. Restart OpenClaw</p>
+                    <p className="text-xs theme-text-muted">
+                      OpenClaw will poll Astrid for tasks assigned to you
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <p className="text-sm font-medium theme-text-primary mb-2">3. Add Worker to Astrid</p>
-                <p className="text-sm theme-text-muted">
-                  Click &quot;Add Worker&quot; above and enter your gateway URL
-                  (e.g., <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>)
-                </p>
+              {/* Which to choose */}
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
+                <p className="text-sm font-medium theme-text-primary mb-2">Which should I use?</p>
+                <ul className="text-xs theme-text-muted space-y-1">
+                  <li><strong>Option A (Worker):</strong> Astrid pushes tasks to your OpenClaw. Good for always-on servers.</li>
+                  <li><strong>Option B (Channel):</strong> OpenClaw pulls tasks from Astrid. Good for laptops/intermittent connections.</li>
+                </ul>
               </div>
 
-              <div>
-                <p className="text-sm font-medium theme-text-primary mb-2">4. Assign Tasks</p>
-                <p className="text-sm theme-text-muted">
-                  Assign tasks to{' '}
-                  <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                    openclaw@astrid.cc
-                  </span>
-                  {' '}and they&apos;ll be executed on your OpenClaw worker
-                </p>
-              </div>
-
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+              {/* Security Notes */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <p className="text-sm font-medium theme-text-primary mb-2">Security Notes</p>
                 <ul className="text-sm theme-text-muted space-y-1 list-disc list-inside">
                   <li>Use <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">wss://</code> for remote workers (Tailscale Funnel recommended)</li>

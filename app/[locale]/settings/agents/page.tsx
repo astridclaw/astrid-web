@@ -14,7 +14,10 @@ import {
   ArrowLeft,
   Sparkles,
   ChevronRight,
-  Server
+  Server,
+  Laptop,
+  Cloud,
+  Zap
 } from "lucide-react"
 import Image from "next/image"
 
@@ -72,78 +75,109 @@ function AgentsSettingsContent() {
             <Brain className="w-8 h-8 text-purple-500" />
             <div>
               <h1 className="text-2xl font-bold theme-text-primary">AI Agents</h1>
-              <p className="theme-text-muted">Add your API keys to enable AI assistance on your tasks</p>
+              <p className="theme-text-muted">Assign tasks to AI agents and get intelligent help</p>
             </div>
           </div>
 
-          {/* Basic AI Assistant Section - Main Content */}
+          {/* Agent Options Overview */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* OpenClaw - Prominent first option */}
+            <Card
+              className="theme-bg-secondary border-orange-500/50 border-2 cursor-pointer hover:scale-[1.02] transition-transform relative overflow-hidden"
+              onClick={() => router.push('/settings/openclaw')}
+            >
+              <div className="absolute top-2 right-2">
+                <span className="text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded-full flex items-center gap-1">
+                  <Zap className="w-3 h-3" />
+                  Recommended
+                </span>
+              </div>
+              <CardContent className="p-6 pt-10">
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+                    <Laptop className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold theme-text-primary text-lg flex items-center justify-center gap-2">
+                      OpenClaw
+                    </h3>
+                    <p className="text-sm theme-text-muted mt-1">
+                      Your own AI agent, running on your machine
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                    <span className="font-mono text-xs flex items-center gap-2">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                      openclaw@astrid.cc
+                    </span>
+                  </div>
+                  <ul className="text-xs theme-text-muted space-y-1 text-left">
+                    <li>✓ Full filesystem access</li>
+                    <li>✓ Run commands locally</li>
+                    <li>✓ Use your own API keys</li>
+                    <li>✓ Claude Code under the hood</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cloud Agents */}
+            <Card
+              className="theme-bg-secondary theme-border cursor-pointer hover:scale-[1.02] transition-transform"
+              onClick={() => router.push('/settings/coding-agents')}
+            >
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
+                    <Cloud className="w-8 h-8 text-indigo-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold theme-text-primary text-lg">
+                      Cloud Agents
+                    </h3>
+                    <p className="text-sm theme-text-muted mt-1">
+                      Self-hosted SDK agents with GitHub integration
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 space-y-1">
+                    <span className="font-mono text-xs flex items-center gap-2">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                      claude@astrid.cc
+                    </span>
+                    <span className="font-mono text-xs flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      openai@astrid.cc
+                    </span>
+                    <span className="font-mono text-xs flex items-center gap-2">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      gemini@astrid.cc
+                    </span>
+                  </div>
+                  <ul className="text-xs theme-text-muted space-y-1 text-left">
+                    <li>✓ Astrid SDK (npm package)</li>
+                    <li>✓ GitHub PR automation</li>
+                    <li>✓ Vercel preview deployments</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Basic AI Assistant Section - API Keys */}
           <Card className="theme-bg-secondary theme-border">
             <CardHeader>
               <CardTitle className="theme-text-primary flex flex-wrap items-center gap-2">
                 <Sparkles className="w-6 h-6 text-yellow-500" />
-                <span>AI Assistant</span>
+                <span>Cloud Agent API Keys</span>
               </CardTitle>
               <CardDescription className="theme-text-muted">
-                Add your own API keys to enable intelligent AI responses on your tasks.
-                Assign tasks to AI agents and get analysis, suggestions, and help.
+                Add your API keys to enable cloud agents (claude/openai/gemini@astrid.cc).
+                Not needed for OpenClaw - it uses your own API keys.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* How to Use */}
-              <div className="border-l-4 border-yellow-500 pl-4">
-                <h3 className="font-semibold theme-text-primary mb-2">How to Use</h3>
-                <div className="text-sm theme-text-muted space-y-2">
-                  <p>Assign tasks to any of these AI agents:</p>
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 space-y-1 font-mono text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                      claude@astrid.cc
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                      openai@astrid.cc
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      gemini@astrid.cc
-                    </div>
-                  </div>
-                  <p className="text-xs theme-text-muted">
-                    The agent will use your API key (configured below) to respond intelligently to your tasks.
-                  </p>
-                </div>
-              </div>
-
               {/* API Key Configuration */}
               <AIAPIKeyManager />
-            </CardContent>
-          </Card>
-
-          {/* Link to Coding Agents */}
-          <Card
-            className="theme-bg-secondary theme-border cursor-pointer hover:scale-[1.01] transition-transform"
-            onClick={() => router.push('/settings/coding-agents')}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="p-2 theme-bg-tertiary rounded-lg">
-                    <Server className="w-6 h-6 text-indigo-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold theme-text-primary flex items-center gap-2">
-                      Coding Agents
-                      <span className="text-xs font-normal bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded">
-                        Advanced
-                      </span>
-                    </h3>
-                    <p className="text-sm theme-text-muted">
-                      Set up self-hosted coding agents with GitHub integration using the Astrid SDK
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 theme-text-muted" />
-              </div>
             </CardContent>
           </Card>
         </div>
