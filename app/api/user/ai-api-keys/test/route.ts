@@ -9,7 +9,7 @@ import crypto from "crypto"
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex')
 
 const TestAPIKeySchema = z.object({
-  serviceId: z.enum(['claude', 'openai', 'gemini'])
+  serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw'])
 })
 
 // Decryption function
@@ -91,6 +91,19 @@ async function testGeminiKey(apiKey: string): Promise<{ success: boolean; error?
   }
 }
 
+async function testOpenClawKey(authToken: string, gatewayUrl: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { testOpenClawConnection } = await import('@/lib/ai/openclaw-rpc-client')
+    const result = await testOpenClawConnection(gatewayUrl, authToken, 15000)
+    return {
+      success: result.success,
+      error: result.error
+    }
+  } catch (error) {
+    return { success: false, error: `Test error: ${error instanceof Error ? error.message : 'Unknown error'}` }
+  }
+}
+
 export async function POST(request: NextRequest) {
   // Apply strict rate limiting for API key testing
   const rateLimitCheck = withRateLimit(RATE_LIMITS.API_KEY_TEST)(request)
@@ -159,6 +172,16 @@ export async function POST(request: NextRequest) {
         break
       case 'gemini':
         testResult = await testGeminiKey(decryptedKey)
+        break
+      case 'openclaw':
+        // OpenClaw requires gatewayUrl from stored config
+        if (!keyData.gatewayUrl) {
+          return NextResponse.json(
+            { success: false, error: "Gateway URL not configured" },
+            { status: 400 }
+          )
+        }
+        testResult = await testOpenClawKey(decryptedKey, keyData.gatewayUrl)
         break
       default:
         return NextResponse.json(

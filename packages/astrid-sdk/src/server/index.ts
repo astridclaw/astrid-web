@@ -80,6 +80,7 @@ function detectProvider(aiAgent: { email?: string; type?: string }): AIProvider 
   if (email.includes('claude') || type.includes('claude')) return 'claude'
   if (email.includes('openai') || email.includes('gpt') || type.includes('openai')) return 'openai'
   if (email.includes('gemini') || email.includes('google') || type.includes('gemini')) return 'gemini'
+  if (email.includes('openclaw') || type.includes('openclaw')) return 'openclaw'
 
   return 'claude' // Default
 }
@@ -92,6 +93,7 @@ function getProviderName(provider: AIProvider): string {
     case 'claude': return 'Claude'
     case 'openai': return 'OpenAI'
     case 'gemini': return 'Gemini'
+    case 'openclaw': return 'OpenClaw'
     default: return 'AI Agent'
   }
 }
@@ -104,6 +106,7 @@ function getApiKeyForProvider(provider: AIProvider): string | undefined {
     case 'claude': return process.env.ANTHROPIC_API_KEY
     case 'openai': return process.env.OPENAI_API_KEY
     case 'gemini': return process.env.GEMINI_API_KEY
+    case 'openclaw': return process.env.OPENCLAW_GATEWAY_URL // OpenClaw uses gateway URL
     default: return undefined
   }
 }

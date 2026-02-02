@@ -14,12 +14,13 @@ function getEncryptionKey(): string {
 }
 
 const SaveAPIKeySchema = z.object({
-  serviceId: z.enum(['claude', 'openai', 'gemini']),
-  apiKey: z.string().min(1)
+  serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw']),
+  apiKey: z.string().min(1),
+  gatewayUrl: z.string().url().optional()  // For OpenClaw only
 })
 
 const DeleteAPIKeySchema = z.object({
-  serviceId: z.enum(['claude', 'openai', 'gemini'])
+  serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw'])
 })
 
 // Encryption functions
@@ -107,7 +108,11 @@ export async function GET(request: NextRequest) {
             keyPreview: getKeyPreview(decryptedKey),
             isValid: (keyInfo as any).isValid,
             lastTested: (keyInfo as any).lastTested,
-            error: (keyInfo as any).error
+            error: (keyInfo as any).error,
+            // Include gatewayUrl for OpenClaw
+            ...(serviceId === 'openclaw' && (keyInfo as any).gatewayUrl
+              ? { gatewayUrl: (keyInfo as any).gatewayUrl }
+              : {})
           }
         } catch (error) {
           keyData[serviceId] = {
@@ -186,7 +191,11 @@ export async function PUT(request: NextRequest) {
       isValid: null, // Will be set when tested
       lastTested: null,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      // Store gatewayUrl for OpenClaw (not encrypted, it's not sensitive)
+      ...(validatedData.serviceId === 'openclaw' && validatedData.gatewayUrl
+        ? { gatewayUrl: validatedData.gatewayUrl }
+        : {})
     }
 
     // Update user settings

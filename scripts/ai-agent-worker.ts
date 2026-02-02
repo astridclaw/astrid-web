@@ -88,6 +88,11 @@ import {
   type GeminiAgentExecutorConfig,
 } from '../lib/ai/gemini-agent-executor'
 import {
+  executeWithOpenClaw,
+  planWithOpenClaw,
+  type OpenClawExecutorConfig,
+} from '../lib/ai/openclaw-executor'
+import {
   isRegisteredAgent,
   getAgentService,
   getAgentConfig,
@@ -184,6 +189,18 @@ async function routePlanningToService(
         logger: config.logger,
         onProgress: config.onProgress,
       })
+
+    case 'openclaw':
+      // OpenClaw requires gateway URL instead of API key
+      // The gateway URL comes from the user's registered workers
+      return planWithOpenClaw(taskTitle, taskDescription, {
+        repoPath: config.repoPath,
+        gatewayUrl: config.apiKey, // apiKey field is repurposed for gateway URL
+        model: config.model,
+        maxTurns: config.maxTurns || 25,
+        logger: config.logger,
+        onProgress: config.onProgress,
+      })
   }
 }
 
@@ -218,6 +235,17 @@ async function routeExecutionToService(
         apiKey: config.apiKey,
         model: config.model,
         maxIterations: config.maxTurns || 50,
+        logger: config.logger,
+        onProgress: config.onProgress,
+      })
+
+    case 'openclaw':
+      // OpenClaw requires gateway URL instead of API key
+      return executeWithOpenClaw(plan, taskTitle, taskDescription, {
+        repoPath: config.repoPath,
+        gatewayUrl: config.apiKey, // apiKey field is repurposed for gateway URL
+        model: config.model,
+        maxTurns: config.maxTurns || 100,
         logger: config.logger,
         onProgress: config.onProgress,
       })
@@ -376,6 +404,14 @@ Format your response in clear markdown. Be thorough but concise.`
           }
         }
       }
+
+      case 'openclaw':
+      default:
+        return {
+          success: false,
+          response: '',
+          error: `Unsupported AI service for assistant mode: ${service}. OpenClaw uses a different execution path.`
+        }
     }
   } catch (error) {
     return {

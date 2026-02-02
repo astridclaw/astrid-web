@@ -50,6 +50,10 @@ export async function GET() {
       gemini: {
         model: modelPreferences.gemini || DEFAULT_MODELS.gemini,
         isDefault: !modelPreferences.gemini
+      },
+      openclaw: {
+        model: modelPreferences.openclaw || DEFAULT_MODELS.openclaw,
+        isDefault: !modelPreferences.openclaw
       }
     }
 

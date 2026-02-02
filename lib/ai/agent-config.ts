@@ -8,7 +8,7 @@
  * - What context file to load (all cloud agents use ASTRID.md)
  */
 
-export type AIService = 'claude' | 'openai' | 'gemini'
+export type AIService = 'claude' | 'openai' | 'gemini' | 'openclaw'
 
 export interface AIAgentConfig {
   /** The AI service provider */
@@ -54,6 +54,11 @@ export const SUGGESTED_MODELS: Record<AIService, string[]> = {
     'gemini-2.5-flash',
     'gemini-1.5-pro',
   ],
+  openclaw: [
+    'anthropic/claude-opus-4-5',
+    'anthropic/claude-sonnet-4',
+    'openai/gpt-4o',
+  ],
 }
 
 /**
@@ -63,6 +68,7 @@ export const DEFAULT_MODELS: Record<AIService, string> = {
   claude: 'claude-sonnet-4-20250514',
   openai: 'gpt-4o', // Reliable default for OpenAI
   gemini: 'gemini-2.0-flash',
+  openclaw: 'anthropic/claude-opus-4-5', // Default for OpenClaw workers
 }
 
 export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
@@ -89,6 +95,14 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     agentType: 'gemini_agent',
     contextFile: 'ASTRID.md',
     capabilities: ['code_generation', 'code_review', 'planning', 'github_operations'],
+  },
+  'openclaw@astrid.cc': {
+    service: 'openclaw',
+    model: 'anthropic/claude-opus-4-5',
+    displayName: 'OpenClaw Worker',
+    agentType: 'openclaw_worker',
+    contextFile: 'ASTRID.md',
+    capabilities: ['code_generation', 'code_review', 'planning', 'github_operations', 'workflow_suggestions'],
   },
 } as const
 

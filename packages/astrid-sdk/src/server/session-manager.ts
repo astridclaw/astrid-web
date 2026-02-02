@@ -9,7 +9,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import crypto from 'crypto'
 
-export type AIProvider = 'claude' | 'openai' | 'gemini' | 'unknown'
+export type AIProvider = 'claude' | 'openai' | 'gemini' | 'openclaw' | 'unknown'
 
 export interface Session {
   id: string
