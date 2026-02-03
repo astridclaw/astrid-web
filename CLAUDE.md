@@ -53,7 +53,7 @@ When user says **"ship it"**, execute the complete deployment sequence:
 
 3. **Trigger Vercel production deployment**:
    ```bash
-   vercel --prod --yes
+   npx vercel --prod --yes --no-dotenv
    ```
 
 ### Asking for Approval
@@ -83,7 +83,7 @@ Claude Code executes:
 2. git pull origin main
 3. git merge feature-branch  # if on a branch
 4. git push origin main
-5. vercel --prod --yes
+5. npx vercel --prod --yes --no-dotenv
 6. Mark Astrid task as complete (if working on a task)
 ```
 
@@ -99,7 +99,7 @@ Claude Code detects comment and executes:
 5. git pull origin main
 6. gh pr merge <PR-number> --merge  # Merge the PR
 7. git pull origin main  # Get merged changes
-8. vercel --prod --yes  # Deploy to production
+8. npx vercel --prod --yes --no-dotenv  # Deploy to production
 9. npx tsx scripts/complete-task-with-workflow.ts <taskId>  # Mark complete
 ```
 
@@ -119,12 +119,27 @@ This project uses **manual Vercel CLI deployments** (not GitHub auto-deploy) for
 - Multiple build type support
 - Direct deployment oversight
 
+### CRITICAL: Always Use --no-dotenv Flag
+
+**NEVER run `vercel` or `npx vercel` without the `--no-dotenv` flag!**
+
+The Vercel CLI will **destructively overwrite** your `.env.local` file with environment variables downloaded from Vercel's servers. This will DELETE all your local secrets including:
+- API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, etc.)
+- Database URLs
+- OAuth credentials
+- Vercel tokens themselves
+
+**Always use:**
+```bash
+npx vercel --prod --yes --no-dotenv
+```
+
 ### Standard Deployment Flow
 
 ```bash
 # After user approves push to main
 git push origin main
-vercel --prod --yes
+npx vercel --prod --yes --no-dotenv
 ```
 
 ### Force Production Rebuild
@@ -132,10 +147,10 @@ vercel --prod --yes
 To trigger a fresh production build without code changes:
 
 ```bash
-vercel --prod --yes
+npx vercel --prod --yes --no-dotenv
 ```
 
-**Note:** Vercel token must be configured. See `.env.local` for `VERCEL_TOKEN`.
+**Note:** Vercel token must be configured. See `.env.local` for `VERCEL_API_TOKEN`.
 **Note:** GitHub Actions workflows exist for CI but NOT for auto-deploy.
 
 ---
@@ -195,7 +210,7 @@ git fetch origin
 git checkout main
 gh pr merge <PR-number> --merge
 git push origin main
-vercel --prod --yes
+npx vercel --prod --yes --no-dotenv
 npx tsx scripts/complete-task-with-workflow.ts <taskId>
 ```
 
@@ -568,7 +583,7 @@ Then configure your webhook URL in Astrid Settings.
 | `npm run test:e2e` | Run Playwright E2E tests |
 | `npm run dev` | Start dev server |
 | **Deployment** | |
-| `vercel --prod --yes` | Deploy to production (manual, no auto-deploy) |
+| `npx vercel --prod --yes --no-dotenv` | Deploy to production (ALWAYS use --no-dotenv!) |
 | `gh pr merge <PR#> --merge` | Merge PR |
 | **Astrid Tasks** | |
 | `npx tsx scripts/get-astrid-tasks.ts` | Pull tasks |
@@ -579,7 +594,7 @@ Then configure your webhook URL in Astrid Settings.
 
 | Scenario | Action |
 |----------|--------|
-| User says "ship it" (local session) | Merge PR → push main → `vercel --prod --yes` → `npm run deploy:canary` |
+| User says "ship it" (local session) | Merge PR → push main → `npx vercel --prod --yes --no-dotenv` → `npm run deploy:canary` |
 | User comments "ship it" on Astrid task | Fetch tasks → merge PR → push main → deploy → canary → mark complete |
 | Check for ship it comments | `npx tsx scripts/get-astrid-tasks.ts` and look for user "ship it" comments |
 | Build failing | Run `npm run predeploy` to auto-fix and retry |
