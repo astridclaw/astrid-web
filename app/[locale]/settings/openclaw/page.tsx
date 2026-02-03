@@ -42,6 +42,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from "@/lib/i18n/client"
 
 interface OpenClawWorker {
   id: string
@@ -71,18 +72,18 @@ function getStatusIcon(status: string) {
   }
 }
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status: string, t: (key: string) => string) {
   switch (status) {
     case 'online':
-      return <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">Online</Badge>
+      return <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('settingsPages.openclaw.status.online')}</Badge>
     case 'offline':
-      return <Badge variant="secondary">Offline</Badge>
+      return <Badge variant="secondary">{t('settingsPages.openclaw.status.offline')}</Badge>
     case 'busy':
-      return <Badge variant="default" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">Busy</Badge>
+      return <Badge variant="default" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('settingsPages.openclaw.status.busy')}</Badge>
     case 'error':
-      return <Badge variant="destructive">Error</Badge>
+      return <Badge variant="destructive">{t('settingsPages.openclaw.status.error')}</Badge>
     default:
-      return <Badge variant="secondary">Unknown</Badge>
+      return <Badge variant="secondary">{t('settingsPages.openclaw.status.unknown')}</Badge>
   }
 }
 
@@ -105,6 +106,7 @@ function formatLastSeen(lastSeen: string | null): string {
 }
 
 function OpenClawSettingsContent() {
+  const { t } = useTranslations()
   const { data: session, status } = useSession()
   const router = useRouter()
   const [workers, setWorkers] = useState<OpenClawWorker[]>([])
@@ -118,7 +120,7 @@ function OpenClawSettingsContent() {
   const [newWorkerName, setNewWorkerName] = useState('')
   const [newWorkerUrl, setNewWorkerUrl] = useState('')
   const [newWorkerToken, setNewWorkerToken] = useState('')
-  const [newWorkerAuthMode, setNewWorkerAuthMode] = useState('token')
+  const [newWorkerAuthMode, setNewWorkerAuthMode] = useState('astrid-signed')
   const [addError, setAddError] = useState<string | null>(null)
 
   const fetchWorkers = useCallback(async () => {
@@ -224,11 +226,11 @@ function OpenClawSettingsContent() {
   }
 
   if (status === "loading" || loading) {
-    return <LoadingScreen message="Loading OpenClaw settings..." />
+    return <LoadingScreen message={t('settingsPages.openclaw.loading')} />
   }
 
   if (!session?.user) {
-    return <LoadingScreen message="Loading OpenClaw settings..." />
+    return <LoadingScreen message={t('settingsPages.openclaw.loading')} />
   }
 
   return (
@@ -253,7 +255,7 @@ function OpenClawSettingsContent() {
           </div>
           <div className="flex items-center space-x-1 theme-count-bg rounded-full px-3 py-1">
             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            <span className="text-sm theme-text-primary">OpenClaw Workers</span>
+            <span className="text-sm theme-text-primary">{t('settingsPages.openclaw.breadcrumb')}</span>
           </div>
         </div>
       </div>
@@ -265,8 +267,8 @@ function OpenClawSettingsContent() {
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-3xl">🦞</span>
             <div>
-              <h1 className="text-2xl font-bold theme-text-primary">OpenClaw Integration</h1>
-              <p className="theme-text-muted">Connect third-party OpenClaw workers to Astrid (advanced)</p>
+              <h1 className="text-2xl font-bold theme-text-primary">{t('settingsPages.openclaw.title')}</h1>
+              <p className="theme-text-muted">{t('settingsPages.openclaw.description')}</p>
             </div>
           </div>
 
@@ -277,14 +279,12 @@ function OpenClawSettingsContent() {
                 <Info className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm theme-text-primary font-medium">
-                    Third-party AI agent integration
+                    {t('settingsPages.openclaw.overview.title')}
                   </p>
                   <p className="text-sm theme-text-muted mt-1">
-                    OpenClaw is a third-party open-source project that can run AI coding agents on your
-                    own infrastructure. It may use Claude Code CLI, or other AI backends. Astrid supports
-                    OpenClaw integration for tasks assigned to
+                    {t('settingsPages.openclaw.overview.description')}
                     <span className="inline-flex items-center gap-1 mx-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                      openclaw@astrid.cc
+                      {t('settingsPages.openclaw.overview.agentEmail')}
                     </span>
                   </p>
                   <div className="flex flex-wrap gap-2 mt-3">
@@ -307,21 +307,19 @@ function OpenClawSettingsContent() {
                 <AlertTriangle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm theme-text-primary font-medium">
-                    Important: Understand the risks
+                    {t('settingsPages.openclaw.security.title')}
                   </p>
                   <p className="text-sm theme-text-muted mt-1">
-                    OpenClaw is not developed or maintained by Astrid or Anthropic. It is a community project
-                    that executes code on your machines with broad system access. Before using OpenClaw:
+                    {t('settingsPages.openclaw.security.description')}
                   </p>
                   <ul className="text-sm theme-text-muted mt-2 space-y-1 list-disc list-inside">
-                    <li>Review the OpenClaw source code and understand what it does</li>
-                    <li>Run it in isolated environments (containers, VMs) when possible</li>
-                    <li>Never expose OpenClaw to the public internet without authentication</li>
-                    <li>Understand that AI agents can make mistakes and execute unintended actions</li>
+                    <li>{t('settingsPages.openclaw.security.risks.review')}</li>
+                    <li>{t('settingsPages.openclaw.security.risks.isolate')}</li>
+                    <li>{t('settingsPages.openclaw.security.risks.noPublic')}</li>
+                    <li>{t('settingsPages.openclaw.security.risks.mistakes')}</li>
                   </ul>
                   <p className="text-xs theme-text-muted mt-2 italic">
-                    Astrid provides this integration for advanced users. We do not endorse or guarantee
-                    the security of third-party tools.
+                    {t('settingsPages.openclaw.security.disclaimer')}
                   </p>
                 </div>
               </div>
@@ -335,72 +333,88 @@ function OpenClawSettingsContent() {
                 <div>
                   <CardTitle className="theme-text-primary flex items-center gap-2">
                     <Cog className="w-5 h-5 text-orange-500" />
-                    Registered Workers
+                    {t('settingsPages.openclaw.workers.title')}
                   </CardTitle>
                   <CardDescription className="theme-text-muted">
-                    Workers you&apos;ve connected to Astrid
+                    {t('settingsPages.openclaw.workers.description')}
                   </CardDescription>
                 </div>
                 <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
                   <DialogTrigger asChild>
                     <Button size="sm">
                       <Plus className="w-4 h-4 mr-1" />
-                      Add Worker
+                      {t('settingsPages.openclaw.workers.addWorker')}
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Add OpenClaw Worker</DialogTitle>
+                      <DialogTitle>{t('settingsPages.openclaw.addDialog.title')}</DialogTitle>
                       <DialogDescription>
-                        Connect a self-hosted OpenClaw Gateway to Astrid
+                        {t('settingsPages.openclaw.addDialog.description')}
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="worker-name">Name</Label>
+                        <Label htmlFor="worker-name">{t('settingsPages.openclaw.addDialog.name')}</Label>
                         <Input
                           id="worker-name"
-                          placeholder="My MacBook Worker"
+                          placeholder={t('settingsPages.openclaw.addDialog.namePlaceholder')}
                           value={newWorkerName}
                           onChange={(e) => setNewWorkerName(e.target.value)}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="gateway-url">Gateway URL</Label>
+                        <Label htmlFor="gateway-url">{t('settingsPages.openclaw.addDialog.gatewayUrl')}</Label>
                         <Input
                           id="gateway-url"
-                          placeholder="ws://localhost:18789"
+                          placeholder={t('settingsPages.openclaw.addDialog.gatewayUrlPlaceholder')}
                           value={newWorkerUrl}
                           onChange={(e) => setNewWorkerUrl(e.target.value)}
                         />
                         <p className="text-xs theme-text-muted">
-                          Use <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://</code> for local or{' '}
-                          <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">wss://</code> for Tailscale Funnel
+                          {t('settingsPages.openclaw.addDialog.gatewayUrlHint')}
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="auth-mode">Authentication Mode</Label>
+                        <Label htmlFor="auth-mode">{t('settingsPages.openclaw.addDialog.authMode')}</Label>
                         <Select value={newWorkerAuthMode} onValueChange={setNewWorkerAuthMode}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="token">Token</SelectItem>
-                            <SelectItem value="tailscale">Tailscale (no auth needed)</SelectItem>
-                            <SelectItem value="none">None (local only)</SelectItem>
+                            <SelectItem value="astrid-signed">{t('settingsPages.openclaw.authModes.astridSigned')}</SelectItem>
+                            <SelectItem value="token">{t('settingsPages.openclaw.authModes.token')}</SelectItem>
+                            <SelectItem value="tailscale">{t('settingsPages.openclaw.authModes.tailscale')}</SelectItem>
+                            <SelectItem value="none">{t('settingsPages.openclaw.authModes.none')}</SelectItem>
                           </SelectContent>
                         </Select>
+                        <p className="text-xs theme-text-muted">
+                          {newWorkerAuthMode === 'astrid-signed' && t('settingsPages.openclaw.authModes.astridSignedDesc')}
+                          {newWorkerAuthMode === 'token' && t('settingsPages.openclaw.authModes.tokenDesc')}
+                          {newWorkerAuthMode === 'tailscale' && t('settingsPages.openclaw.authModes.tailscaleDesc')}
+                          {newWorkerAuthMode === 'none' && t('settingsPages.openclaw.authModes.noneDesc')}
+                        </p>
                       </div>
                       {newWorkerAuthMode === 'token' && (
                         <div className="space-y-2">
-                          <Label htmlFor="auth-token">Auth Token</Label>
+                          <Label htmlFor="auth-token">{t('settingsPages.openclaw.addDialog.authToken')}</Label>
                           <Input
                             id="auth-token"
                             type="password"
-                            placeholder="Gateway authentication token"
+                            placeholder={t('settingsPages.openclaw.addDialog.authTokenPlaceholder')}
                             value={newWorkerToken}
                             onChange={(e) => setNewWorkerToken(e.target.value)}
                           />
+                        </div>
+                      )}
+                      {newWorkerAuthMode === 'astrid-signed' && (
+                        <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg text-xs">
+                          <p className="font-medium text-green-700 dark:text-green-300 mb-1">{t('settingsPages.openclaw.astridSignedInfo.title')}</p>
+                          <p className="text-green-600 dark:text-green-400">
+                            {t('settingsPages.openclaw.astridSignedInfo.description')}{' '}
+                            <code className="bg-green-100 dark:bg-green-800 px-1 rounded">{t('settingsPages.openclaw.astridSignedInfo.publicKeyPath')}</code>{' '}
+                            {t('settingsPages.openclaw.astridSignedInfo.suffix')}
+                          </p>
                         </div>
                       )}
                       {addError && (
@@ -409,13 +423,13 @@ function OpenClawSettingsContent() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                        Cancel
+                        {t('actions.cancel')}
                       </Button>
                       <Button
                         onClick={handleAddWorker}
                         disabled={addingWorker || !newWorkerName || !newWorkerUrl}
                       >
-                        {addingWorker ? 'Adding...' : 'Add Worker'}
+                        {addingWorker ? t('settingsPages.openclaw.addDialog.adding') : t('settingsPages.openclaw.addDialog.add')}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -426,9 +440,9 @@ function OpenClawSettingsContent() {
               {workers.length === 0 ? (
                 <div className="text-center py-8 theme-text-muted">
                   <span className="text-4xl mb-4 block">🦞</span>
-                  <p className="font-medium theme-text-primary mb-1">No workers registered</p>
+                  <p className="font-medium theme-text-primary mb-1">{t('settingsPages.openclaw.workers.noWorkers')}</p>
                   <p className="text-sm">
-                    Add an OpenClaw worker to start delegating tasks
+                    {t('settingsPages.openclaw.workers.noWorkersHint')}
                   </p>
                 </div>
               ) : (
@@ -444,16 +458,16 @@ function OpenClawSettingsContent() {
                           <div>
                             <p className="font-medium theme-text-primary flex items-center gap-2">
                               {worker.name}
-                              {getStatusBadge(worker.status)}
+                              {getStatusBadge(worker.status, t)}
                             </p>
                             <p className="text-xs theme-text-muted">
                               {worker.gatewayUrl}
                             </p>
                             <p className="text-xs theme-text-muted">
-                              Last seen: {formatLastSeen(worker.lastSeen)}
+                              {t('settingsPages.openclaw.workers.lastSeen')}: {formatLastSeen(worker.lastSeen)}
                               {worker.lastError && (
                                 <span className="text-red-500 ml-2">
-                                  Error: {worker.lastError}
+                                  {t('settingsPages.openclaw.workers.error')}: {worker.lastError}
                                 </span>
                               )}
                             </p>
@@ -489,10 +503,9 @@ function OpenClawSettingsContent() {
           {/* Setup Instructions - Two Options */}
           <Card className="theme-bg-secondary theme-border">
             <CardHeader>
-              <CardTitle className="theme-text-primary">Setup Instructions</CardTitle>
+              <CardTitle className="theme-text-primary">{t('settingsPages.openclaw.setup.title')}</CardTitle>
               <CardDescription className="theme-text-muted">
-                Connect your OpenClaw instance to receive tasks from Astrid.
-                OpenClaw can use various AI backends (Claude Code CLI, other agents) - see OpenClaw docs for configuration.
+                {t('settingsPages.openclaw.setup.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -500,45 +513,57 @@ function OpenClawSettingsContent() {
               <div className="border-l-4 border-orange-500 pl-4">
                 <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
                   <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">A</span>
-                  Register your OpenClaw worker (Push mode)
+                  {t('settingsPages.openclaw.setup.optionA.title')}
                 </h3>
                 <p className="text-xs theme-text-muted mb-3 italic">
-                  Prerequisite: You already have OpenClaw installed and the gateway running.
-                  See <Link href="https://docs.openclaw.ai/start/getting-started" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">OpenClaw docs</Link> for installation.
+                  {t('settingsPages.openclaw.setup.optionA.prerequisite')}{' '}
+                  <Link href="https://docs.openclaw.ai/start/getting-started" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{t('settingsPages.openclaw.setup.optionA.seeDocsLink')}</Link>
                 </p>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium theme-text-primary">1. Find your Gateway URL</p>
+                    <p className="font-medium theme-text-primary">1. {t('settingsPages.openclaw.setup.optionA.step1.title')}</p>
                     <p className="text-xs theme-text-muted">
-                      Check your OpenClaw config or run:
+                      {t('settingsPages.openclaw.setup.optionA.step1.description')}
                     </p>
                     <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
-                      openclaw config get gateway.url
+                      {t('settingsPages.openclaw.setup.optionA.step1.command')}
                     </code>
                     <p className="text-xs theme-text-muted mt-1">
-                      Default: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>
+                      {t('settingsPages.openclaw.setup.optionA.step1.default')} <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>
                     </p>
                   </div>
                   <div>
-                    <p className="font-medium theme-text-primary">2. Get your auth token (if using token auth)</p>
+                    <p className="font-medium theme-text-primary">2. {t('settingsPages.openclaw.setup.optionA.step2.title')}</p>
+                    <p className="text-xs theme-text-muted mb-2">
+                      <strong>{t('settingsPages.openclaw.setup.optionA.step2.recommended')}</strong> {t('settingsPages.openclaw.setup.optionA.step2.astridSignedHint')}
+                    </p>
+                    <p className="text-xs theme-text-muted">
+                      {t('settingsPages.openclaw.setup.optionA.step2.configureGateway')}
+                    </p>
                     <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
-                      openclaw config get gateway.auth.token
+                      https://astrid.cc/.well-known/openclaw-public-key
+                    </code>
+                    <p className="text-xs theme-text-muted mt-2">
+                      <strong>{t('settingsPages.openclaw.setup.optionA.step2.alternative')}</strong> {t('settingsPages.openclaw.setup.optionA.step2.tokenHint')}
+                    </p>
+                    <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
+                      {t('settingsPages.openclaw.setup.optionA.step2.tokenCommand')}
                     </code>
                   </div>
                   <div>
-                    <p className="font-medium theme-text-primary">3. Add worker using the &quot;Add Worker&quot; button above</p>
+                    <p className="font-medium theme-text-primary">3. {t('settingsPages.openclaw.setup.optionA.step3.title')}</p>
                     <p className="text-xs theme-text-muted">
-                      Enter your Gateway URL and authentication credentials
+                      {t('settingsPages.openclaw.setup.optionA.step3.description')}
                     </p>
                   </div>
                   <div>
-                    <p className="font-medium theme-text-primary">4. Assign tasks</p>
+                    <p className="font-medium theme-text-primary">4. {t('settingsPages.openclaw.setup.optionA.step4.title')}</p>
                     <p className="text-xs theme-text-muted">
-                      Assign tasks to{' '}
+                      {t('settingsPages.openclaw.setup.optionA.step4.description')}{' '}
                       <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                        openclaw@astrid.cc
+                        {t('settingsPages.openclaw.overview.agentEmail')}
                       </span>
-                      {' '}and Astrid will push them to your worker
+                      {' '}{t('settingsPages.openclaw.setup.optionA.step4.suffix')}
                     </p>
                   </div>
                 </div>
@@ -548,27 +573,27 @@ function OpenClawSettingsContent() {
               <div className="border-l-4 border-blue-500 pl-4">
                 <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
                   <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">B</span>
-                  Configure Astrid as an OpenClaw channel (Pull mode)
+                  {t('settingsPages.openclaw.setup.optionB.title')}
                 </h3>
                 <p className="text-xs theme-text-muted mb-3 italic">
-                  Prerequisite: You already have OpenClaw installed.
-                  See <Link href="https://docs.openclaw.ai/start/getting-started" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">OpenClaw docs</Link> for installation.
+                  {t('settingsPages.openclaw.setup.optionB.prerequisite')}{' '}
+                  <Link href="https://docs.openclaw.ai/start/getting-started" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{t('settingsPages.openclaw.setup.optionA.seeDocsLink')}</Link>
                 </p>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium theme-text-primary">1. Create OAuth credentials in Astrid</p>
+                    <p className="font-medium theme-text-primary">1. {t('settingsPages.openclaw.setup.optionB.step1.title')}</p>
                     <p className="text-xs theme-text-muted">
-                      Go to{' '}
+                      {t('settingsPages.openclaw.setup.optionB.step1.description')}{' '}
                       <Link href="/settings/api-access" className="text-blue-500 hover:underline">
-                        Settings → API Access
+                        {t('settingsPages.openclaw.setup.optionB.step1.linkText')}
                       </Link>
-                      {' '}and create an OAuth client. Copy the Client ID and Client Secret.
+                      {' '}{t('settingsPages.openclaw.setup.optionB.step1.suffix')}
                     </p>
                   </div>
                   <div>
-                    <p className="font-medium theme-text-primary">2. Add Astrid channel to your OpenClaw config</p>
+                    <p className="font-medium theme-text-primary">2. {t('settingsPages.openclaw.setup.optionB.step2.title')}</p>
                     <p className="text-xs theme-text-muted mb-1">
-                      Add this to <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">~/.openclaw/openclaw.json</code>:
+                      {t('settingsPages.openclaw.setup.optionB.step2.description')} <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">~/.openclaw/openclaw.json</code>:
                     </p>
                     <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1 whitespace-pre-wrap">
 {`{
@@ -586,11 +611,11 @@ function OpenClawSettingsContent() {
                     </code>
                   </div>
                   <div>
-                    <p className="font-medium theme-text-primary">3. Restart OpenClaw</p>
+                    <p className="font-medium theme-text-primary">3. {t('settingsPages.openclaw.setup.optionB.step3.title')}</p>
                     <p className="text-xs theme-text-muted">
-                      OpenClaw will poll Astrid every 30 seconds for tasks assigned to{' '}
+                      {t('settingsPages.openclaw.setup.optionB.step3.description')}{' '}
                       <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                        openclaw@astrid.cc
+                        {t('settingsPages.openclaw.overview.agentEmail')}
                       </span>
                     </p>
                   </div>
@@ -599,39 +624,68 @@ function OpenClawSettingsContent() {
 
               {/* Which to choose */}
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                <p className="text-sm font-medium theme-text-primary mb-2">Which should I use?</p>
+                <p className="text-sm font-medium theme-text-primary mb-2">{t('settingsPages.openclaw.setup.whichToUse.title')}</p>
                 <ul className="text-xs theme-text-muted space-y-2">
                   <li>
-                    <strong>Option A (Push):</strong> Astrid connects to your OpenClaw gateway and pushes tasks.
+                    <strong>{t('settingsPages.openclaw.setup.whichToUse.optionA.title')}</strong> {t('settingsPages.openclaw.setup.whichToUse.optionA.description')}
                     <br />
-                    <span className="text-green-600 dark:text-green-400">Best for:</span> Always-on servers, OpenClaw accessible via public URL or Tailscale.
+                    <span className="text-green-600 dark:text-green-400">Best for:</span> {t('settingsPages.openclaw.setup.whichToUse.optionA.bestFor')}
                   </li>
                   <li>
-                    <strong>Option B (Pull):</strong> OpenClaw polls Astrid&apos;s API for new tasks.
+                    <strong>{t('settingsPages.openclaw.setup.whichToUse.optionB.title')}</strong> {t('settingsPages.openclaw.setup.whichToUse.optionB.description')}
                     <br />
-                    <span className="text-green-600 dark:text-green-400">Best for:</span> Laptops, machines behind NAT/firewall, intermittent connections.
+                    <span className="text-green-600 dark:text-green-400">Best for:</span> {t('settingsPages.openclaw.setup.whichToUse.optionB.bestFor')}
                   </li>
                 </ul>
                 <p className="text-xs theme-text-muted mt-3 italic">
-                  OpenClaw handles code execution using its configured AI backend (Claude, GPT, etc.).
-                  See the <Link href="https://docs.openclaw.ai/gateway/configuration" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">OpenClaw configuration docs</Link> for agent and model options.
+                  {t('settingsPages.openclaw.setup.whichToUse.note')} <Link href="https://docs.openclaw.ai/gateway/configuration" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">{t('settingsPages.openclaw.setup.whichToUse.configDocsLink')}</Link> {t('settingsPages.openclaw.setup.whichToUse.configDocsSuffix')}
                 </p>
               </div>
 
               {/* Security Notes */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <p className="text-sm font-medium theme-text-primary mb-2">Connection Security</p>
+                <p className="text-sm font-medium theme-text-primary mb-2">{t('settingsPages.openclaw.connectionSecurity.title')}</p>
+
+                {/* Astrid-Signed explanation */}
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+                  <p className="text-sm font-medium text-green-700 dark:text-green-300 mb-2">
+                    {t('settingsPages.openclaw.connectionSecurity.astridSigned.title')}
+                  </p>
+                  <p className="text-xs text-green-600 dark:text-green-400 mb-2">
+                    {t('settingsPages.openclaw.connectionSecurity.astridSigned.description')}
+                  </p>
+                  <div className="text-xs text-green-600 dark:text-green-400 space-y-1">
+                    <p><strong>{t('settingsPages.openclaw.connectionSecurity.astridSigned.howItWorks')}</strong></p>
+                    <ol className="list-decimal list-inside space-y-1 ml-2">
+                      <li>{t('settingsPages.openclaw.connectionSecurity.astridSigned.step1')}</li>
+                      <li>{t('settingsPages.openclaw.connectionSecurity.astridSigned.step2')}<br/>
+                        <code className="bg-green-100 dark:bg-green-800 px-1 rounded">https://astrid.cc/.well-known/openclaw-public-key</code>
+                      </li>
+                      <li>{t('settingsPages.openclaw.connectionSecurity.astridSigned.step3')}</li>
+                      <li>{t('settingsPages.openclaw.connectionSecurity.astridSigned.step4')}</li>
+                    </ol>
+                  </div>
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                    See the{' '}
+                    <Link href="https://github.com/anthropics/astrid/blob/main/docs/OPENCLAW_GATEWAY.md" target="_blank" rel="noreferrer" className="underline">
+                      {t('settingsPages.openclaw.connectionSecurity.astridSigned.devGuideLink')}
+                    </Link>
+                    {' '}for implementation details.
+                  </p>
+                </div>
+
                 <ul className="text-sm theme-text-muted space-y-1 list-disc list-inside">
-                  <li>Use <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">wss://</code> for remote workers (Tailscale Funnel recommended)</li>
-                  <li>Auth tokens stored by Astrid are encrypted at rest</li>
-                  <li>Workers only receive tasks assigned to your account</li>
+                  <li>{t('settingsPages.openclaw.connectionSecurity.tips.wss')}</li>
+                  <li>{t('settingsPages.openclaw.connectionSecurity.tips.encrypted')}</li>
+                  <li>{t('settingsPages.openclaw.connectionSecurity.tips.accountOnly')}</li>
+                  <li>{t('settingsPages.openclaw.connectionSecurity.tips.replay')}</li>
                 </ul>
                 <p className="text-xs theme-text-muted mt-3 italic">
-                  Note: OpenClaw is a separate project with its own security model. Refer to the{' '}
+                  {t('settingsPages.openclaw.connectionSecurity.disclaimer')}{' '}
                   <Link href="https://github.com/openclaw/openclaw" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-                    OpenClaw documentation
+                    {t('settingsPages.openclaw.connectionSecurity.openclawDocsLink')}
                   </Link>
-                  {' '}for security best practices.
+                  {' '}{t('settingsPages.openclaw.connectionSecurity.disclaimerSuffix')}
                 </p>
               </div>
             </CardContent>

@@ -4,7 +4,7 @@ import { authConfig } from "@/lib/auth-config"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import crypto from "crypto"
-import { testOpenClawConnection } from "@/lib/ai/openclaw-rpc-client"
+import { testOpenClawConnection, type AuthMode } from "@/lib/ai/openclaw-rpc-client"
 
 function getEncryptionKey(): string {
   const key = process.env.ENCRYPTION_KEY
@@ -41,7 +41,7 @@ const CreateWorkerSchema = z.object({
     { message: 'Gateway URL must use ws:// or wss:// protocol' }
   ),
   authToken: z.string().optional(),
-  authMode: z.enum(['token', 'tailscale', 'none']).default('token'),
+  authMode: z.enum(['token', 'tailscale', 'astrid-signed', 'none']).default('astrid-signed'),
 })
 
 async function getSession(request: NextRequest) {
@@ -137,7 +137,9 @@ export async function POST(request: NextRequest) {
     const testResult = await testOpenClawConnection(
       validatedData.gatewayUrl,
       validatedData.authToken,
-      10000
+      10000,
+      validatedData.authMode as AuthMode,
+      session.user.id
     )
 
     // Encrypt auth token if provided

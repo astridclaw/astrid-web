@@ -4,9 +4,16 @@
  * WebSocket RPC client for communicating with OpenClaw Gateway.
  * OpenClaw uses a JSON-RPC style protocol over WebSocket for real-time
  * task execution and progress streaming.
+ *
+ * Supports multiple authentication modes:
+ * - 'token': Simple shared secret authentication
+ * - 'tailscale': Tailscale-based identity verification
+ * - 'astrid-signed': Cryptographic signatures proving request origin
+ * - 'none': No authentication (not recommended for production)
  */
 
 import WebSocket from 'ws'
+import { signConnectionRequest, type ConnectionSignature } from './openclaw-signing'
 
 // ============================================================================
 // TYPES
@@ -41,11 +48,17 @@ export interface OpenClawSessionResult {
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
 
+export type AuthMode = 'token' | 'tailscale' | 'astrid-signed' | 'none'
+
 export interface OpenClawRPCClientConfig {
   /** Gateway URL (ws:// or wss://) */
   gatewayUrl: string
-  /** Optional authentication token */
+  /** Optional authentication token (for 'token' auth mode) */
   authToken?: string
+  /** Authentication mode */
+  authMode?: AuthMode
+  /** User ID (required for 'astrid-signed' auth mode) */
+  userId?: string
   /** Reconnection settings */
   reconnect?: {
     enabled: boolean
@@ -62,6 +75,8 @@ export interface OpenClawRPCClientConfig {
 interface ResolvedOpenClawRPCClientConfig {
   gatewayUrl: string
   authToken: string
+  authMode: AuthMode
+  userId: string
   reconnect: {
     enabled: boolean
     maxAttempts: number
@@ -124,6 +139,8 @@ export class OpenClawRPCClient {
     this.config = {
       gatewayUrl: config.gatewayUrl,
       authToken: config.authToken || '',
+      authMode: config.authMode || 'token',
+      userId: config.userId || '',
       reconnect: {
         enabled: config.reconnect?.enabled ?? true,
         maxAttempts: config.reconnect?.maxAttempts ?? 5,
@@ -215,6 +232,39 @@ export class OpenClawRPCClient {
                 timeout: connectTimeout,
               })
 
+              // Build auth payload based on auth mode
+              let authPayload: { token?: string; signature?: ConnectionSignature; mode: AuthMode }
+
+              switch (this.config.authMode) {
+                case 'astrid-signed':
+                  if (!this.config.userId) {
+                    reject(new Error('userId is required for astrid-signed auth mode'))
+                    return
+                  }
+                  const signature = signConnectionRequest(
+                    this.config.gatewayUrl,
+                    this.config.userId
+                  )
+                  authPayload = { signature, mode: 'astrid-signed' }
+                  this.config.logger('info', 'Using astrid-signed authentication')
+                  break
+
+                case 'tailscale':
+                  authPayload = { mode: 'tailscale' }
+                  this.config.logger('info', 'Using Tailscale authentication')
+                  break
+
+                case 'none':
+                  authPayload = { mode: 'none' }
+                  this.config.logger('warn', 'Using no authentication (not recommended)')
+                  break
+
+                case 'token':
+                default:
+                  authPayload = { token: this.config.authToken, mode: 'token' }
+                  break
+              }
+
               // Send connect request with auth
               const connectRequest: OpenClawRequest = {
                 type: 'req',
@@ -224,12 +274,12 @@ export class OpenClawRPCClient {
                   minProtocol: 3,
                   maxProtocol: 3,
                   client: {
-                    id: 'webchat',
+                    id: 'astrid',
                     version: '1.0',
                     platform: 'server',
                     mode: 'webchat'
                   },
-                  auth: { token: this.config.authToken }
+                  auth: authPayload
                 }
               }
               this.ws!.send(JSON.stringify(connectRequest))
@@ -619,7 +669,9 @@ export function createOpenClawClient(config: OpenClawRPCClientConfig): OpenClawR
 export async function testOpenClawConnection(
   gatewayUrl: string,
   authToken?: string,
-  timeoutMs: number = 10000
+  timeoutMs: number = 10000,
+  authMode: AuthMode = 'token',
+  userId?: string
 ): Promise<{
   success: boolean
   latencyMs?: number
@@ -629,6 +681,8 @@ export async function testOpenClawConnection(
   const client = new OpenClawRPCClient({
     gatewayUrl,
     authToken,
+    authMode,
+    userId,
     connectionTimeoutMs: timeoutMs,
     reconnect: { enabled: false },
     logger: (level, msg, meta) => console.log(`[OpenClaw:${level}]`, msg, meta || ''),

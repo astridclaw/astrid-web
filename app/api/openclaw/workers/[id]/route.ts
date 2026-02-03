@@ -30,7 +30,7 @@ const UpdateWorkerSchema = z.object({
     { message: 'Gateway URL must use ws:// or wss:// protocol' }
   ).optional(),
   authToken: z.string().optional(),
-  authMode: z.enum(['token', 'tailscale', 'none']).optional(),
+  authMode: z.enum(['token', 'tailscale', 'astrid-signed', 'none']).optional(),
   isActive: z.boolean().optional(),
 })
 

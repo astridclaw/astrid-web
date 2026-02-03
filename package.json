@@ -95,6 +95,7 @@
     "setup:ios-oauth": "tsx --env-file=.env.local scripts/setup-ios-oauth.ts",
     "setup:astrid-config": "tsx scripts/setup-astrid-config.ts",
     "setup:astrid-config:force": "tsx scripts/setup-astrid-config.ts --force",
+    "generate:openclaw-keys": "tsx scripts/generate-openclaw-keys.ts",
     "agent:worker": "tsx --env-file=.env.local scripts/ai-agent-worker.ts",
     "predeploy:dry": "tsx scripts/predeploy-self-healing.ts --dry",
     "predeploy:ci": "tsx scripts/predeploy-self-healing.ts --ci",
