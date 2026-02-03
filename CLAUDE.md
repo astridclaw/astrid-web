@@ -130,10 +130,16 @@ These commands download Vercel's env vars and **overwrite your local secrets**.
 
 **ONLY use Vercel CLI to push deployments:**
 ```bash
-npx vercel --prod --yes --token="$VERCEL_API_TOKEN"
+export VERCEL_TOKEN=$(grep "^VERCEL_TOKEN=" .env.local | cut -d'=' -f2 | tr -d '\r"')
+npx vercel --prod --yes --token="$VERCEL_TOKEN"
 ```
 
-**If `.vercel/project.json` doesn't exist**, create it manually:
+**Environment variables in `.env.local`:**
+- `VERCEL_PROD` - production project ID (newastrid → astrid.cc)
+- `VERCEL_STAGING` - staging project ID (astrid-web)
+- `VERCEL_TOKEN` - auth token (works for both)
+
+**If `.vercel/project.json` doesn't exist**, create it manually for production:
 ```json
 {"projectId":"prj_MUWxfWJ9lIZOi2clHPZhlHsYqSiy","orgId":"team_gFxp7fWaX7e8tUPt8Vt3YXl0","projectName":"newastrid"}
 ```
@@ -147,8 +153,8 @@ npx vercel --prod --yes --token="$VERCEL_API_TOKEN"
 git push origin main
 
 # Extract token and deploy (avoids sourcing .env.local which may have issues)
-export VERCEL_API_TOKEN=$(grep "^VERCEL_API_TOKEN=" .env.local | cut -d'=' -f2 | tr -d '\r"')
-npx vercel --prod --yes --token="$VERCEL_API_TOKEN"
+export VERCEL_TOKEN=$(grep "^VERCEL_TOKEN=" .env.local | cut -d'=' -f2 | tr -d '\r"')
+npx vercel --prod --yes --token="$VERCEL_TOKEN"
 ```
 
 ### Force Production Rebuild
@@ -156,12 +162,11 @@ npx vercel --prod --yes --token="$VERCEL_API_TOKEN"
 To trigger a fresh production build without code changes:
 
 ```bash
-export VERCEL_API_TOKEN=$(grep "^VERCEL_API_TOKEN=" .env.local | cut -d'=' -f2 | tr -d '\r"')
-npx vercel --prod --yes --token="$VERCEL_API_TOKEN"
+export VERCEL_TOKEN=$(grep "^VERCEL_TOKEN=" .env.local | cut -d'=' -f2 | tr -d '\r"')
+npx vercel --prod --yes --token="$VERCEL_TOKEN"
 ```
 
-**Note:** Vercel token must be configured. See `.env.local` for `VERCEL_API_TOKEN`.
-**Note:** Vercel CLI may overwrite .env.local - back it up first or restore after!
+**Note:** Vercel token must be configured. See `.env.local` for `VERCEL_TOKEN`.
 **Note:** GitHub Actions workflows exist for CI but NOT for auto-deploy.
 
 ---
