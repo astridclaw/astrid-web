@@ -16,10 +16,10 @@ function getEncryptionKey(): string {
 const SaveAPIKeySchema = z.object({
   serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw']),
   apiKey: z.string().min(1),
-  // For OpenClaw: WebSocket URLs (ws:// or wss://) - Zod's .url() only accepts http/https
+  // For OpenClaw: WebSocket URLs (ws:// or wss://) or HTTPS URLs
   gatewayUrl: z.string().refine(
-    (url) => !url || url.startsWith('ws://') || url.startsWith('wss://'),
-    { message: 'Gateway URL must start with ws:// or wss://' }
+    (url) => !url || url.startsWith('ws://') || url.startsWith('wss://') || url.startsWith('https://'),
+    { message: 'Gateway URL must start with ws://, wss://, or https://' }
   ).optional()
 })
 

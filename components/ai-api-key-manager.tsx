@@ -267,7 +267,7 @@ export function AIAPIKeyManager() {
 
   const validateGatewayUrl = (url: string): boolean => {
     if (!url) return false
-    return url.startsWith('ws://') || url.startsWith('wss://')
+    return url.startsWith('ws://') || url.startsWith('wss://') || url.startsWith('https://')
   }
 
   const handleKeyChange = (serviceId: string, value: string) => {
@@ -297,7 +297,7 @@ export function AIAPIKeyManager() {
         return
       }
       if (!validateGatewayUrl(gatewayUrl)) {
-        toast.error('Gateway URL must start with ws:// or wss://')
+        toast.error('Gateway URL must start with ws://, wss://, or https://')
         return
       }
     }
@@ -607,8 +607,9 @@ export function AIAPIKeyManager() {
                         {data?.hasKey ? 'Update Gateway URL' : 'Gateway URL'}
                       </Label>
                       <p className="text-sm text-muted-foreground mb-2">
-                        Use <code className="bg-muted px-1 rounded">ws://</code> for local or{' '}
-                        <code className="bg-muted px-1 rounded">wss://</code> for remote (Tailscale Funnel, etc.)
+                        Use <code className="bg-muted px-1 rounded">ws://</code> for local,{' '}
+                        <code className="bg-muted px-1 rounded">wss://</code> or{' '}
+                        <code className="bg-muted px-1 rounded">https://</code> for remote
                       </p>
                       <Input
                         id={`gateway-${service.id}`}
