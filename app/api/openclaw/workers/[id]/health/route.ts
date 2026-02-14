@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 import { authConfig } from "@/lib/auth-config"
 import { prisma } from "@/lib/prisma"
 import crypto from "crypto"
-import { testOpenClawConnection } from "@/lib/ai/openclaw-rpc-client"
+import { testOpenClawConnection, type AuthMode } from "@/lib/ai/openclaw-rpc-client"
 
 function getEncryptionKey(): string {
   const key = process.env.ENCRYPTION_KEY
@@ -99,12 +99,15 @@ export async function GET(
     console.log('Testing OpenClaw connection:', {
       gatewayUrl: worker.gatewayUrl,
       hasAuthToken: !!authToken,
-      authTokenLength: authToken?.length
+      authTokenLength: authToken?.length,
+      authMode: worker.authMode,
     })
     const testResult = await testOpenClawConnection(
       worker.gatewayUrl,
       authToken,
-      10000
+      10000,
+      worker.authMode as AuthMode,
+      session.user.id
     )
     console.log('OpenClaw test result:', testResult)
 

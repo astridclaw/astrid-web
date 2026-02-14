@@ -179,7 +179,7 @@ function OpenClawSettingsContent() {
       setNewWorkerName('')
       setNewWorkerUrl('')
       setNewWorkerToken('')
-      setNewWorkerAuthMode('token')
+      setNewWorkerAuthMode('astrid-signed')
     } catch (error) {
       setAddError('Failed to add worker')
     } finally {
