@@ -768,7 +768,7 @@ model OpenClawWorker {
   userId      String
   name        String                        // User-friendly name for the worker
   gatewayUrl  String                        // WebSocket URL (ws:// or wss://)
-  authToken   String?                       // Encrypted gateway authentication token
+  authToken   String?   @db.Text            // Encrypted gateway authentication token (JSON with encrypted + iv)
   authMode    String    @default("token")   // token, tailscale, or none
   status      String    @default("unknown") // online, offline, busy, error, unknown
   lastSeen    DateTime?                     // Last successful connection

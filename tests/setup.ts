@@ -16,7 +16,7 @@ process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 // 32-byte hex key for AES-256 encryption (used by field-encryption.ts and ai-api-keys)
 process.env.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
 
-// Mock window.matchMedia (only in browser-like environments)
+// Mock window.matchMedia and localStorage (only in browser-like environments)
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -30,6 +30,38 @@ if (typeof window !== 'undefined') {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     })),
+  })
+
+  // Mock localStorage
+  const localStorageMock = (() => {
+    let store: Record<string, string> = {}
+    return {
+      getItem: vi.fn((key: string) => store[key] ?? null),
+      setItem: vi.fn((key: string, value: string) => {
+        store[key] = value
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete store[key]
+      }),
+      clear: vi.fn(() => {
+        store = {}
+      }),
+      get length() {
+        return Object.keys(store).length
+      },
+      key: vi.fn((index: number) => Object.keys(store)[index] ?? null),
+    }
+  })()
+
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+    writable: true,
+  })
+
+  // Also define on globalThis for consistency
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: localStorageMock,
+    writable: true,
   })
 }
 
