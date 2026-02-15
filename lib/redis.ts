@@ -41,11 +41,9 @@ export async function getRedisClient() {
         url: process.env.REDIS_URL
       })
     } else {
-      // Fallback: Use local Redis default (will fail gracefully if not available)
-      console.log('📦 [Redis] Attempting local Redis connection (localhost:6379)')
-      redis = createClient({
-        url: 'redis://localhost:6379'
-      })
+      // No Redis configured - skip connection
+      console.log('📦 [Redis] No REDIS_URL configured, skipping Redis')
+      return null
     }
 
     // Only set up event handlers for standard Redis client
@@ -414,13 +412,7 @@ export async function isRedisAvailable(): Promise<boolean> {
       return false
     }
     if (!isProduction && !process.env.REDIS_URL) {
-      // Try to connect to default local Redis
-      try {
-        const client = await getRedisClient()
-        return client && client.isReady
-      } catch {
-        return false
-      }
+      return false
     }
     
     const client = await getRedisClient()
