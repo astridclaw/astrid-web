@@ -182,21 +182,6 @@ export function CommentSection({
   const commentInputRef = useRef<HTMLTextAreaElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-scroll to bottom when new comments are added (like iOS iMessage)
-  const prevCommentCountRef = useRef((task.comments || []).length)
-  useEffect(() => {
-    const currentCount = (task.comments || []).length
-    if (currentCount > prevCommentCountRef.current && commentsContainerRef.current) {
-      setTimeout(() => {
-        commentsContainerRef.current?.scrollTo({
-          top: commentsContainerRef.current.scrollHeight,
-          behavior: 'smooth'
-        })
-      }, 100)
-    }
-    prevCommentCountRef.current = currentCount
-  }, [(task.comments || []).length])
-
   // Mention state
   const [mentionSearch, setMentionSearch] = useState<string | null>(null)
   const [mentionCursorPos, setMentionCursorPos] = useState<number>(0)

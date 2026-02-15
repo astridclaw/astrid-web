@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, memo } from "react"
+import { useState, useEffect, useRef, useCallback, memo } from "react"
 import { useTaskDetailState } from "@/hooks/task-detail/useTaskDetailState"
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh"
 import { Button } from "@/components/ui/button"
@@ -147,6 +147,10 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
   const shouldShowMobileAttachmentButtons = () => {
     return isMobileDevice() || isIPadDevice() || is1ColumnView()
   }
+
+  // Scroll area ref for auto-scrolling when new comments are added
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null)
+  const prevCommentCountRef = useRef((task.comments || []).length)
 
   // Arrow positioning state
   const { top: arrowTop, setArrowTop } = state.arrow
@@ -1165,6 +1169,26 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
     disabled: !isMobileDevice()
   })
 
+  // Combined callback ref for scroll area (pullToRefresh + auto-scroll)
+  const scrollAreaCallbackRef = useCallback((el: HTMLDivElement | null) => {
+    scrollAreaRef.current = el
+    pullToRefresh.bindToElement(el)
+  }, [pullToRefresh])
+
+  // Auto-scroll to bottom when new comments are added
+  const commentCount = (task.comments || []).length
+  useEffect(() => {
+    if (commentCount > prevCommentCountRef.current && scrollAreaRef.current) {
+      setTimeout(() => {
+        scrollAreaRef.current?.scrollTo({
+          top: scrollAreaRef.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 100)
+    }
+    prevCommentCountRef.current = commentCount
+  }, [commentCount])
+
   const handleCancelLists = () => {
     setTempLists(task.lists || [])
     setListSearchTerm("")
@@ -1420,7 +1444,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
 
       <div
         className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4 relative"
-        ref={pullToRefresh.bindToElement}
+        ref={scrollAreaCallbackRef}
         onTouchStart={pullToRefresh.onTouchStart}
         onTouchMove={pullToRefresh.onTouchMove}
         onTouchEnd={pullToRefresh.onTouchEnd}
