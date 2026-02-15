@@ -277,20 +277,21 @@ function OpenClawSettingsContent() {
                 <Info className="w-5 h-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm theme-text-primary font-medium">
-                    Run Claude Code on your own infrastructure
+                    Connect your Astrid list to an AI coding agent
                   </p>
                   <p className="text-sm theme-text-muted mt-1">
-                    OpenClaw workers run Claude Code CLI on your machines, giving you full control over
-                    code execution. Workers connect via WebSocket and can handle tasks assigned to
+                    OpenClaw connects your Astrid lists to Claude Code running on your own machine.
+                    Assign tasks to
                     <span className="inline-flex items-center gap-1 mx-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
                       openclaw@astrid.cc
                     </span>
+                    and they&apos;ll be picked up by your worker automatically.
                   </p>
                   <div className="flex flex-wrap gap-2 mt-3">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href="https://github.com/anthropics/openclaw" target="_blank" rel="noreferrer">
+                      <Link href="https://github.com/anthropics/claude-code" target="_blank" rel="noreferrer">
                         <ExternalLink className="w-4 h-4 mr-1" />
-                        OpenClaw GitHub
+                        Claude Code
                       </Link>
                     </Button>
                   </div>
@@ -457,101 +458,75 @@ function OpenClawSettingsContent() {
             </CardContent>
           </Card>
 
-          {/* Setup Instructions - Two Options */}
+          {/* Quick Start */}
           <Card className="theme-bg-secondary theme-border">
             <CardHeader>
-              <CardTitle className="theme-text-primary">Setup Instructions</CardTitle>
+              <CardTitle className="theme-text-primary">Quick Start</CardTitle>
               <CardDescription className="theme-text-muted">
-                Connect Astrid and OpenClaw in either direction
+                Connect in 3 steps - like adding a bot to Discord
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Option A: Configure from Astrid */}
-              <div className="border-l-4 border-orange-500 pl-4">
-                <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
-                  <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">A</span>
-                  Configure from Astrid (you&apos;re here)
-                </h3>
-                <div className="space-y-3 text-sm">
+              <div className="space-y-4 text-sm">
+                <div className="flex gap-3">
+                  <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
                   <div>
-                    <p className="font-medium theme-text-primary">1. Install & start OpenClaw</p>
+                    <p className="font-medium theme-text-primary">Install the Astrid SDK</p>
                     <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
-                      pip install openclaw && openclaw gateway
+                      npm install -g @gracefultools/astrid-sdk
                     </code>
                   </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
                   <div>
-                    <p className="font-medium theme-text-primary">2. Add worker above</p>
-                    <p className="text-xs theme-text-muted">
-                      Gateway URL: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>
+                    <p className="font-medium theme-text-primary">Start the agent in your project</p>
+                    <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1">
+                      cd /your/project && npx astrid-agent --terminal
+                    </code>
+                    <p className="text-xs theme-text-muted mt-1">
+                      Or register a worker above with your gateway URL (default: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">ws://localhost:18789</code>)
                     </p>
                   </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
                   <div>
-                    <p className="font-medium theme-text-primary">3. Assign tasks</p>
+                    <p className="font-medium theme-text-primary">Assign tasks</p>
                     <p className="text-xs theme-text-muted">
-                      Assign to{' '}
+                      Assign any task to{' '}
                       <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
                         openclaw@astrid.cc
                       </span>
+                      {' '}and it&apos;ll be picked up automatically
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Option B: Configure from OpenClaw */}
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h3 className="font-semibold theme-text-primary mb-3 flex items-center gap-2">
-                  <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">B</span>
-                  Configure from OpenClaw
-                </h3>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="font-medium theme-text-primary">1. Get OAuth credentials</p>
-                    <p className="text-xs theme-text-muted">
-                      Go to{' '}
-                      <Link href="/settings/api-access" className="text-blue-500 hover:underline">
-                        Settings → API Access
-                      </Link>
-                      {' '}and create OAuth credentials
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium theme-text-primary">2. Add Astrid channel to OpenClaw</p>
-                    <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono mt-1 whitespace-pre-wrap">
-{`# In your OpenClaw config (openclaw.yaml):
-channels:
-  astrid:
-    clientId: "your-client-id"
-    clientSecret: "your-secret"
-    agentEmail: "openclaw@astrid.cc"
-    pollIntervalMs: 30000`}
-                    </code>
-                  </div>
-                  <div>
-                    <p className="font-medium theme-text-primary">3. Restart OpenClaw</p>
-                    <p className="text-xs theme-text-muted">
-                      OpenClaw will poll Astrid for tasks assigned to you
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Which to choose */}
+              {/* Alternative: OAuth polling mode */}
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
-                <p className="text-sm font-medium theme-text-primary mb-2">Which should I use?</p>
-                <ul className="text-xs theme-text-muted space-y-1">
-                  <li><strong>Option A (Worker):</strong> Astrid pushes tasks to your OpenClaw. Good for always-on servers.</li>
-                  <li><strong>Option B (Channel):</strong> OpenClaw pulls tasks from Astrid. Good for laptops/intermittent connections.</li>
-                </ul>
+                <p className="text-sm font-medium theme-text-primary mb-2">Alternative: Pull mode</p>
+                <p className="text-xs theme-text-muted mb-2">
+                  Instead of registering a worker here, you can configure the Astrid SDK to poll for tasks using OAuth credentials from{' '}
+                  <Link href="/settings/api-access" className="text-blue-500 hover:underline">
+                    Settings → API Access
+                  </Link>
+                </p>
+                <code className="block p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs font-mono whitespace-pre-wrap">
+{`export ASTRID_OAUTH_CLIENT_ID="your-id"
+export ASTRID_OAUTH_CLIENT_SECRET="your-secret"
+npx astrid-agent --terminal`}
+                </code>
               </div>
 
               {/* Security Notes */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <p className="text-sm font-medium theme-text-primary mb-2">Security Notes</p>
+                <p className="text-sm font-medium theme-text-primary mb-2">Security</p>
                 <ul className="text-sm theme-text-muted space-y-1 list-disc list-inside">
                   <li>Use <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">wss://</code> for remote workers (Tailscale Funnel recommended)</li>
                   <li>Auth tokens are encrypted at rest</li>
                   <li>Workers only execute tasks for your account</li>
-                  <li>Run <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded">openclaw doctor</code> to check security configuration</li>
                 </ul>
               </div>
             </CardContent>

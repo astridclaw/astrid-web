@@ -1,38 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authConfig } from "@/lib/auth-config"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import crypto from "crypto"
 import { testOpenClawConnection } from "@/lib/ai/openclaw-rpc-client"
-
-function getEncryptionKey(): string {
-  const key = process.env.ENCRYPTION_KEY
-  if (!key) {
-    throw new Error('ENCRYPTION_KEY environment variable is required')
-  }
-  return key
-}
-
-function encrypt(text: string): { encrypted: string; iv: string } {
-  const algorithm = 'aes-256-cbc'
-  const key = Buffer.from(getEncryptionKey(), 'hex')
-  const iv = crypto.randomBytes(16)
-  const cipher = crypto.createCipheriv(algorithm, key, iv)
-  let encrypted = cipher.update(text, 'utf8', 'hex')
-  encrypted += cipher.final('hex')
-  return { encrypted, iv: iv.toString('hex') }
-}
-
-function decrypt(encryptedData: { encrypted: string; iv: string }): string {
-  const algorithm = 'aes-256-cbc'
-  const key = Buffer.from(getEncryptionKey(), 'hex')
-  const iv = Buffer.from(encryptedData.iv, 'hex')
-  const decipher = crypto.createDecipheriv(algorithm, key, iv)
-  let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8')
-  decrypted += decipher.final('utf8')
-  return decrypted
-}
+import { getOpenClawSession, encryptAuthToken } from "@/lib/openclaw-utils"
 
 const CreateWorkerSchema = z.object({
   name: z.string().min(1).max(100),
@@ -44,45 +14,13 @@ const CreateWorkerSchema = z.object({
   authMode: z.enum(['token', 'tailscale', 'none']).default('token'),
 })
 
-async function getSession(request: NextRequest) {
-  let session = await getServerSession(authConfig)
-
-  // If JWT session validation failed, try database session (for mobile apps)
-  if (!session?.user) {
-    const cookieHeader = request.headers.get('cookie')
-    if (cookieHeader) {
-      const sessionTokenMatch = cookieHeader.match(/next-auth\.session-token=([^;]+)/)
-      if (sessionTokenMatch) {
-        const sessionToken = sessionTokenMatch[1]
-        const dbSession = await prisma.session.findUnique({
-          where: { sessionToken },
-          include: { user: true }
-        })
-        if (dbSession && dbSession.expires > new Date()) {
-          session = {
-            user: {
-              id: dbSession.user.id,
-              email: dbSession.user.email,
-              name: dbSession.user.name,
-              image: dbSession.user.image,
-            },
-            expires: dbSession.expires.toISOString()
-          }
-        }
-      }
-    }
-  }
-
-  return session
-}
-
 /**
  * GET /api/openclaw/workers
  * List all OpenClaw workers for the current user
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession(request)
+    const session = await getOpenClawSession(request)
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -123,7 +61,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession(request)
+    const session = await getOpenClawSession(request)
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -142,8 +80,7 @@ export async function POST(request: NextRequest) {
     // Encrypt auth token if provided
     let encryptedAuthToken: string | null = null
     if (validatedData.authToken) {
-      const { encrypted, iv } = encrypt(validatedData.authToken)
-      encryptedAuthToken = JSON.stringify({ encrypted, iv })
+      encryptedAuthToken = encryptAuthToken(validatedData.authToken)
     }
 
     // Create the worker
