@@ -4,9 +4,8 @@ import { useState, useRef, useMemo, useCallback, useEffect } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SecureAttachmentViewer } from "@/components/secure-attachment-viewer"
-import { Trash2, Paperclip, Reply, Send, MoreVertical, X, Image as ImageIcon, FileText, Loader2, RefreshCw } from "lucide-react"
+import { Paperclip, Send, X, Image as ImageIcon, FileText, Loader2, RefreshCw, Copy, Reply, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { isMobileDevice } from "@/lib/layout-detection"
 import { renderMarkdownWithLinks } from "@/lib/markdown"
@@ -796,10 +795,15 @@ export function CommentSection({
       )
     }
 
+    const isActionsVisible = showingActionsFor === comment.id
+
     return (
       <div className={`flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}`}>
         {/* Bubble row: avatar + bubble */}
-        <div className={`chat-bubble-row ${isCurrentUser ? 'chat-bubble-row-mine' : ''}`}>
+        <div
+          className={`chat-bubble-row ${isCurrentUser ? 'chat-bubble-row-mine' : ''} cursor-pointer`}
+          onClick={() => setShowingActionsFor(isActionsVisible ? null : comment.id)}
+        >
           {/* Avatar */}
           <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src={comment.author?.image || undefined} />
@@ -834,43 +838,59 @@ export function CommentSection({
           </div>
         </div>
 
-        {/* Meta: "Author · time" below bubble, with action buttons */}
+        {/* Meta: "Author · time" below bubble */}
         <div className={`chat-bubble-meta theme-text-muted ${isCurrentUser ? 'pr-10' : 'pl-10'}`}>
           <span>{isCurrentUser ? 'You' : getAuthorDisplay(comment.author)}</span>
           <span>·</span>
           <span>{format(comment.createdAt, "MMM d 'at' h:mm a")}</span>
-
-          {/* Reply button (top-level comments only) */}
-          {!isReply && (
-            <button
-              onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-              className="ml-2 theme-text-muted hover:text-blue-400 transition-colors"
-              title="Reply"
-            >
-              <Reply className="w-3 h-3" />
-            </button>
-          )}
-
-          {/* Delete action */}
-          {comment.authorId === currentUser.id && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="ml-1 theme-text-muted hover:theme-text-secondary transition-colors">
-                  <MoreVertical className="w-3 h-3" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem
-                  onClick={() => isReply && parentCommentId ? handleDeleteReply(comment.id, parentCommentId) : handleDeleteComment(comment.id)}
-                  className="text-red-600 hover:text-red-700 focus:text-red-700"
-                >
-                  <Trash2 className="w-3 h-3 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
         </div>
+
+        {/* Action bar: Copy, Reply, Delete - shown on tap */}
+        {isActionsVisible && (
+          <div className={`flex items-center gap-3 mt-1 ${isCurrentUser ? 'pr-10' : 'pl-10'}`} data-comment-actions>
+            <button
+              className="flex items-center gap-1 text-xs theme-text-muted hover:theme-text-secondary transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                navigator.clipboard.writeText(comment.content || '')
+                setShowingActionsFor(null)
+              }}
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>Copy</span>
+            </button>
+            {!isReply && (
+              <button
+                className="flex items-center gap-1 text-xs theme-text-muted hover:theme-text-secondary transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setReplyingTo(comment.id)
+                  setShowingActionsFor(null)
+                }}
+              >
+                <Reply className="w-3.5 h-3.5" />
+                <span>Reply</span>
+              </button>
+            )}
+            {isCurrentUser && (
+              <button
+                className="flex items-center gap-1 text-xs text-red-500 hover:text-red-400 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (isReply && parentCommentId) {
+                    handleDeleteReply(comment.id, parentCommentId)
+                  } else {
+                    handleDeleteComment(comment.id)
+                  }
+                  setShowingActionsFor(null)
+                }}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     )
   }

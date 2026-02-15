@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -460,9 +459,12 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
       
       // Handle repeating editing - no auto-save, user must click Save button
 
-      // Hide mobile comment actions when clicking elsewhere
+      // Hide comment actions when clicking elsewhere (but not on an action button itself)
       if (showingActionsFor) {
-        setShowingActionsFor(null)
+        const actionBar = (target as HTMLElement).closest?.('[data-comment-actions]')
+        if (!actionBar) {
+          setShowingActionsFor(null)
+        }
       }
     }
 
@@ -501,7 +503,10 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
   
   // Simple arrow positioning based on selected task
   useEffect(() => {
-    const panelElement = document.querySelector('[data-task-detail-panel]') as HTMLElement
+    // Use the desktop wrapper if available (arrow renders outside overflow:hidden),
+    // otherwise fall back to the panel element itself
+    const panelElement = document.querySelector('[data-task-panel-desktop]') as HTMLElement
+      || document.querySelector('[data-task-detail-panel]') as HTMLElement
 
     const updateArrowPosition = () => {
       try {
@@ -1327,22 +1332,21 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
   }
 
   return (
-    <div className={`${onClose ? 'w-full' : 'task-panel'} theme-panel flex flex-col h-full relative`} data-task-detail-panel {...(swipeToDismiss || {})}>
-      {/* Arrow pointing to the selected task - Show on desktop, hide on mobile */}
+    <>
+      {/* Arrow rendered outside the panel div so it escapes overflow:hidden */}
       {!onClose ? (
         <div
           className="task-panel-arrow theme-panel-arrow"
           style={{ top: `${arrowTop}px`, transition: 'top 0.15s ease-out' }}
         ></div>
       ) : (
-        // Show arrow on desktop even when onClose is provided
         <div
           className="task-panel-arrow theme-panel-arrow hidden lg:block"
           style={{ top: `${arrowTop}px`, transition: 'top 0.15s ease-out' }}
         ></div>
       )}
-      
-      
+      <div className={`${onClose ? 'w-full' : 'task-panel'} theme-panel flex flex-col h-full relative`} data-task-detail-panel {...(swipeToDismiss || {})}>
+
       <div className="border-b border-gray-200 dark:border-gray-700">
         {/* Mobile/Tablet Back Navigation - Full Width */}
         {onClose && (
@@ -1371,22 +1375,31 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
               repeating={task.repeating !== 'never'}
             />
             {editingTitle ? (
-              <div className="flex items-center space-x-2 flex-1">
-                <Input
-                  value={tempTitle}
-                  onChange={(e) => setTempTitle(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSaveTitle()
-                    if (e.key === "Escape") handleCancelTitle()
-                  }}
-                  onBlur={handleSaveTitle}
-                  className="bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white flex-1"
-                  autoFocus
-                />
-              </div>
+              <textarea
+                value={tempTitle}
+                onChange={(e) => {
+                  setTempTitle(e.target.value)
+                  e.target.style.height = 'auto'
+                  e.target.style.height = e.target.scrollHeight + 'px'
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSaveTitle() }
+                  if (e.key === "Escape") handleCancelTitle()
+                }}
+                onBlur={handleSaveTitle}
+                ref={(el) => {
+                  if (el) {
+                    el.focus()
+                    el.style.height = 'auto'
+                    el.style.height = el.scrollHeight + 'px'
+                  }
+                }}
+                className="text-lg px-2 py-1 rounded flex-1 bg-transparent border-none outline-none resize-none overflow-hidden theme-text-primary"
+                rows={1}
+              />
             ) : (
               <span
-                className={`text-lg cursor-pointer hover:theme-bg-hover px-2 py-1 rounded flex-1 truncate ${
+                className={`text-lg cursor-pointer hover:theme-bg-hover px-2 py-1 rounded flex-1 ${
                   task.completed ? "line-through theme-text-muted" : "theme-text-primary"
                 }`}
                 onClick={() => setEditingTitle(true)}
@@ -1443,7 +1456,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
       </div>
 
       <div
-        className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4 relative theme-bg-primary"
+        className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4 relative"
         ref={scrollAreaCallbackRef}
         onTouchStart={pullToRefresh.onTouchStart}
         onTouchMove={pullToRefresh.onTouchMove}
@@ -1658,6 +1671,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
         setShareUrlCopied={setShareUrlCopied}
       />
     </div>
+    </>
   )
 }
 

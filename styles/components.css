@@ -126,12 +126,19 @@
 }
 
 .task-panel-arrow {
-  @apply absolute -left-2 border-l border-b transform rotate-45 transition-all duration-75;
-  width: 17px;
-  height: 17px;
+  @apply absolute w-6 h-6 transform rotate-45 transition-all duration-75;
+  left: -13px;
   z-index: 10;
+  border-left: 2px solid rgb(var(--theme-bg-selected-border));
+  border-bottom: 2px solid rgb(var(--theme-bg-selected-border));
   border-right: none;
   border-top: none;
+}
+
+/* Desktop arrow: blue border matching the panel box-shadow border (overrides theme border-color) */
+.task-panel-desktop > .task-panel-arrow {
+  border-left-color: rgb(var(--theme-bg-selected-border));
+  border-bottom-color: rgb(var(--theme-bg-selected-border));
 }
 
 .panel-header {
@@ -274,6 +281,7 @@
   @apply flex-1 resize-none rounded-lg border px-3 py-2;
   min-height: 36px;
   max-height: 200px;
+  overflow: hidden;
   font-size: 16px;
 }
 
@@ -530,12 +538,13 @@
 }
 
 .task-panel {
-  @apply w-96 border-l flex flex-col h-full relative md:relative md:translate-x-0;
+  @apply w-96 flex flex-col h-full relative md:relative md:translate-x-0 rounded-xl overflow-hidden;
 }
 
 .task-panel-desktop {
-  @apply fixed top-32 bottom-10 border flex flex-col z-30 rounded-lg shadow-lg;
-  border-color: rgb(var(--theme-panel-border));
+  @apply fixed top-32 bottom-10 bg-white dark:bg-gray-800 flex flex-col z-30 rounded-xl;
+  /* Blue border matching selected task row, using box-shadow so it doesn't affect layout */
+  box-shadow: 0 0 0 2px rgb(var(--theme-bg-selected-border)), 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   /* Responsive width that adapts to available space and layout configuration */
   width: clamp(
     var(--task-panel-min-width),
@@ -544,6 +553,12 @@
   );
   min-width: var(--task-panel-min-width);
   max-width: var(--task-panel-max-width);
+}
+
+/* Inner panel clips content to rounded corners while arrow stays outside */
+.task-panel-desktop > [data-task-detail-panel] {
+  overflow: hidden;
+  border-radius: 0.75rem;
 }
 
 /* For 3-column layouts with visible sidebar */

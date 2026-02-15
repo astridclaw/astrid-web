@@ -91,10 +91,10 @@ describe('CommentSection', () => {
       expect(screen.getByPlaceholderText('Add a comment...')).toBeInTheDocument()
     })
 
-    it('should show Reply button for each comment', () => {
+    it('should show comment author and timestamp', () => {
       render(<CommentSection {...defaultProps} />)
-      // Chat bubble uses an icon button with title="Reply"
-      expect(screen.getByTitle('Reply')).toBeInTheDocument()
+      // Chat bubble shows "You" for current user's comments
+      expect(screen.getByText('You')).toBeInTheDocument()
     })
   })
 
@@ -273,14 +273,9 @@ describe('CommentSection', () => {
   })
 
   describe('Replies', () => {
-    it('should show reply form when Reply button is clicked', () => {
-      const setReplyingTo = vi.fn()
-      render(<CommentSection {...defaultProps} setReplyingTo={setReplyingTo} />)
-
-      const replyButton = screen.getByTitle('Reply')
-      fireEvent.click(replyButton)
-
-      expect(setReplyingTo).toHaveBeenCalledWith('comment-1')
+    it('should render reply form when replyingTo is set', () => {
+      render(<CommentSection {...defaultProps} replyingTo="comment-1" />)
+      expect(screen.getByPlaceholderText('Write a reply...')).toBeInTheDocument()
     })
 
     it('should render reply form when replyingTo matches comment', () => {
@@ -376,98 +371,171 @@ describe('CommentSection', () => {
     })
   })
 
-  describe('Deleting Comments', () => {
-    it('should show delete button for own comments', () => {
+  describe('Comment Actions (tap to show)', () => {
+    it('should show own comments with You label', () => {
       render(<CommentSection {...defaultProps} />)
-      // The user should be able to access the dropdown menu for their own comments
-      // Verify the Reply icon button exists (always shown for top-level comments)
-      expect(screen.getByTitle('Reply')).toBeInTheDocument()
+      expect(screen.getByText('You')).toBeInTheDocument()
     })
 
-    it('should delete comment when delete is clicked', async () => {
+    it('should show action bar when comment bubble is tapped', () => {
+      render(<CommentSection {...defaultProps} showingActionsFor="comment-1" />)
+      expect(screen.getByText('Copy')).toBeInTheDocument()
+      expect(screen.getByText('Reply')).toBeInTheDocument()
+      expect(screen.getByText('Delete')).toBeInTheDocument()
+    })
+
+    it('should call setShowingActionsFor when bubble is clicked', () => {
+      const setShowingActionsFor = vi.fn()
+      render(<CommentSection {...defaultProps} setShowingActionsFor={setShowingActionsFor} />)
+
+      const commentContent = screen.getByText('First comment')
+      const bubbleRow = commentContent.closest('.chat-bubble-row')
+      expect(bubbleRow).toBeTruthy()
+      fireEvent.click(bubbleRow!)
+
+      expect(setShowingActionsFor).toHaveBeenCalledWith('comment-1')
+    })
+
+    it('should toggle actions off when bubble is clicked again', () => {
+      const setShowingActionsFor = vi.fn()
+      render(<CommentSection {...defaultProps} showingActionsFor="comment-1" setShowingActionsFor={setShowingActionsFor} />)
+
+      const commentContent = screen.getByText('First comment')
+      const bubbleRow = commentContent.closest('.chat-bubble-row')
+      fireEvent.click(bubbleRow!)
+
+      expect(setShowingActionsFor).toHaveBeenCalledWith(null)
+    })
+
+    it('should copy comment text when Copy is clicked', () => {
+      const writeText = vi.fn().mockResolvedValue(undefined)
+      Object.assign(navigator, { clipboard: { writeText } })
+      const setShowingActionsFor = vi.fn()
+
+      render(<CommentSection {...defaultProps} showingActionsFor="comment-1" setShowingActionsFor={setShowingActionsFor} />)
+
+      fireEvent.click(screen.getByText('Copy'))
+
+      expect(writeText).toHaveBeenCalledWith('First comment')
+      expect(setShowingActionsFor).toHaveBeenCalledWith(null)
+    })
+
+    it('should open reply input when Reply is clicked', () => {
+      const setReplyingTo = vi.fn()
+      const setShowingActionsFor = vi.fn()
+
+      render(<CommentSection {...defaultProps} showingActionsFor="comment-1" setReplyingTo={setReplyingTo} setShowingActionsFor={setShowingActionsFor} />)
+
+      fireEvent.click(screen.getByText('Reply'))
+
+      expect(setReplyingTo).toHaveBeenCalledWith('comment-1')
+      expect(setShowingActionsFor).toHaveBeenCalledWith(null)
+    })
+
+    it('should delete comment when Delete is clicked', async () => {
       const mockFetch = vi.fn().mockResolvedValue({ ok: true })
       global.fetch = mockFetch
 
       const onUpdate = vi.fn()
-      render(<CommentSection {...defaultProps} onUpdate={onUpdate} />)
+      const setShowingActionsFor = vi.fn()
 
-      // Click the more menu
-      const moreButtons = screen.getAllByRole('button')
-      const moreButton = moreButtons.find(btn => btn.querySelector('.lucide-more-vertical'))
-      if (moreButton) {
-        fireEvent.click(moreButton)
+      render(<CommentSection {...defaultProps} showingActionsFor="comment-1" onUpdate={onUpdate} setShowingActionsFor={setShowingActionsFor} />)
 
-        // Click delete in dropdown
-        await waitFor(() => {
-          const deleteButton = screen.getByText('Delete Comment')
-          fireEvent.click(deleteButton)
-        })
+      fireEvent.click(screen.getByText('Delete'))
 
-        await waitFor(() => {
-          expect(mockFetch).toHaveBeenCalledWith(
-            '/api/comments/comment-1',
-            expect.objectContaining({ method: 'DELETE' })
-          )
-          expect(onUpdate).toHaveBeenCalledWith(
-            expect.objectContaining({
-              comments: []
-            })
-          )
-        })
-      }
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          '/api/comments/comment-1',
+          expect.objectContaining({ method: 'DELETE' })
+        )
+        expect(onUpdate).toHaveBeenCalledWith(
+          expect.objectContaining({ comments: [] })
+        )
+      })
+      expect(setShowingActionsFor).toHaveBeenCalledWith(null)
     })
 
-    it('should delete reply when delete is clicked', async () => {
+    it('should not show Delete for other users comments', () => {
+      const otherUser: User = { id: 'user-2', email: 'other@test.com', name: 'Other User', image: null }
+      const taskWithOtherComment = {
+        ...mockTask,
+        comments: [{
+          ...mockTask.comments![0],
+          id: 'comment-2',
+          author: otherUser,
+          authorId: 'user-2',
+        }]
+      }
+
+      render(<CommentSection {...defaultProps} task={taskWithOtherComment} showingActionsFor="comment-2" />)
+
+      expect(screen.getByText('Copy')).toBeInTheDocument()
+      expect(screen.getByText('Reply')).toBeInTheDocument()
+      expect(screen.queryByText('Delete')).not.toBeInTheDocument()
+    })
+
+    it('should not show Reply for nested replies', () => {
       const taskWithReplies = {
         ...mockTask,
-        comments: [
-          {
-            ...mockTask.comments![0],
-            replies: [
-              {
-                id: 'reply-1',
-                content: 'Reply content',
-                type: 'TEXT' as const,
-                author: mockCurrentUser,
-                authorId: 'user-1',
-                taskId: 'task-1',
-                parentCommentId: 'comment-1',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                replies: []
-              }
-            ]
-          }
-        ]
+        comments: [{
+          ...mockTask.comments![0],
+          replies: [{
+            id: 'reply-1',
+            content: 'Reply content',
+            type: 'TEXT' as const,
+            author: mockCurrentUser,
+            authorId: 'user-1',
+            taskId: 'task-1',
+            parentCommentId: 'comment-1',
+            createdAt: new Date('2025-01-01T11:00:00Z'),
+            updatedAt: new Date('2025-01-01T11:00:00Z'),
+            replies: []
+          }]
+        }]
+      }
+
+      render(<CommentSection {...defaultProps} task={taskWithReplies} showingActionsFor="reply-1" />)
+
+      // Reply action should show for the comment but not for the reply
+      expect(screen.getByText('Copy')).toBeInTheDocument()
+      expect(screen.queryByText('Reply')).not.toBeInTheDocument()
+      expect(screen.getByText('Delete')).toBeInTheDocument()
+    })
+
+    it('should delete reply when Delete is clicked on a reply', async () => {
+      const taskWithReplies = {
+        ...mockTask,
+        comments: [{
+          ...mockTask.comments![0],
+          replies: [{
+            id: 'reply-1',
+            content: 'Reply content',
+            type: 'TEXT' as const,
+            author: mockCurrentUser,
+            authorId: 'user-1',
+            taskId: 'task-1',
+            parentCommentId: 'comment-1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            replies: []
+          }]
+        }]
       }
 
       const mockFetch = vi.fn().mockResolvedValue({ ok: true })
       global.fetch = mockFetch
 
       const onUpdate = vi.fn()
-      render(<CommentSection {...defaultProps} task={taskWithReplies} onUpdate={onUpdate} />)
+      render(<CommentSection {...defaultProps} task={taskWithReplies} onUpdate={onUpdate} showingActionsFor="reply-1" />)
 
-      // Find and click the reply's more menu
-      const moreButtons = screen.getAllByRole('button')
-      const replyMoreButton = moreButtons.find(btn =>
-        btn.classList.contains('w-5') && btn.querySelector('.lucide-more-vertical')
-      )
+      fireEvent.click(screen.getByText('Delete'))
 
-      if (replyMoreButton) {
-        fireEvent.click(replyMoreButton)
-
-        await waitFor(() => {
-          const deleteButton = screen.getByText('Delete Reply')
-          fireEvent.click(deleteButton)
-        })
-
-        await waitFor(() => {
-          expect(mockFetch).toHaveBeenCalledWith(
-            '/api/comments/reply-1',
-            expect.objectContaining({ method: 'DELETE' })
-          )
-        })
-      }
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          '/api/comments/reply-1',
+          expect.objectContaining({ method: 'DELETE' })
+        )
+      })
     })
   })
 

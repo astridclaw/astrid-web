@@ -7,7 +7,7 @@
   --theme-bg-hover: 255, 255, 255;
   --theme-bg-active: 229, 231, 235;
   --theme-bg-selected: 239, 246, 255;
-  --theme-bg-selected-border: 191, 219, 254;
+  --theme-bg-selected-border: 59, 130, 246;
 
   /* Surface colors - White cards (same as light) */
   --theme-surface: 255, 255, 255;
@@ -47,7 +47,7 @@
   /* Task panel colors (same as light) */
   --theme-panel-bg: 249, 250, 251;
   --theme-panel-border: 229, 231, 235;
-  --theme-panel-arrow: 255, 255, 255;
+  --theme-panel-arrow: 249, 250, 251;
 
   /* Header colors (same as light) */
   --theme-header-bg: 249, 250, 251;
@@ -118,7 +118,7 @@
 }
 
 .ocean .theme-input {
-  background-color: rgb(var(--theme-border));
+  background-color: rgb(var(--theme-input-bg));
   border-color: rgb(var(--theme-input-border));
   color: rgb(var(--theme-text-primary));
 }
@@ -204,7 +204,8 @@
 }
 
 /* Chat bubble colors - white bubbles on cyan */
-.ocean .chat-bubble-mine { background-color: rgb(255, 255, 255); }
-.ocean .chat-bubble-other { background-color: rgba(255, 255, 255, 0.5); }
+/* Chat bubbles: translucent cyan to match ocean task cards */
+.ocean .chat-bubble-mine { background-color: rgba(136, 220, 248, 0.25); }
+.ocean .chat-bubble-other { background-color: rgba(136, 220, 248, 0.15); }
 
 /* Ocean theme inherits all component styles from light theme */
