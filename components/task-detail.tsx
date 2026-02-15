@@ -1443,7 +1443,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
       </div>
 
       <div
-        className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4 relative"
+        className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4 relative theme-bg-primary"
         ref={scrollAreaCallbackRef}
         onTouchStart={pullToRefresh.onTouchStart}
         onTouchMove={pullToRefresh.onTouchMove}

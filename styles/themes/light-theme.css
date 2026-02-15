@@ -318,9 +318,9 @@
 .lite .theme-comment-bg { background-color: rgb(var(--theme-comment-bg)); }
 .lite .theme-count-bg { background-color: rgb(var(--theme-count-bg)); }
 
-/* Chat bubble colors - glass effect */
+/* Chat bubble colors */
 .light .chat-bubble-mine { background-color: rgb(var(--theme-bg-secondary)); }
-.light .chat-bubble-other { background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.light .chat-bubble-other { background-color: rgb(var(--theme-bg-tertiary)); }
 
 /* Chat bubble colors - lite theme */
 .lite .chat-bubble-mine { background-color: rgb(var(--theme-bg-secondary)); }
