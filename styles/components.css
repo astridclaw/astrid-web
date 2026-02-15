@@ -565,8 +565,8 @@
   -webkit-overflow-scrolling: touch;
   /* Prevent blue screen overlay issues on iOS */
   isolation: isolate;
-  /* Ensure keyboard compatibility */
-  overflow-y: auto;
+  /* Let internal flex layout handle scrolling so floating input bar stays at bottom */
+  overflow: hidden;
 }
 
 /* Mobile-specific textarea styling to fix iOS blue screen issue */
