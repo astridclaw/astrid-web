@@ -174,7 +174,7 @@ export function CommentSection({
   replyUploadError,
   setReplyUploadError
 }: CommentSectionProps) {
-  const [showSystemComments, setShowSystemComments] = useState(true)
+  const [showSystemComments, setShowSystemComments] = useState(false)
   const [localUploadError, setLocalUploadError] = useState<string | null>(null)
   const [localReplyUploadError, setLocalReplyUploadError] = useState<string | null>(null)
   const [isRefreshingDesktop, setIsRefreshingDesktop] = useState(false)
