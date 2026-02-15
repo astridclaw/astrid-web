@@ -176,8 +176,8 @@ describe('TaskDetail Upload Functionality', () => {
 
       render(<TaskDetail {...mockProps} />)
 
-      // Find the file input and upload a file
-      const fileInput = document.querySelector('#comment-file-upload')
+      // Find the file input in the floating CommentInputBar
+      const fileInput = document.querySelector('#comment-file-upload-bar')
       expect(fileInput).toBeTruthy()
 
       const file = new File(['test content'], 'test.jpg', { type: 'image/jpeg' })
@@ -240,8 +240,8 @@ describe('TaskDetail Upload Functionality', () => {
 
       render(<TaskDetail {...mockProps} task={mockTaskWithComments} />)
 
-      // Click reply button
-      const replyButton = screen.getByText('Reply')
+      // Click reply button (chat bubble uses icon with title)
+      const replyButton = screen.getByTitle('Reply')
       await user.click(replyButton)
 
       // Find the reply file input

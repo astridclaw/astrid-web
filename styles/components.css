@@ -245,6 +245,36 @@
   @apply w-full rounded-lg px-3 py-2 pr-12 resize-none transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
 
+/* Chat-style Comments */
+.chat-bubble {
+  @apply rounded-lg max-w-[85%];
+  padding: 12px;
+}
+
+.chat-bubble-row {
+  @apply flex items-end gap-2;
+}
+
+.chat-bubble-row-mine {
+  @apply flex-row-reverse;
+}
+
+.chat-bubble-meta {
+  @apply text-xs mt-1 flex items-center gap-1;
+}
+
+.chat-input-bar {
+  @apply flex items-center gap-3 p-3;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-input-textarea {
+  @apply flex-1 resize-none rounded-lg border px-3 py-2;
+  min-height: 36px;
+  max-height: 200px;
+  font-size: 16px;
+}
+
 /* Form Components */
 .form-group {
   @apply space-y-2;

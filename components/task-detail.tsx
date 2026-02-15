@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MarkdownEditor } from "./markdown-editor"
 import { SecureAttachmentViewer } from "./secure-attachment-viewer"
 import { UserPicker } from "./user-picker"
@@ -20,7 +20,7 @@ import { CustomRepeatingEditor } from "./custom-repeating-editor"
 import { TaskCheckbox } from "./task-checkbox"
 import { PriorityPicker } from "./ui/priority-picker"
 import { TimePicker, formatConciseTime } from "./ui/time-picker"
-import { CommentSection } from "./task-detail/CommentSection"
+import { CommentSection, CommentInputBar } from "./task-detail/CommentSection"
 import { TaskFieldEditors } from "./task-detail/TaskFieldEditors"
 import { TaskModals } from "./task-detail/TaskModals"
 import type { Task, Comment, User, TaskList } from "../types/task"
@@ -1339,7 +1339,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
         {/* Task Content Row */}
         <div className="p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 flex-1">
+            <div className="flex items-center space-x-2 flex-1 min-w-0">
             <TaskCheckbox
               checked={tempCompleted}
               onToggle={handleToggleComplete}
@@ -1361,8 +1361,8 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
                 />
               </div>
             ) : (
-              <span 
-                className={`text-lg cursor-pointer hover:theme-bg-hover px-2 py-1 rounded flex-1 ${
+              <span
+                className={`text-lg cursor-pointer hover:theme-bg-hover px-2 py-1 rounded flex-1 truncate ${
                   task.completed ? "line-through theme-text-muted" : "theme-text-primary"
                 }`}
                 onClick={() => setEditingTitle(true)}
@@ -1371,6 +1371,49 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
               </span>
             )}
           </div>
+          {/* Action menu (... button) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="flex-shrink-0 theme-text-muted hover:theme-text-secondary">
+                <MoreVertical className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={handleCopyClick}>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareClick}>
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </DropdownMenuItem>
+              {(() => {
+                const taskList = task.lists?.[0]
+                const isPublicListTask = taskList?.privacy === 'PUBLIC'
+                const isUserOwnerOrAdmin = taskList?.ownerId === currentUser.id ||
+                                          taskList?.admins?.some(admin => admin.id === currentUser.id)
+                if (isPublicListTask && !isUserOwnerOrAdmin) return null
+                return (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600 focus:text-red-600">
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </>
+                )
+              })()}
+              {reminderDebugMode && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleTestReminder} className="text-orange-500 focus:text-orange-500">
+                    <Bug className="w-4 h-4 mr-2" />
+                    Test Reminder
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         </div>
       </div>
@@ -1498,19 +1541,7 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
         })()}
 
 
-        {/* Comments Section */}
-        {!shouldHideTaskComments(task) && (
-        <CommentSection
-          task={task}
-          currentUser={currentUser}
-          onUpdate={onUpdate}
-          onLocalUpdate={onLocalUpdate}
-          onRefreshComments={handleRefreshComments}
-          {...state.comments}
-        />
-        )}
-
-        {/* Timer Button */}
+        {/* Timer Button (before comments, matching iOS order) */}
         <div className="mt-4 px-4">
           <Button
             variant="outline"
@@ -1535,90 +1566,35 @@ function TaskDetailComponent({ task, currentUser, availableLists = [], onUpdate,
           />
         )}
 
-        {/* Action Buttons - at bottom of scrollable content */}
-        <div className="pt-8 pb-32 md:pb-4 flex flex-wrap justify-center gap-3 border-t border-gray-200 dark:border-gray-700 mt-6">
-          {(() => {
-            // Check if this is a public list task that user doesn't own/admin
-            const taskList = task.lists?.[0] // Assuming task belongs to one primary list
-            const isPublicListTask = taskList?.privacy === 'PUBLIC'
-            const isUserOwnerOrAdmin = taskList?.ownerId === currentUser.id ||
-                                      taskList?.admins?.some(admin => admin.id === currentUser.id)
-
-            if (isPublicListTask && !isUserOwnerOrAdmin) {
-              // Show Copy and Share buttons for public list tasks that user doesn't own/admin
-              return (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopyClick}
-                    className="border-blue-600 text-blue-400 bg-transparent hover:bg-blue-600 hover:border-blue-600 hover:text-white"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleShareClick}
-                    className="border-green-600 text-green-400 bg-transparent hover:bg-green-600 hover:border-green-600 hover:text-white"
-                  >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
-                </>
-              )
-            }
-
-            // Show Copy, Share and Delete buttons for tasks user can edit
-            return (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyClick}
-                  className="border-blue-600 text-blue-400 bg-transparent hover:bg-blue-600 hover:border-blue-600 hover:text-white"
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleShareClick}
-                  className="border-green-600 text-green-400 bg-transparent hover:bg-green-600 hover:border-green-600 hover:text-white"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDeleteClick}
-                  className="border-gray-600 theme-text-secondary bg-transparent hover:bg-red-600 hover:border-red-600"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
-                </Button>
-              </>
-            )
-          })()}
-
-          {/* Debug Mode: Test Reminder Button */}
-          {reminderDebugMode && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTestReminder}
-              className="border-orange-500 text-orange-400 bg-transparent hover:bg-orange-600 hover:border-orange-600 hover:text-white"
-              title="[DEBUG] Test reminder notification for this task"
-            >
-              <Bug className="w-4 h-4 mr-2" />
-              Test Reminder
-            </Button>
-          )}
-        </div>
+        {/* Comments Section (chat bubbles only - input bar is outside scroll area) */}
+        {!shouldHideTaskComments(task) && (
+        <CommentSection
+          task={task}
+          currentUser={currentUser}
+          onUpdate={onUpdate}
+          onLocalUpdate={onLocalUpdate}
+          onRefreshComments={handleRefreshComments}
+          hideInput={true}
+          {...state.comments}
+        />
+        )}
       </div>
+
+      {/* Floating comment input bar - outside scroll area, sticks to bottom */}
+      {!shouldHideTaskComments(task) && !readOnly && (
+        <CommentInputBar
+          task={task}
+          currentUser={currentUser}
+          onUpdate={onUpdate}
+          onLocalUpdate={onLocalUpdate}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          uploadingFile={uploadingFile}
+          setUploadingFile={setUploadingFile}
+          attachedFile={attachedFile}
+          setAttachedFile={setAttachedFile}
+        />
+      )}
 
       {/* Footer with Action Buttons - only for new tasks now */}
       {isNewTask && onSaveNew && (

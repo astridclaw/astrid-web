@@ -157,6 +157,12 @@
   border: 1px solid rgba(136, 220, 248, 0.3);
 }
 
+/* Comment input bar: Match mobile quick add styling */
+.ocean .chat-input-bar {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-top: 1px solid rgba(136, 220, 248, 0.3);
+}
+
 /* ===== OCEAN THEME: Cyan Background with White Cards ===== */
 /* Matches iOS Ocean theme - white cards floating on cyan ocean */
 
@@ -196,5 +202,9 @@
 .ocean .task-card .theme-bg-secondary {
   background-color: rgba(243, 244, 246, 0.8);
 }
+
+/* Chat bubble colors - white bubbles on cyan */
+.ocean .chat-bubble-mine { background-color: rgb(255, 255, 255); }
+.ocean .chat-bubble-other { background-color: rgba(255, 255, 255, 0.5); }
 
 /* Ocean theme inherits all component styles from light theme */

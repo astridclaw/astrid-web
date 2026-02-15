@@ -82,7 +82,8 @@ describe('CommentSection', () => {
     it('should render existing comments', () => {
       render(<CommentSection {...defaultProps} />)
       expect(screen.getByText('First comment')).toBeInTheDocument()
-      expect(screen.getByText('Test User')).toBeInTheDocument()
+      // Chat bubble shows "You" for current user's comments
+      expect(screen.getByText('You')).toBeInTheDocument()
     })
 
     it('should render add comment textarea', () => {
@@ -92,7 +93,8 @@ describe('CommentSection', () => {
 
     it('should show Reply button for each comment', () => {
       render(<CommentSection {...defaultProps} />)
-      expect(screen.getByText('Reply')).toBeInTheDocument()
+      // Chat bubble uses an icon button with title="Reply"
+      expect(screen.getByTitle('Reply')).toBeInTheDocument()
     })
   })
 
@@ -143,7 +145,7 @@ describe('CommentSection', () => {
 
     it('should show Send button when there is content', () => {
       render(<CommentSection {...defaultProps} newComment="Test comment" />)
-      expect(screen.getByTitle('Send comment (Enter)')).toBeInTheDocument()
+      expect(screen.getByTitle('Send comment')).toBeInTheDocument()
     })
 
     it('should not add empty comment', async () => {
@@ -275,7 +277,7 @@ describe('CommentSection', () => {
       const setReplyingTo = vi.fn()
       render(<CommentSection {...defaultProps} setReplyingTo={setReplyingTo} />)
 
-      const replyButton = screen.getByText('Reply')
+      const replyButton = screen.getByTitle('Reply')
       fireEvent.click(replyButton)
 
       expect(setReplyingTo).toHaveBeenCalledWith('comment-1')
@@ -287,7 +289,7 @@ describe('CommentSection', () => {
       expect(screen.getByText('Replying to Test User')).toBeInTheDocument()
     })
 
-    it('should cancel reply when Cancel button is clicked', () => {
+    it('should cancel reply when X button is clicked', () => {
       const setReplyingTo = vi.fn()
       const setReplyContent = vi.fn()
       const setReplyAttachedFile = vi.fn()
@@ -300,8 +302,11 @@ describe('CommentSection', () => {
         setReplyAttachedFile={setReplyAttachedFile}
       />)
 
-      const cancelButton = screen.getByText('Cancel')
-      fireEvent.click(cancelButton)
+      // Chat bubble uses an X icon button to cancel reply (inside "Replying to..." text)
+      const replyingToText = screen.getByText(/Replying to/)
+      const cancelButton = replyingToText.querySelector('button')
+      expect(cancelButton).toBeTruthy()
+      fireEvent.click(cancelButton!)
 
       expect(setReplyingTo).toHaveBeenCalledWith(null)
       expect(setReplyContent).toHaveBeenCalledWith('')
@@ -366,9 +371,8 @@ describe('CommentSection', () => {
       }
 
       render(<CommentSection {...defaultProps} task={taskWithReplies} />)
+      // Chat bubbles render replies inline as nested bubbles
       expect(screen.getByText('Reply content')).toBeInTheDocument()
-      expect(screen.getByText('1 reply')).toBeInTheDocument()
-      expect(screen.getByText('replied')).toBeInTheDocument()
     })
   })
 
@@ -376,8 +380,8 @@ describe('CommentSection', () => {
     it('should show delete button for own comments', () => {
       render(<CommentSection {...defaultProps} />)
       // The user should be able to access the dropdown menu for their own comments
-      // We can verify this by checking that Reply button exists (always shown)
-      expect(screen.getByText('Reply')).toBeInTheDocument()
+      // Verify the Reply icon button exists (always shown for top-level comments)
+      expect(screen.getByTitle('Reply')).toBeInTheDocument()
     })
 
     it('should delete comment when delete is clicked', async () => {
@@ -537,16 +541,27 @@ describe('CommentSection', () => {
   })
 
   describe('Theme Compatibility', () => {
-    it('should use theme-text-primary for comment usernames', () => {
-      render(<CommentSection {...defaultProps} />)
-      const usernameElement = screen.getByText('Test User')
-      // UserLink component wraps username in a link, check parent has theme classes
-      const linkElement = usernameElement.closest('a')
-      expect(linkElement).toBeTruthy()
-      expect(linkElement).toHaveClass('theme-text-primary')
+    it('should use theme-text-muted for comment author in chat bubble meta', () => {
+      // Use a different author so name is displayed (not "You")
+      const otherUser: User = { id: 'user-2', email: 'other@test.com', name: 'Other User', image: null }
+      const taskWithOtherComment = {
+        ...mockTask,
+        comments: [{
+          ...mockTask.comments![0],
+          author: otherUser,
+          authorId: 'user-2',
+        }]
+      }
+      render(<CommentSection {...defaultProps} task={taskWithOtherComment} />)
+      const usernameElement = screen.getByText('Other User')
+      // Chat bubble meta row has theme-text-muted class
+      const metaElement = usernameElement.closest('.chat-bubble-meta')
+      expect(metaElement).toBeTruthy()
+      expect(metaElement).toHaveClass('theme-text-muted')
     })
 
-    it('should use theme-text-primary for reply usernames', () => {
+    it('should use theme-text-muted for reply author in chat bubble meta', () => {
+      const otherUser: User = { id: 'user-2', email: 'other@test.com', name: 'Reply User', image: null }
       const taskWithReplies = {
         ...mockTask,
         comments: [
@@ -557,8 +572,8 @@ describe('CommentSection', () => {
                 id: 'reply-1',
                 content: 'Reply content',
                 type: 'TEXT' as const,
-                author: { ...mockCurrentUser, name: 'Reply User' },
-                authorId: 'user-1',
+                author: otherUser,
+                authorId: 'user-2',
                 taskId: 'task-1',
                 parentCommentId: 'comment-1',
                 createdAt: new Date('2025-01-01T11:00:00Z'),
@@ -572,10 +587,9 @@ describe('CommentSection', () => {
 
       render(<CommentSection {...defaultProps} task={taskWithReplies} />)
       const replyUsernameElement = screen.getByText('Reply User')
-      // UserLink component wraps username in a link, check parent has theme classes
-      const linkElement = replyUsernameElement.closest('a')
-      expect(linkElement).toBeTruthy()
-      expect(linkElement).toHaveClass('theme-text-primary')
+      const metaElement = replyUsernameElement.closest('.chat-bubble-meta')
+      expect(metaElement).toBeTruthy()
+      expect(metaElement).toHaveClass('theme-text-muted')
     })
 
     it('should use theme-text-primary for attached file names', () => {
