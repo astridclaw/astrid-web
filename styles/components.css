@@ -126,7 +126,9 @@
 }
 
 .task-panel-arrow {
-  @apply absolute -left-3 w-6 h-6 border-l border-b transform rotate-45 transition-all duration-75;
+  @apply absolute -left-2 border-l border-b transform rotate-45 transition-all duration-75;
+  width: 17px;
+  height: 17px;
   z-index: 10;
   border-right: none;
   border-top: none;
@@ -532,7 +534,8 @@
 }
 
 .task-panel-desktop {
-  @apply fixed top-32 bottom-10 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col z-30 rounded-l-lg rounded-r-lg rounded-lg shadow-lg;
+  @apply fixed top-32 bottom-10 border flex flex-col z-30 rounded-lg shadow-lg;
+  border-color: rgb(var(--theme-panel-border));
   /* Responsive width that adapts to available space and layout configuration */
   width: clamp(
     var(--task-panel-min-width),

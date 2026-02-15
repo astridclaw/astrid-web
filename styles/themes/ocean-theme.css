@@ -47,7 +47,7 @@
   /* Task panel colors (same as light) */
   --theme-panel-bg: 249, 250, 251;
   --theme-panel-border: 229, 231, 235;
-  --theme-panel-arrow: 249, 250, 251;
+  --theme-panel-arrow: 255, 255, 255;
 
   /* Header colors (same as light) */
   --theme-header-bg: 249, 250, 251;
@@ -118,7 +118,7 @@
 }
 
 .ocean .theme-input {
-  background-color: rgb(var(--theme-input-bg));
+  background-color: rgb(var(--theme-border));
   border-color: rgb(var(--theme-input-border));
   color: rgb(var(--theme-text-primary));
 }
