@@ -65,15 +65,23 @@ export type AgentEventType =
  * Authenticate an agent request via OAuth Bearer token.
  * Returns the auth context — the authenticated user must be an AI agent.
  */
-export async function authenticateAgentRequest(req: NextRequest): Promise<AuthContext> {
+/**
+ * Authenticate an agent request via OAuth Bearer token.
+ * Validates required scopes based on the operation.
+ */
+export async function authenticateAgentRequest(
+  req: NextRequest,
+  requiredScopes: string[] = ['tasks:read']
+): Promise<AuthContext> {
   const auth = await authenticateAPI(req)
 
-  // Require at minimum tasks:read scope
-  if (
-    !hasRequiredScopes(auth.scopes, ['tasks:read']) &&
-    !hasRequiredScopes(auth.scopes, ['*'])
-  ) {
-    throw new ForbiddenError('Missing required scope: tasks:read')
+  // Check required scopes (wildcard always passes)
+  if (!hasRequiredScopes(auth.scopes, ['*'])) {
+    for (const scope of requiredScopes) {
+      if (!hasRequiredScopes(auth.scopes, [scope])) {
+        throw new ForbiddenError(`Missing required scope: ${scope}`)
+      }
+    }
   }
 
   return auth

@@ -80,19 +80,6 @@ const AI_SERVICES: AIServiceConfig[] = [
     },
     documentation: 'https://aistudio.google.com/apikey'
   },
-  {
-    id: 'openclaw',
-    name: 'OpenClaw',
-    description: 'Your own AI agent running locally via OpenClaw Gateway',
-    icon: '',
-    isGateway: true,
-    keyFormat: {
-      prefix: 'ws',
-      pattern: /^wss?:\/\/.+/
-    },
-    documentation: 'https://github.com/anthropics/claude-code'
-  }
-]
 
 interface APIKeyData {
   [serviceId: string]: {

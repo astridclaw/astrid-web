@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCachedApiKey, getCachedModelPreference, getCachedOpenClawConfig } from '@/lib/api-key-cache'
+import { getCachedApiKey, getCachedModelPreference } from '@/lib/api-key-cache'
 import { uploadTextContent } from '@/lib/secure-storage'
 
 export const runtime = 'nodejs'
@@ -62,9 +62,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unknown AI agent' }, { status: 400 })
     }
 
-    // Handle OpenClaw separately — fire-and-forget to user's gateway
+    // OpenClaw tasks now arrive via the channel plugin, not assistant-workflow
     if (service === 'openclaw') {
-      return await handleOpenClawService(task, taskId, creatorId, isCommentResponse, userComment)
+      await prisma.comment.create({
+        data: {
+          taskId,
+          authorId: task.assigneeId,
+          content: `To use OpenClaw with Astrid, install the Astrid channel plugin in your OpenClaw instance. OpenClaw connects outbound to Astrid — no gateway URL needed.\n\nSee: https://github.com/Graceful-Tools/astrid-web/tree/main/packages/openclaw-astrid-channel`
+        }
+      })
+      return NextResponse.json({ error: 'OpenClaw uses channel plugin', commented: true })
     }
 
     // Get the creator's API key for this service
@@ -337,93 +344,5 @@ async function callAIService(
       throw new Error(`Unknown service: ${service}`)
   }
 }
-
-/**
- * Convert WebSocket gateway URL to HTTP for hooks endpoint
- */
-function gatewayUrlToHttp(wsUrl: string): string {
-  return wsUrl
-    .replace(/^wss:\/\//, 'https://')
-    .replace(/^ws:\/\//, 'http://')
-}
-
-/**
- * Handle OpenClaw task dispatch — fire-and-forget to user's gateway
- */
-async function handleOpenClawService(
-  task: any,
-  taskId: string,
-  creatorId: string,
-  isCommentResponse?: boolean,
-  userComment?: string
-): Promise<NextResponse> {
-  const config = await getCachedOpenClawConfig(creatorId)
-
-  if (!config) {
-    console.log(`⚠️ [AssistantWorkflow] No OpenClaw gateway for user ${creatorId}`)
-    await prisma.comment.create({
-      data: {
-        taskId,
-        authorId: task.assigneeId,
-        content: `I'd love to help with this task, but you need to configure an OpenClaw gateway first. Please go to Settings → AI Agents and add your OpenClaw gateway URL.`
-      }
-    })
-    return NextResponse.json({ error: 'No OpenClaw gateway configured', commented: true })
-  }
-
-  const prompt = buildPrompt(task, isCommentResponse, userComment)
-  const httpUrl = gatewayUrlToHttp(config.gatewayUrl)
-  const hooksUrl = `${httpUrl.replace(/\/$/, '')}/hooks/agent`
-
-  console.log(`🤖 [AssistantWorkflow] Dispatching to OpenClaw gateway: ${hooksUrl}`)
-
-  try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    }
-    if (config.authToken) {
-      headers['Authorization'] = `Bearer ${config.authToken}`
-    }
-
-    const response = await fetch(hooksUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        message: prompt,
-        name: 'astrid-task',
-        sessionKey: `hook:astrid:task-${taskId}`,
-        wakeMode: 'now'
-      }),
-      signal: AbortSignal.timeout(15000)
-    })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(`Gateway returned ${response.status}: ${errorText}`)
-    }
-
-    console.log(`✅ [AssistantWorkflow] Task dispatched to OpenClaw gateway`)
-
-    await prisma.comment.create({
-      data: {
-        taskId,
-        authorId: task.assigneeId,
-        content: `I'm working on this task now. I'll post updates as I make progress.`
-      }
-    })
-
-    return NextResponse.json({ success: true, service: 'openclaw', async: true })
-  } catch (error: any) {
-    console.error(`❌ [AssistantWorkflow] OpenClaw dispatch failed:`, error)
-
-    await prisma.comment.create({
-      data: {
-        taskId,
-        authorId: task.assigneeId,
-        content: `I couldn't connect to the OpenClaw gateway: ${error.message}. Please check that your gateway is running and accessible.`
-      }
-    })
-
-    return NextResponse.json({ error: 'OpenClaw dispatch failed', message: error.message })
   }
 }

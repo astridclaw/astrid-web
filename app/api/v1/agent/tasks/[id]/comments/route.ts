@@ -70,7 +70,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
 
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
-    const auth = await authenticateAgentRequest(req)
+    const auth = await authenticateAgentRequest(req, ['tasks:read', 'comments:write'])
     const { id } = await context.params
 
     // Verify agent has access
@@ -89,6 +89,18 @@ export async function POST(req: NextRequest, context: RouteContext) {
 
     if (!task) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 })
+    }
+
+    // Rate limit: max 10 comments per task per minute per agent
+    const recentComments = await prisma.comment.count({
+      where: {
+        taskId: id,
+        authorId: auth.userId,
+        createdAt: { gte: new Date(Date.now() - 60_000) },
+      },
+    })
+    if (recentComments >= 10) {
+      return NextResponse.json({ error: 'Rate limit: max 10 comments per minute per task' }, { status: 429 })
     }
 
     const body = await req.json()

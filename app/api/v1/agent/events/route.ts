@@ -48,7 +48,7 @@ function mapEventType(type: string): string | null {
 export async function GET(request: NextRequest) {
   let auth
   try {
-    auth = await authenticateAgentRequest(request)
+    auth = await authenticateAgentRequest(request, ['tasks:read', 'sse:connect'])
   } catch {
     return new Response('Unauthorized', { status: 401 })
   }

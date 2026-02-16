@@ -43,7 +43,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
 
 export async function PATCH(req: NextRequest, context: RouteContext) {
   try {
-    const auth = await authenticateAgentRequest(req)
+    const auth = await authenticateAgentRequest(req, ['tasks:read', 'tasks:write'])
     const { id } = await context.params
 
     // Verify agent owns this task
