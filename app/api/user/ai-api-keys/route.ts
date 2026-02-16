@@ -15,13 +15,16 @@ function getEncryptionKey(): string {
 
 const SaveAPIKeySchema = z.object({
   serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw']),
-  apiKey: z.string().min(1),
-  // For OpenClaw: WebSocket URLs (ws:// or wss://) or HTTPS URLs
-  gatewayUrl: z.string().refine(
-    (url) => !url || url.startsWith('ws://') || url.startsWith('wss://') || url.startsWith('https://'),
-    { message: 'Gateway URL must start with ws://, wss://, or https://' }
-  ).optional()
-})
+  apiKey: z.string().min(1).optional(),
+  gatewayUrl: z.string().min(1).optional(),
+  authToken: z.string().optional(),
+}).refine(
+  (data) => {
+    if (data.serviceId === 'openclaw') return !!data.gatewayUrl
+    return !!data.apiKey
+  },
+  { message: 'OpenClaw requires gatewayUrl, other services require apiKey' }
+)
 
 const DeleteAPIKeySchema = z.object({
   serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw'])
@@ -106,17 +109,16 @@ export async function GET(request: NextRequest) {
     for (const [serviceId, keyInfo] of Object.entries(apiKeys)) {
       if (typeof keyInfo === 'object' && keyInfo && 'encrypted' in keyInfo) {
         try {
-          const decryptedKey = decrypt(keyInfo as any)
+          const decryptedValue = decrypt(keyInfo as any)
+          const isGateway = (keyInfo as any).isGateway === true
           keyData[serviceId] = {
             hasKey: true,
-            keyPreview: getKeyPreview(decryptedKey),
+            keyPreview: isGateway
+              ? (decryptedValue.length > 20 ? decryptedValue.substring(0, 20) + '...' : decryptedValue)
+              : getKeyPreview(decryptedValue),
             isValid: (keyInfo as any).isValid,
             lastTested: (keyInfo as any).lastTested,
-            error: (keyInfo as any).error,
-            // Include gatewayUrl for OpenClaw
-            ...(serviceId === 'openclaw' && (keyInfo as any).gatewayUrl
-              ? { gatewayUrl: (keyInfo as any).gatewayUrl }
-              : {})
+            error: (keyInfo as any).error
           }
         } catch (error) {
           keyData[serviceId] = {
@@ -186,20 +188,32 @@ export async function PUT(request: NextRequest) {
     const mcpSettings = user.mcpSettings ? JSON.parse(user.mcpSettings) : {}
     const apiKeys = mcpSettings.apiKeys || {}
 
-    // Encrypt the API key
-    const encryptedKey = encrypt(validatedData.apiKey)
+    // Encrypt and store based on service type
+    if (validatedData.serviceId === 'openclaw') {
+      // Gateway service: encrypt URL and optional auth token
+      const encryptedUrl = encrypt(validatedData.gatewayUrl!)
+      const encryptedToken = validatedData.authToken ? encrypt(validatedData.authToken) : null
 
-    // Store encrypted key with metadata
-    apiKeys[validatedData.serviceId] = {
-      ...encryptedKey,
-      isValid: null, // Will be set when tested
-      lastTested: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      // Store gatewayUrl for OpenClaw (not encrypted, it's not sensitive)
-      ...(validatedData.serviceId === 'openclaw' && validatedData.gatewayUrl
-        ? { gatewayUrl: validatedData.gatewayUrl }
-        : {})
+      apiKeys[validatedData.serviceId] = {
+        ...encryptedUrl,
+        isGateway: true,
+        authToken: encryptedToken,
+        isValid: null,
+        lastTested: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    } else {
+      // Standard API key service
+      const encryptedKey = encrypt(validatedData.apiKey!)
+
+      apiKeys[validatedData.serviceId] = {
+        ...encryptedKey,
+        isValid: null, // Will be set when tested
+        lastTested: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
     }
 
     // Update user settings

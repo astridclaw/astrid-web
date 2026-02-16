@@ -81,6 +81,49 @@ export async function getCachedApiKey(
 
 
 /**
+ * Get cached OpenClaw gateway config for a user
+ */
+export async function getCachedOpenClawConfig(
+  userId: string
+): Promise<{ gatewayUrl: string; authToken?: string } | null> {
+  try {
+    const gatewayUrl = await getCachedApiKey(userId, 'openclaw')
+    if (!gatewayUrl) return null
+
+    // Also try to get the auth token
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { mcpSettings: true }
+    })
+
+    if (!user?.mcpSettings) return { gatewayUrl }
+
+    let settings: any = {}
+    try {
+      settings = typeof user.mcpSettings === 'string'
+        ? JSON.parse(user.mcpSettings)
+        : user.mcpSettings
+    } catch {
+      return { gatewayUrl }
+    }
+
+    const apiKeys = settings.apiKeys || {}
+    const openclawData = apiKeys.openclaw
+    if (!openclawData?.authToken?.encrypted) return { gatewayUrl }
+
+    try {
+      const authToken = decryptApiKeyNew(openclawData.authToken)
+      return { gatewayUrl, authToken }
+    } catch {
+      return { gatewayUrl }
+    }
+  } catch (error) {
+    console.error(`Error getting OpenClaw config for user ${userId}:`, error)
+    return null
+  }
+}
+
+/**
  * Clear cache for a user (useful when keys are updated)
  */
 export function clearApiKeyCache(userId: string): void {

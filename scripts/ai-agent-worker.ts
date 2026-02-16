@@ -109,6 +109,9 @@ const CONFIG = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY,
   openaiApiKey: process.env.OPENAI_API_KEY,
   geminiApiKey: process.env.GEMINI_API_KEY,
+  // OpenClaw Gateway
+  openclawGatewayUrl: process.env.OPENCLAW_GATEWAY_URL,
+  openclawAuthToken: process.env.OPENCLAW_AUTH_TOKEN,
   // Astrid OAuth
   astridApiUrl: process.env.ASTRID_API_URL || 'https://astrid.cc',
   astridClientId: process.env.ASTRID_OAUTH_CLIENT_ID,
@@ -131,12 +134,13 @@ const CONFIG = {
   testflightPublicLink: process.env.TESTFLIGHT_PUBLIC_LINK,
 }
 
-// Get API key for a specific AI service
+// Get API key (or gateway URL for OpenClaw) for a specific AI service
 function getApiKeyForService(service: AIService): string | undefined {
   switch (service) {
     case 'claude': return CONFIG.anthropicApiKey
     case 'openai': return CONFIG.openaiApiKey
     case 'gemini': return CONFIG.geminiApiKey
+    case 'openclaw': return CONFIG.openclawGatewayUrl
   }
 }
 
@@ -192,10 +196,11 @@ async function routePlanningToService(
 
     case 'openclaw':
       // OpenClaw requires gateway URL instead of API key
-      // The gateway URL comes from the user's registered workers
+      // The gateway URL comes from OPENCLAW_GATEWAY_URL env var
       return planWithOpenClaw(taskTitle, taskDescription, {
         repoPath: config.repoPath,
-        gatewayUrl: config.apiKey, // apiKey field is repurposed for gateway URL
+        gatewayUrl: config.apiKey, // apiKey field holds gateway URL for openclaw
+        authToken: CONFIG.openclawAuthToken,
         model: config.model,
         maxTurns: config.maxTurns || 25,
         logger: config.logger,
@@ -243,7 +248,8 @@ async function routeExecutionToService(
       // OpenClaw requires gateway URL instead of API key
       return executeWithOpenClaw(plan, taskTitle, taskDescription, {
         repoPath: config.repoPath,
-        gatewayUrl: config.apiKey, // apiKey field is repurposed for gateway URL
+        gatewayUrl: config.apiKey, // apiKey field holds gateway URL for openclaw
+        authToken: CONFIG.openclawAuthToken,
         model: config.model,
         maxTurns: config.maxTurns || 100,
         logger: config.logger,
@@ -2194,7 +2200,7 @@ async function processTask(task: AstridTask) {
   if (!apiKey) {
     await postComment(
       task.id,
-      `❌ **Error**: No API key configured for ${agentService}. Please add ${agentService === 'claude' ? 'ANTHROPIC_API_KEY' : agentService === 'openai' ? 'OPENAI_API_KEY' : 'GEMINI_API_KEY'} to your environment.`,
+      `❌ **Error**: No API key configured for ${agentService}. Please add ${agentService === 'claude' ? 'ANTHROPIC_API_KEY' : agentService === 'openai' ? 'OPENAI_API_KEY' : agentService === 'openclaw' ? 'OPENCLAW_GATEWAY_URL' : 'GEMINI_API_KEY'} to your environment.`,
       agentEmail
     )
     return

@@ -20,13 +20,9 @@ import {
   Shield,
   Zap,
   Info,
-  Trash2,
-  UserPlus,
-  List
+  Trash2
 } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
-import Link from "next/link"
 
 interface AIServiceConfig {
   id: string
@@ -35,14 +31,13 @@ interface AIServiceConfig {
   icon: string
   baseUrl?: string
   testEndpoint?: string
+  isGateway?: boolean
   keyFormat: {
     prefix: string
     length?: number
     pattern?: RegExp
   }
   documentation: string
-  isOpenClaw?: boolean  // Special handling for OpenClaw (Gateway URL instead of model)
-  agentEmail?: string   // Agent email to add as member (e.g., openclaw@astrid.cc)
 }
 
 const AI_SERVICES: AIServiceConfig[] = [
@@ -50,56 +45,52 @@ const AI_SERVICES: AIServiceConfig[] = [
     id: 'claude',
     name: 'Claude',
     description: 'Claude AI assistant with advanced reasoning capabilities',
-    icon: '\uD83E\uDDE0',  // Brain emoji
+    icon: '',
     baseUrl: 'https://api.anthropic.com',
     testEndpoint: '/v1/models',
     keyFormat: {
       prefix: 'sk-ant-',
       pattern: /^sk-ant-[a-zA-Z0-9_-]+$/
     },
-    documentation: 'https://docs.anthropic.com/claude/reference/getting-started',
-    agentEmail: 'claude@astrid.cc'
+    documentation: 'https://docs.anthropic.com/claude/reference/getting-started'
   },
   {
     id: 'openai',
     name: 'OpenAI',
     description: 'GPT models and OpenAI Assistant API integration',
-    icon: '\uD83E\uDD16',  // Robot emoji
+    icon: '',
     baseUrl: 'https://api.openai.com',
     testEndpoint: '/v1/models',
     keyFormat: {
       prefix: 'sk-',
       pattern: /^sk-(proj-)?[a-zA-Z0-9_-]+$/
     },
-    documentation: 'https://platform.openai.com/docs/api-reference',
-    agentEmail: 'openai@astrid.cc'
+    documentation: 'https://platform.openai.com/docs/api-reference'
   },
   {
     id: 'gemini',
     name: 'Gemini',
     description: 'Google Gemini AI with advanced multimodal capabilities',
-    icon: '\u2728',  // Sparkles emoji
+    icon: '',
     baseUrl: 'https://generativelanguage.googleapis.com',
     testEndpoint: '/v1beta/models',
     keyFormat: {
       prefix: 'AI',
       pattern: /^AIza[a-zA-Z0-9_-]+$/
     },
-    documentation: 'https://aistudio.google.com/apikey',
-    agentEmail: 'gemini@astrid.cc'
+    documentation: 'https://aistudio.google.com/apikey'
   },
   {
     id: 'openclaw',
     name: 'OpenClaw',
-    description: 'Self-hosted AI agent framework for coding tasks',
-    icon: '\uD83E\uDD9E',  // Lobster emoji
+    description: 'Your own AI agent running locally via OpenClaw Gateway',
+    icon: '',
+    isGateway: true,
     keyFormat: {
-      prefix: '',  // No prefix requirement
-      pattern: /^.{8,}$/  // At least 8 chars
+      prefix: 'ws',
+      pattern: /^wss?:\/\/.+/
     },
-    documentation: 'https://github.com/anthropics/claude-code/tree/main/packages/openclaw',
-    isOpenClaw: true,
-    agentEmail: 'openclaw@astrid.cc'
+    documentation: 'https://github.com/anthropics/claude-code'
   }
 ]
 
@@ -110,7 +101,6 @@ interface APIKeyData {
     isValid?: boolean
     lastTested?: string
     error?: string
-    gatewayUrl?: string  // For OpenClaw
   }
 }
 
@@ -135,13 +125,10 @@ export function AIAPIKeyManager() {
   const [showKey, setShowKey] = useState<{ [serviceId: string]: boolean }>({})
   const [apiKeys, setApiKeys] = useState<{ [serviceId: string]: string }>({})
   const [keyData, setKeyData] = useState<APIKeyData>({})
+  const [authTokens, setAuthTokens] = useState<{ [serviceId: string]: string }>({})
   const [selectedService, setSelectedService] = useState<string>(AI_SERVICES[0].id)
   const [modelData, setModelData] = useState<ModelData | null>(null)
   const [modelInputs, setModelInputs] = useState<{ [serviceId: string]: string }>({})
-  const [gatewayUrls, setGatewayUrls] = useState<{ [serviceId: string]: string }>({})
-  const [addingToLists, setAddingToLists] = useState<string | null>(null)
-  const [userLists, setUserLists] = useState<Array<{ id: string; name: string }>>([])
-  const [selectedLists, setSelectedLists] = useState<Set<string>>(new Set())
 
   const fetchAPIKeys = async () => {
     try {
@@ -174,68 +161,10 @@ export function AIAPIKeyManager() {
     }
   }
 
-  const fetchUserLists = async () => {
-    try {
-      const response = await fetch('/api/lists')
-      if (!response.ok) return
-      const data = await response.json()
-      setUserLists(data.lists || [])
-    } catch (error) {
-      console.error('Error fetching user lists:', error)
-    }
-  }
-
-  const handleAddAgentToLists = async (serviceId: string) => {
-    const service = AI_SERVICES.find(s => s.id === serviceId)
-    if (!service?.agentEmail || selectedLists.size === 0) return
-
-    try {
-      setAddingToLists(serviceId)
-      let successCount = 0
-      let errorCount = 0
-
-      for (const listId of selectedLists) {
-        try {
-          const response = await fetch(`/api/lists/${listId}/members`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: service.agentEmail,
-              role: 'member'
-            })
-          })
-
-          if (response.ok || response.status === 409) {
-            // 409 means already a member, which is fine
-            successCount++
-          } else {
-            errorCount++
-          }
-        } catch {
-          errorCount++
-        }
-      }
-
-      if (successCount > 0) {
-        toast.success(`Added ${service.agentEmail} to ${successCount} list${successCount > 1 ? 's' : ''}`)
-      }
-      if (errorCount > 0) {
-        toast.error(`Failed to add to ${errorCount} list${errorCount > 1 ? 's' : ''}`)
-      }
-
-      setSelectedLists(new Set())
-    } catch (error) {
-      console.error('Error adding agent to lists:', error)
-      toast.error('Failed to add agent to lists')
-    } finally {
-      setAddingToLists(null)
-    }
-  }
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true)
-      await Promise.all([fetchAPIKeys(), fetchModelPreferences(), fetchUserLists()])
+      await Promise.all([fetchAPIKeys(), fetchModelPreferences()])
       setLoading(false)
     }
     loadData()
@@ -245,9 +174,9 @@ export function AIAPIKeyManager() {
     const service = AI_SERVICES.find(s => s.id === serviceId)
     if (!service) return false
 
-    // OpenClaw has no prefix requirement
-    if (service.isOpenClaw) {
-      return service.keyFormat.pattern ? service.keyFormat.pattern.test(key) : key.length >= 8
+    // Gateway services validate URL format instead of key format
+    if (service.isGateway) {
+      return service.keyFormat.pattern ? service.keyFormat.pattern.test(key) : key.startsWith('ws')
     }
 
     if (!key.startsWith(service.keyFormat.prefix)) {
@@ -265,66 +194,47 @@ export function AIAPIKeyManager() {
     return true
   }
 
-  const validateGatewayUrl = (url: string): boolean => {
-    if (!url) return false
-    return url.startsWith('ws://') || url.startsWith('wss://') || url.startsWith('https://')
-  }
-
   const handleKeyChange = (serviceId: string, value: string) => {
     setApiKeys(prev => ({ ...prev, [serviceId]: value }))
-  }
-
-  const handleGatewayUrlChange = (serviceId: string, value: string) => {
-    setGatewayUrls(prev => ({ ...prev, [serviceId]: value }))
   }
 
   const handleSaveKey = async (serviceId: string) => {
     const service = AI_SERVICES.find(s => s.id === serviceId)
     const key = apiKeys[serviceId]
-    const gatewayUrl = gatewayUrls[serviceId]
-
     if (!key) return
 
     if (!validateKeyFormat(serviceId, key)) {
-      toast.error(service?.isOpenClaw ? 'Auth token must be at least 8 characters' : 'Invalid API key format')
+      toast.error(service?.isGateway ? 'Invalid gateway URL format' : 'Invalid API key format')
       return
-    }
-
-    // OpenClaw requires gateway URL
-    if (service?.isOpenClaw) {
-      if (!gatewayUrl) {
-        toast.error('Gateway URL is required for OpenClaw')
-        return
-      }
-      if (!validateGatewayUrl(gatewayUrl)) {
-        toast.error('Gateway URL must start with ws://, wss://, or https://')
-        return
-      }
     }
 
     try {
       setSaving(serviceId)
+
+      const body: Record<string, string> = { serviceId }
+      if (service?.isGateway) {
+        body.gatewayUrl = key
+        const token = authTokens[serviceId]
+        if (token) body.authToken = token
+      } else {
+        body.apiKey = key
+      }
+
       const response = await fetch('/api/user/ai-api-keys', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          serviceId,
-          apiKey: key,
-          ...(service?.isOpenClaw && gatewayUrl ? { gatewayUrl } : {})
-        })
+        body: JSON.stringify(body)
       })
 
-      if (!response.ok) throw new Error('Failed to save API key')
+      if (!response.ok) throw new Error(service?.isGateway ? 'Failed to save gateway config' : 'Failed to save API key')
 
       await fetchAPIKeys()
       setApiKeys(prev => ({ ...prev, [serviceId]: '' }))
-      if (service?.isOpenClaw) {
-        setGatewayUrls(prev => ({ ...prev, [serviceId]: '' }))
-      }
-      toast.success(`${service?.name} ${service?.isOpenClaw ? 'configuration' : 'API key'} saved`)
+      setAuthTokens(prev => ({ ...prev, [serviceId]: '' }))
+      toast.success(`${service?.name} ${service?.isGateway ? 'gateway' : 'API key'} saved`)
     } catch (error) {
       console.error('Error saving API key:', error)
-      toast.error('Failed to save API key')
+      toast.error(service?.isGateway ? 'Failed to save gateway config' : 'Failed to save API key')
     } finally {
       setSaving(null)
     }
@@ -524,9 +434,7 @@ export function AIAPIKeyManager() {
                   <div className="space-y-4">
                     <div className="p-4 border rounded-lg bg-muted/50">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                        <Label className="font-medium">
-                          {service.isOpenClaw ? 'Current Configuration' : 'Current API Key'}
-                        </Label>
+                        <Label className="font-medium">{service.isGateway ? 'Current Gateway URL' : 'Current API Key'}</Label>
                         <div className="flex flex-wrap items-center gap-2">
                           {getStatusBadge(service.id)}
                           {data.lastTested && (
@@ -536,57 +444,43 @@ export function AIAPIKeyManager() {
                           )}
                         </div>
                       </div>
-                      {/* Show Gateway URL for OpenClaw */}
-                      {service.isOpenClaw && data.gatewayUrl && (
-                        <div className="mb-2">
-                          <Label className="text-xs text-muted-foreground">Gateway URL</Label>
-                          <Input
-                            value={data.gatewayUrl}
-                            readOnly
-                            className="font-mono text-sm"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        {service.isOpenClaw && <Label className="text-xs text-muted-foreground">Auth Token</Label>}
-                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
-                          <Input
-                            type={showKey[service.id] ? 'text' : 'password'}
-                            value={data.keyPreview || ''}
-                            readOnly
-                            className="font-mono text-sm flex-1 min-w-[150px]"
-                          />
-                          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => toggleShowKey(service.id)}
-                              title={showKey[service.id] ? "Hide" : "Show"}
-                            >
-                              {showKey[service.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleTestKey(service.id)}
-                              disabled={testing === service.id}
-                              title="Test"
-                            >
-                              {testing === service.id ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <TestTube className="h-4 w-4" />
-                              )}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDeleteKey(service.id)}
-                              title="Delete"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                        <Input
+                          type={showKey[service.id] ? 'text' : 'password'}
+                          value={data.keyPreview || ''}
+                          readOnly
+                          className="font-mono text-sm flex-1 min-w-[150px]"
+                        />
+                        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleShowKey(service.id)}
+                            title={showKey[service.id] ? "Hide" : "Show"}
+                          >
+                            {showKey[service.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleTestKey(service.id)}
+                            disabled={testing === service.id}
+                            title="Test"
+                          >
+                            {testing === service.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <TestTube className="h-4 w-4" />
+                            )}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteKey(service.id)}
+                            title="Delete"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                       {data.error && (
@@ -600,52 +494,29 @@ export function AIAPIKeyManager() {
                 ) : null}
 
                 <div className="space-y-4">
-                  {/* Gateway URL input for OpenClaw */}
-                  {service.isOpenClaw && (
-                    <div>
-                      <Label htmlFor={`gateway-${service.id}`} className="font-medium">
-                        {data?.hasKey ? 'Update Gateway URL' : 'Gateway URL'}
-                      </Label>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Use <code className="bg-muted px-1 rounded">ws://</code> for local,{' '}
-                        <code className="bg-muted px-1 rounded">wss://</code> or{' '}
-                        <code className="bg-muted px-1 rounded">https://</code> for remote
-                      </p>
-                      <Input
-                        id={`gateway-${service.id}`}
-                        type="text"
-                        placeholder="wss://your-gateway.example.com/"
-                        value={gatewayUrls[service.id] || ''}
-                        onChange={(e) => handleGatewayUrlChange(service.id, e.target.value)}
-                        className="font-mono"
-                      />
-                    </div>
-                  )}
                   <div>
                     <Label htmlFor={`key-${service.id}`} className="font-medium">
-                      {service.isOpenClaw
-                        ? (data?.hasKey ? 'Update Auth Token' : 'Auth Token')
-                        : (data?.hasKey ? 'Update API Key' : 'Enter API Key')
-                      }
+                      {service.isGateway
+                        ? (data?.hasKey ? 'Update Gateway URL' : 'Enter Gateway URL')
+                        : (data?.hasKey ? 'Update API Key' : 'Enter API Key')}
                     </Label>
                     <p className="text-sm text-muted-foreground mb-2">
-                      {service.isOpenClaw
-                        ? 'Find this in your OpenClaw config: openclaw config get gateway.auth.token'
-                        : `Key should start with "${service.keyFormat.prefix}"${service.keyFormat.length ? ` and be ${service.keyFormat.length} characters long` : ''}.`
-                      }
+                      {service.isGateway
+                        ? 'WebSocket URL for your OpenClaw Gateway (ws:// or wss://).'
+                        : <>Key should start with &quot;{service.keyFormat.prefix}&quot;{service.keyFormat.length ? ` and be ${service.keyFormat.length} characters long` : ''}.</>}
                     </p>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2">
                       <Input
                         id={`key-${service.id}`}
-                        type="password"
-                        placeholder={service.isOpenClaw ? 'Your OpenClaw gateway token' : `${service.keyFormat.prefix}...`}
+                        type={service.isGateway ? 'text' : 'password'}
+                        placeholder={service.isGateway ? 'ws://localhost:18789' : `${service.keyFormat.prefix}...`}
                         value={currentKey}
                         onChange={(e) => handleKeyChange(service.id, e.target.value)}
                         className="font-mono flex-1 min-w-[200px]"
                       />
                       <Button
                         onClick={() => handleSaveKey(service.id)}
-                        disabled={!currentKey || (service.isOpenClaw && !gatewayUrls[service.id]) || saving === service.id}
+                        disabled={!currentKey || saving === service.id}
                         className="w-full sm:w-auto"
                       >
                         {saving === service.id ? (
@@ -657,10 +528,28 @@ export function AIAPIKeyManager() {
                       </Button>
                     </div>
                   </div>
+                  {service.isGateway && (
+                    <div>
+                      <Label htmlFor={`token-${service.id}`} className="font-medium">
+                        Auth Token (optional)
+                      </Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Authentication token for your gateway. Not needed for local connections.
+                      </p>
+                      <Input
+                        id={`token-${service.id}`}
+                        type="password"
+                        placeholder="Gateway authentication token"
+                        value={authTokens[service.id] || ''}
+                        onChange={(e) => setAuthTokens(prev => ({ ...prev, [service.id]: e.target.value }))}
+                        className="font-mono"
+                      />
+                    </div>
+                  )}
                 </div>
 
-                {/* Model Selection - Not shown for OpenClaw */}
-                {modelData && !service.isOpenClaw && (
+                {/* Model Selection */}
+                {modelData && (
                   <div className="space-y-4 pt-4 border-t">
                     <div>
                       <Label htmlFor={`model-${service.id}`} className="font-medium flex items-center gap-2">
@@ -723,25 +612,19 @@ export function AIAPIKeyManager() {
                 <Alert>
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    {service.isOpenClaw ? (
+                    {service.isGateway ? (
                       <>
-                        Need help setting up OpenClaw?{' '}
-                        <Link
-                          href="/settings/openclaw"
-                          className="underline hover:no-underline"
-                        >
-                          View setup instructions
-                        </Link>
-                        {' '}or visit the{' '}
+                        Run <code className="bg-muted px-1 rounded text-xs">npx astrid-agent --terminal</code> in your project directory, then enter the gateway URL above.
+                        See{' '}
                         <a
                           href={service.documentation}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="underline hover:no-underline"
                         >
-                          OpenClaw documentation
+                          {service.name} documentation
                         </a>
-                        .
+                        {' '}for details.
                       </>
                     ) : (
                       <>
@@ -759,60 +642,6 @@ export function AIAPIKeyManager() {
                     )}
                   </AlertDescription>
                 </Alert>
-
-                {/* Add Agent to Lists - show when service has agentEmail and key is configured */}
-                {service.agentEmail && data?.hasKey && userLists.length > 0 && (
-                  <div className="space-y-4 pt-4 border-t">
-                    <div>
-                      <Label className="font-medium flex items-center gap-2">
-                        <UserPlus className="h-4 w-4" />
-                        Add {service.agentEmail} to Lists
-                      </Label>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Select lists where you want to assign tasks to this agent.
-                      </p>
-                      <div className="space-y-2 max-h-40 overflow-y-auto border rounded-lg p-3">
-                        {userLists.map(list => (
-                          <div key={list.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`list-${service.id}-${list.id}`}
-                              checked={selectedLists.has(list.id)}
-                              onCheckedChange={(checked) => {
-                                const newSelected = new Set(selectedLists)
-                                if (checked) {
-                                  newSelected.add(list.id)
-                                } else {
-                                  newSelected.delete(list.id)
-                                }
-                                setSelectedLists(newSelected)
-                              }}
-                            />
-                            <Label
-                              htmlFor={`list-${service.id}-${list.id}`}
-                              className="text-sm font-normal cursor-pointer flex items-center gap-2"
-                            >
-                              <List className="h-3 w-3 text-muted-foreground" />
-                              {list.name}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                      <Button
-                        onClick={() => handleAddAgentToLists(service.id)}
-                        disabled={selectedLists.size === 0 || addingToLists === service.id}
-                        size="sm"
-                        className="mt-3"
-                      >
-                        {addingToLists === service.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <UserPlus className="h-4 w-4 mr-2" />
-                        )}
-                        Add to {selectedLists.size} List{selectedLists.size !== 1 ? 's' : ''}
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
             )
           })()}

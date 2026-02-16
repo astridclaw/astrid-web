@@ -10,7 +10,7 @@ import * as path from 'path'
 import {
   OpenClawRPCClient,
   createOpenClawClient,
-  type OpenClawSessionEvent,
+  type OpenClawEvent,
   type OpenClawRPCClientConfig,
 } from './openclaw-rpc-client'
 import type { ImplementationPlan } from './types'
@@ -40,7 +40,7 @@ export interface OpenClawExecutorConfig {
   /** Progress callback */
   onProgress?: (message: string) => void
   /** Event callback for detailed progress */
-  onEvent?: (event: OpenClawSessionEvent) => void
+  onEvent?: (event: OpenClawEvent) => void
   /** Logger function */
   logger?: (level: 'info' | 'warn' | 'error', message: string, meta?: Record<string, unknown>) => void
   /** Timeout for planning phase in ms */

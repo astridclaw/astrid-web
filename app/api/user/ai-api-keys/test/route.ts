@@ -91,19 +91,6 @@ async function testGeminiKey(apiKey: string): Promise<{ success: boolean; error?
   }
 }
 
-async function testOpenClawKey(authToken: string, gatewayUrl: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    const { testOpenClawConnection } = await import('@/lib/ai/openclaw-rpc-client')
-    const result = await testOpenClawConnection(gatewayUrl, authToken, 15000)
-    return {
-      success: result.success,
-      error: result.error
-    }
-  } catch (error) {
-    return { success: false, error: `Test error: ${error instanceof Error ? error.message : 'Unknown error'}` }
-  }
-}
-
 export async function POST(request: NextRequest) {
   // Apply strict rate limiting for API key testing
   const rateLimitCheck = withRateLimit(RATE_LIMITS.API_KEY_TEST)(request)
@@ -174,14 +161,20 @@ export async function POST(request: NextRequest) {
         testResult = await testGeminiKey(decryptedKey)
         break
       case 'openclaw':
-        // OpenClaw requires gatewayUrl from stored config
-        if (!keyData.gatewayUrl) {
-          return NextResponse.json(
-            { success: false, error: "Gateway URL not configured" },
-            { status: 400 }
-          )
+        {
+          // Decrypt auth token if present
+          const authTokenData = keyData.authToken
+          let authToken: string | undefined
+          if (authTokenData && authTokenData.encrypted) {
+            try {
+              authToken = decrypt(authTokenData)
+            } catch {
+              // Auth token optional, ignore decrypt failures
+            }
+          }
+          const { testOpenClawConnection } = await import('@/lib/ai/openclaw-rpc-client')
+          testResult = await testOpenClawConnection(decryptedKey, authToken)
         }
-        testResult = await testOpenClawKey(decryptedKey, keyData.gatewayUrl)
         break
       default:
         return NextResponse.json(

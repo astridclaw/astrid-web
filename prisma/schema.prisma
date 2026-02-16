@@ -91,8 +91,6 @@ model User {
   ownedLists                   TaskList[]         @relation("ListOwner")
   analyticsEvents              AnalyticsEvent[]   @relation("AnalyticsEvents")
   adminUser                    AdminUser?         @relation("AdminUsers")
-  openClawWorkers              OpenClawWorker[]   @relation("OpenClawWorkers")
-
   @@index([email])
   @@index([emailVerified])
   @@index([createdAt])
@@ -759,29 +757,3 @@ model AdminUser {
   user User @relation("AdminUsers", fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ==========================================
-// OpenClaw Worker Registration
-// ==========================================
-
-model OpenClawWorker {
-  id          String    @id @default(cuid())
-  userId      String
-  name        String                        // User-friendly name for the worker
-  gatewayUrl  String                        // WebSocket URL (ws:// or wss://)
-  authToken   String?   @db.Text            // Encrypted gateway authentication token (JSON with encrypted + iv)
-  authMode    String    @default("token")   // token, tailscale, or none
-  status      String    @default("unknown") // online, offline, busy, error, unknown
-  lastSeen    DateTime?                     // Last successful connection
-  lastError   String?                       // Last connection error message
-  isActive    Boolean   @default(true)      // Whether this worker should be used
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  user User @relation("OpenClawWorkers", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([isActive])
-  @@index([status])
-  @@index([userId, isActive])
-  @@map("openclaw_workers")
-}

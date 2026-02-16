@@ -4,22 +4,15 @@
  * WebSocket RPC client for communicating with OpenClaw Gateway.
  * OpenClaw uses a JSON-RPC style protocol over WebSocket for real-time
  * task execution and progress streaming.
- *
- * Supports multiple authentication modes:
- * - 'token': Simple shared secret authentication
- * - 'tailscale': Tailscale-based identity verification
- * - 'astrid-signed': Cryptographic signatures proving request origin
- * - 'none': No authentication (not recommended for production)
  */
 
 import WebSocket from 'ws'
-import { signConnectionRequest, type ConnectionSignature } from './openclaw-signing'
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export interface OpenClawSessionEvent {
+export interface OpenClawEvent {
   type: 'progress' | 'tool_call' | 'thinking' | 'complete' | 'error' | 'output'
   sessionId: string
   data: unknown
@@ -48,17 +41,11 @@ export interface OpenClawSessionResult {
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
 
-export type AuthMode = 'token' | 'tailscale' | 'astrid-signed' | 'none'
-
 export interface OpenClawRPCClientConfig {
   /** Gateway URL (ws:// or wss://) */
   gatewayUrl: string
-  /** Optional authentication token (for 'token' auth mode) */
+  /** Optional authentication token */
   authToken?: string
-  /** Authentication mode */
-  authMode?: AuthMode
-  /** User ID (required for 'astrid-signed' auth mode) */
-  userId?: string
   /** Reconnection settings */
   reconnect?: {
     enabled: boolean
@@ -75,8 +62,6 @@ export interface OpenClawRPCClientConfig {
 interface ResolvedOpenClawRPCClientConfig {
   gatewayUrl: string
   authToken: string
-  authMode: AuthMode
-  userId: string
   reconnect: {
     enabled: boolean
     maxAttempts: number
@@ -87,34 +72,29 @@ interface ResolvedOpenClawRPCClientConfig {
   logger: (level: 'info' | 'warn' | 'error', message: string, meta?: Record<string, unknown>) => void
 }
 
-// OpenClaw protocol uses custom format, not JSON-RPC 2.0
-interface OpenClawRequest {
-  type: 'req'
-  id: string
+interface RPCRequest {
+  jsonrpc: '2.0'
+  id: string | number
   method: string
   params?: unknown
 }
 
-interface OpenClawResponse {
-  type: 'res'
-  id: string
-  ok: boolean
-  payload?: unknown
+interface RPCResponse {
+  jsonrpc: '2.0'
+  id: string | number
+  result?: unknown
   error?: {
-    code: string
+    code: number
     message: string
     data?: unknown
   }
 }
 
-interface OpenClawEvent {
-  type: 'event'
-  event: string
-  payload?: unknown
-  seq?: number
+interface RPCNotification {
+  jsonrpc: '2.0'
+  method: string
+  params?: unknown
 }
-
-type OpenClawMessage = OpenClawResponse | OpenClawEvent
 
 // ============================================================================
 // RPC CLIENT
@@ -130,7 +110,7 @@ export class OpenClawRPCClient {
     reject: (error: Error) => void
     timeout: ReturnType<typeof setTimeout>
   }> = new Map()
-  private eventSubscribers: Map<string, Set<(event: OpenClawSessionEvent) => void>> = new Map()
+  private eventSubscribers: Map<string, Set<(event: OpenClawEvent) => void>> = new Map()
   private reconnectAttempts = 0
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null
   private connectionPromise: Promise<void> | null = null
@@ -139,8 +119,6 @@ export class OpenClawRPCClient {
     this.config = {
       gatewayUrl: config.gatewayUrl,
       authToken: config.authToken || '',
-      authMode: config.authMode || 'token',
-      userId: config.userId || '',
       reconnect: {
         enabled: config.reconnect?.enabled ?? true,
         maxAttempts: config.reconnect?.maxAttempts ?? 5,
@@ -186,130 +164,25 @@ export class OpenClawRPCClient {
         }
       }, this.config.connectionTimeoutMs)
 
-      let authResolved = false
-
       try {
-        // Connect without token in URL - OpenClaw uses challenge-response auth
-        this.ws = new WebSocket(this.config.gatewayUrl)
+        // Build connection URL with auth token if provided
+        const url = new URL(this.config.gatewayUrl)
+        if (this.config.authToken) {
+          url.searchParams.set('token', this.config.authToken)
+        }
+
+        this.ws = new WebSocket(url.toString())
 
         this.ws.on('open', () => {
-          this.config.logger('info', 'WebSocket open, waiting for challenge...')
-          // Don't resolve yet - wait for successful auth
+          clearTimeout(connectionTimeout)
+          this.status = 'connected'
+          this.reconnectAttempts = 0
+          this.config.logger('info', 'Connected to OpenClaw Gateway')
+          resolve()
         })
 
         this.ws.on('message', (data: WebSocket.Data) => {
-          try {
-            const msg = JSON.parse(data.toString()) as OpenClawMessage
-
-            // Handle auth challenge during connection
-            if (!authResolved && msg.type === 'event' && (msg as OpenClawEvent).event === 'connect.challenge') {
-              this.config.logger('info', 'Received auth challenge, sending connect request')
-              const connectId = this.generateId()
-
-              // Store the pending connect request
-              const connectTimeout = setTimeout(() => {
-                if (!authResolved) {
-                  this.pendingRequests.delete(connectId)
-                  reject(new Error('Connect request timed out'))
-                }
-              }, 10000)
-
-              this.pendingRequests.set(connectId, {
-                resolve: (result: unknown) => {
-                  clearTimeout(connectTimeout)
-                  authResolved = true
-                  clearTimeout(connectionTimeout)
-                  this.status = 'connected'
-                  this.reconnectAttempts = 0
-                  this.config.logger('info', 'Connected to OpenClaw Gateway (authenticated)')
-                  resolve()
-                },
-                reject: (err: Error) => {
-                  clearTimeout(connectTimeout)
-                  authResolved = true
-                  reject(err)
-                },
-                timeout: connectTimeout,
-              })
-
-              // Build auth payload based on auth mode
-              let authPayload: { token?: string; signature?: ConnectionSignature; mode: AuthMode }
-
-              switch (this.config.authMode) {
-                case 'astrid-signed':
-                  if (!this.config.userId) {
-                    reject(new Error('userId is required for astrid-signed auth mode'))
-                    return
-                  }
-                  const signature = signConnectionRequest(
-                    this.config.gatewayUrl,
-                    this.config.userId
-                  )
-                  authPayload = { signature, mode: 'astrid-signed' }
-                  this.config.logger('info', 'Using astrid-signed authentication')
-                  break
-
-                case 'tailscale':
-                  authPayload = { mode: 'tailscale' }
-                  this.config.logger('info', 'Using Tailscale authentication')
-                  break
-
-                case 'none':
-                  authPayload = { mode: 'none' }
-                  this.config.logger('warn', 'Using no authentication (not recommended)')
-                  break
-
-                case 'token':
-                default:
-                  authPayload = { token: this.config.authToken, mode: 'token' }
-                  break
-              }
-
-              // Send connect request with auth
-              const connectRequest: OpenClawRequest = {
-                type: 'req',
-                id: connectId,
-                method: 'connect',
-                params: {
-                  minProtocol: 3,
-                  maxProtocol: 3,
-                  client: {
-                    id: 'astrid',
-                    version: '1.0',
-                    platform: 'server',
-                    mode: 'webchat'
-                  },
-                  auth: authPayload
-                }
-              }
-              this.ws!.send(JSON.stringify(connectRequest))
-              return
-            }
-
-            // Handle response to connect request
-            if (!authResolved && msg.type === 'res') {
-              const response = msg as OpenClawResponse
-              const pending = this.pendingRequests.get(response.id)
-              if (pending) {
-                this.pendingRequests.delete(response.id)
-                if (response.ok) {
-                  pending.resolve(response.payload)
-                } else {
-                  pending.reject(new Error(response.error?.message || 'Connect failed'))
-                }
-              }
-              return
-            }
-
-            // Normal message handling after connection
-            if (authResolved) {
-              this.handleMessage(data)
-            }
-          } catch (error) {
-            this.config.logger('error', 'Failed to parse message during connect', {
-              error: error instanceof Error ? error.message : String(error)
-            })
-          }
+          this.handleMessage(data)
         })
 
         this.ws.on('close', (code: number, reason: Buffer) => {
@@ -328,12 +201,6 @@ export class OpenClawRPCClient {
             this.pendingRequests.delete(id)
           }
 
-          // If not yet authenticated, reject the connection promise
-          if (!authResolved) {
-            authResolved = true
-            reject(new Error(`Connection closed during auth: ${code} ${reason.toString()}`))
-          }
-
           // Attempt reconnection if enabled and was connected
           if (wasConnected && this.config.reconnect.enabled) {
             this.scheduleReconnect()
@@ -345,10 +212,7 @@ export class OpenClawRPCClient {
           this.config.logger('error', 'WebSocket error', { error: error.message })
           if (this.status === 'connecting') {
             this.status = 'error'
-            if (!authResolved) {
-              authResolved = true
-              reject(error)
-            }
+            reject(error)
           }
         })
       } catch (error) {
@@ -357,10 +221,6 @@ export class OpenClawRPCClient {
         reject(error)
       }
     })
-  }
-
-  private generateId(): string {
-    return `${Date.now()}-${++this.requestId}`
   }
 
   private scheduleReconnect(): void {
@@ -431,11 +291,10 @@ export class OpenClawRPCClient {
       throw new Error('Not connected to OpenClaw Gateway')
     }
 
-    const id = this.generateId()
+    const id = ++this.requestId
 
-    // Use OpenClaw's native request format
-    const request: OpenClawRequest = {
-      type: 'req',
+    const request: RPCRequest = {
+      jsonrpc: '2.0',
       id,
       method,
       params,
@@ -462,7 +321,7 @@ export class OpenClawRPCClient {
    * Subscribe to events for a specific session
    * Returns unsubscribe function
    */
-  subscribe(sessionId: string, onEvent: (event: OpenClawSessionEvent) => void): () => void {
+  subscribe(sessionId: string, onEvent: (event: OpenClawEvent) => void): () => void {
     if (!this.eventSubscribers.has(sessionId)) {
       this.eventSubscribers.set(sessionId, new Set())
     }
@@ -483,28 +342,27 @@ export class OpenClawRPCClient {
 
   private handleMessage(data: WebSocket.Data): void {
     try {
-      const message = JSON.parse(data.toString()) as OpenClawMessage
+      const message = JSON.parse(data.toString()) as RPCResponse | RPCNotification
 
-      // Handle response to RPC call
-      if (message.type === 'res') {
-        const response = message as OpenClawResponse
-        const pending = this.pendingRequests.get(response.id)
+      // Handle RPC response
+      if ('id' in message && message.id !== undefined) {
+        const pending = this.pendingRequests.get(message.id)
         if (pending) {
           clearTimeout(pending.timeout)
-          this.pendingRequests.delete(response.id)
+          this.pendingRequests.delete(message.id)
 
-          if (response.ok) {
-            pending.resolve(response.payload)
+          if (message.error) {
+            pending.reject(new Error(`RPC Error: ${message.error.message}`))
           } else {
-            pending.reject(new Error(`RPC Error: ${response.error?.message || 'Unknown error'}`))
+            pending.resolve(message.result)
           }
         }
         return
       }
 
-      // Handle events
-      if (message.type === 'event') {
-        this.handleEvent(message as OpenClawEvent)
+      // Handle RPC notification (events)
+      if ('method' in message) {
+        this.handleNotification(message)
       }
     } catch (error) {
       this.config.logger('error', 'Failed to parse message', {
@@ -513,30 +371,29 @@ export class OpenClawRPCClient {
     }
   }
 
-  private handleEvent(event: OpenClawEvent): void {
-    const payload = event.payload as { sessionId?: string; [key: string]: unknown } | undefined
-    const sessionId = payload?.sessionId
+  private handleNotification(notification: RPCNotification): void {
+    const params = notification.params as { sessionId?: string; [key: string]: unknown } | undefined
 
-    // Create internal event format
-    const internalEvent: OpenClawSessionEvent = {
-      type: this.mapEventToType(event.event),
-      sessionId: sessionId || '*',
-      data: payload,
+    if (!params?.sessionId) {
+      return
+    }
+
+    const event: OpenClawEvent = {
+      type: this.mapMethodToEventType(notification.method),
+      sessionId: params.sessionId,
+      data: params,
       timestamp: Date.now(),
     }
 
-    // Notify session-specific subscribers
-    if (sessionId) {
-      const subscribers = this.eventSubscribers.get(sessionId)
-      if (subscribers) {
-        for (const callback of subscribers) {
-          try {
-            callback(internalEvent)
-          } catch (error) {
-            this.config.logger('error', 'Event handler error', {
-              error: error instanceof Error ? error.message : String(error)
-            })
-          }
+    const subscribers = this.eventSubscribers.get(params.sessionId)
+    if (subscribers) {
+      for (const callback of subscribers) {
+        try {
+          callback(event)
+        } catch (error) {
+          this.config.logger('error', 'Event handler error', {
+            error: error instanceof Error ? error.message : String(error)
+          })
         }
       }
     }
@@ -546,7 +403,7 @@ export class OpenClawRPCClient {
     if (wildcardSubscribers) {
       for (const callback of wildcardSubscribers) {
         try {
-          callback(internalEvent)
+          callback(event)
         } catch (error) {
           this.config.logger('error', 'Wildcard event handler error', {
             error: error instanceof Error ? error.message : String(error)
@@ -556,15 +413,23 @@ export class OpenClawRPCClient {
     }
   }
 
-  private mapEventToType(eventName: string): OpenClawSessionEvent['type'] {
-    // Map OpenClaw event names to internal types
-    if (eventName.includes('progress') || eventName === 'chat') return 'progress'
-    if (eventName.includes('tool')) return 'tool_call'
-    if (eventName.includes('thinking')) return 'thinking'
-    if (eventName.includes('complete') || eventName.includes('done')) return 'complete'
-    if (eventName.includes('error')) return 'error'
-    if (eventName.includes('output')) return 'output'
-    return 'progress'
+  private mapMethodToEventType(method: string): OpenClawEvent['type'] {
+    switch (method) {
+      case 'session.progress':
+        return 'progress'
+      case 'session.tool_call':
+        return 'tool_call'
+      case 'session.thinking':
+        return 'thinking'
+      case 'session.complete':
+        return 'complete'
+      case 'session.error':
+        return 'error'
+      case 'session.output':
+        return 'output'
+      default:
+        return 'progress'
+    }
   }
 
   // ============================================================================
@@ -669,9 +534,7 @@ export function createOpenClawClient(config: OpenClawRPCClientConfig): OpenClawR
 export async function testOpenClawConnection(
   gatewayUrl: string,
   authToken?: string,
-  timeoutMs: number = 10000,
-  authMode: AuthMode = 'token',
-  userId?: string
+  timeoutMs: number = 10000
 ): Promise<{
   success: boolean
   latencyMs?: number
@@ -681,23 +544,19 @@ export async function testOpenClawConnection(
   const client = new OpenClawRPCClient({
     gatewayUrl,
     authToken,
-    authMode,
-    userId,
     connectionTimeoutMs: timeoutMs,
     reconnect: { enabled: false },
-    logger: (level, msg, meta) => console.log(`[OpenClaw:${level}]`, msg, meta || ''),
   })
 
   try {
     await client.connect()
-    const start = Date.now()
+    const pingResult = await client.ping()
     const status = await client.getGatewayStatus()
-    const latencyMs = Date.now() - start
     client.disconnect()
 
     return {
       success: true,
-      latencyMs,
+      latencyMs: pingResult.latencyMs,
       version: status.version,
     }
   } catch (error) {

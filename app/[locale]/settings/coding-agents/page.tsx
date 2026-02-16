@@ -120,7 +120,7 @@ function CodingAgentsContent() {
           {/* OpenClaw Section */}
           <Card
             className="theme-bg-secondary border-orange-500/50 border cursor-pointer hover:scale-[1.01] transition-transform"
-            onClick={() => router.push('/settings/openclaw')}
+            onClick={() => router.push('/settings/agents')}
           >
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
@@ -128,16 +128,12 @@ function CodingAgentsContent() {
                   <span className="text-3xl">🦞</span>
                   <div>
                     <p className="text-sm theme-text-primary font-medium flex items-center gap-2">
-                      OpenClaw Workers
-                      <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-0.5 rounded">
-                        New in Alpha
-                      </span>
+                      OpenClaw
                     </p>
                     <p className="text-sm theme-text-muted mt-1">
-                      Run Claude Code on your own machine. Full filesystem access, local commands, your API keys.
-                      Assign tasks to{' '}
+                      Run Claude Code on your own machine. Configure your gateway URL in{' '}
                       <span className="inline-flex items-center gap-1 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-1.5 py-0.5 rounded">
-                        openclaw@astrid.cc
+                        AI Agents → API Keys
                       </span>
                     </p>
                   </div>
