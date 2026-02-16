@@ -1,19 +1,9 @@
 import { NextResponse } from "next/server"
-import { getPublicKeyInfo } from "@/lib/ai/openclaw-signing"
 
+// Stub: OpenClaw signing has been removed. Key verification now handled externally.
 export async function GET() {
-  try {
-    const keyInfo = getPublicKeyInfo()
-
-    return NextResponse.json(keyInfo, {
-      headers: {
-        "Cache-Control": "public, max-age=3600",
-      },
-    })
-  } catch (error) {
-    return NextResponse.json(
-      { error: "OpenClaw signing key not configured" },
-      { status: 503 }
-    )
-  }
+  return NextResponse.json(
+    { error: "OpenClaw signing key endpoint deprecated — use external agent runtimes" },
+    { status: 410 }
+  )
 }

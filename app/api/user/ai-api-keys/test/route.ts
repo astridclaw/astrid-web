@@ -161,20 +161,8 @@ export async function POST(request: NextRequest) {
         testResult = await testGeminiKey(decryptedKey)
         break
       case 'openclaw':
-        {
-          // Decrypt auth token if present
-          const authTokenData = keyData.authToken
-          let authToken: string | undefined
-          if (authTokenData && authTokenData.encrypted) {
-            try {
-              authToken = decrypt(authTokenData)
-            } catch {
-              // Auth token optional, ignore decrypt failures
-            }
-          }
-          const { testOpenClawConnection } = await import('@/lib/ai/openclaw-rpc-client')
-          testResult = await testOpenClawConnection(decryptedKey, authToken)
-        }
+        // OpenClaw RPC client removed — connections now handled by external agent runtimes
+        testResult = { success: true, message: 'OpenClaw key validation deprecated — use external agent runtime' }
         break
       default:
         return NextResponse.json(

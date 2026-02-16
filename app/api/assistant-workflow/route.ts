@@ -251,6 +251,11 @@ List: ${listName}`
   return prompt
 }
 
+/**
+ * LEGACY/FALLBACK: Direct AI API calls for basic mode.
+ * This is the fallback for users without an external agent runtime (OpenClaw, Claude Code Remote).
+ * For coding tasks, Astrid now dispatches to external runtimes via webhooks/SSE.
+ */
 async function callAIService(
   service: 'claude' | 'openai' | 'gemini',
   apiKey: string,
