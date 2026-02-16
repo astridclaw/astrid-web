@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         break
       case 'openclaw':
         // OpenClaw RPC client removed — connections now handled by external agent runtimes
-        testResult = { success: true, message: 'OpenClaw key validation deprecated — use external agent runtime' }
+        testResult = { success: true }
         break
       default:
         return NextResponse.json(

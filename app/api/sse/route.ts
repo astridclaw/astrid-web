@@ -8,6 +8,8 @@ import { registerConnection, removeConnection, updateConnectionPing, getMissedEv
 // Explicitly use Node.js runtime for SSE compatibility in production
 export const runtime = 'nodejs'
 
+type SSESession = { user: { id: string; email?: string | null; name?: string | null; image?: string | null }; expires?: string } | null
+
 export async function GET(request: NextRequest) {
   console.log('[SSE] GET request received')
 
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
     'origin': request.headers.get('origin'),
   })
 
-  let session: { user: { id: string; email?: string | null; name?: string | null; image?: string | null }; expires?: string } | null = null
+  let session: SSESession = null
 
   try {
     // Priority 1: OAuth Bearer token (for OpenClaw and API clients)
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest) {
 
     // Priority 2: Session-based auth (existing web UI flow)
     if (!session) {
-      session = await getServerSession(authConfig) as typeof session
+      session = await getServerSession(authConfig) as SSESession
       console.log('[SSE] Session result:', session ? `User: ${session.user?.email}` : 'NO SESSION')
 
       // If JWT session validation failed, try database session (for mobile apps)

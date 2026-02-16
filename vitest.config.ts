@@ -16,7 +16,8 @@ export default defineConfig({
       '**/dist/**',
       '**/e2e/**',
       '**/.{idea,git,cache,output,temp}/**',
-      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*'
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+      'packages/openclaw-astrid-channel/tests/**',
     ],
     coverage: {
       reporter: ['text', 'json', 'html'],

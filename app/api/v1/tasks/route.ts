@@ -391,11 +391,6 @@ export async function POST(req: NextRequest) {
             githubRepositoryId: (task.lists?.[0] as any)?.githubRepositoryId,
             assignerName: task.creator?.name || task.creator?.email || "Someone",
             assignerId: task.creator?.id,
-            // Legacy fields for backward compatibility
-            taskId: task.id,
-            taskTitle: task.title,
-            taskPriority: task.priority,
-            taskDueDateTime: task.dueDateTime,
             userId: auth.userId,
             listNames: task.lists?.map((list: any) => list.name) || [],
             comments: task.comments?.map((c: any) => ({
