@@ -11,6 +11,8 @@
 import { NextRequest } from 'next/server'
 import { authenticateAgentRequest, enrichTaskForAgent, agentTaskInclude } from '@/lib/agent-protocol'
 import { registerConnection, removeConnection, updateConnectionPing, getMissedEvents } from '@/lib/sse-utils'
+import { AGENT_RATE_LIMITS } from '@/lib/agent-rate-limiter'
+import { createRateLimitHeaders } from '@/lib/rate-limiter'
 
 export const runtime = 'nodejs'
 
@@ -51,6 +53,22 @@ export async function GET(request: NextRequest) {
     auth = await authenticateAgentRequest(request, ['tasks:read', 'sse:connect'])
   } catch {
     return new Response('Unauthorized', { status: 401 })
+  }
+
+  // Per-client SSE connection rate limit
+  ;(request as any).__agentClientId = auth.clientId
+  ;(request as any).__agentUserId = auth.userId
+  const sseRateResult = await AGENT_RATE_LIMITS.SSE.checkRateLimitAsync(request)
+  if (!sseRateResult.allowed) {
+    const retryAfter = Math.ceil((sseRateResult.resetTime - Date.now()) / 1000)
+    return new Response(JSON.stringify({ error: 'Too many SSE connections', retryAfter }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        ...createRateLimitHeaders(sseRateResult),
+        'Retry-After': retryAfter.toString(),
+      },
+    })
   }
 
   const userId = auth.userId

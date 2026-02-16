@@ -8,10 +8,14 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { authenticateAgentRequest, enrichTaskForAgent, agentTaskInclude } from '@/lib/agent-protocol'
 import { prisma } from '@/lib/prisma'
 import { UnauthorizedError, ForbiddenError } from '@/lib/api-auth-middleware'
+import { checkAgentRateLimit, addRateLimitHeaders, AGENT_RATE_LIMITS } from '@/lib/agent-rate-limiter'
 
 export async function GET(req: NextRequest) {
   try {
     const auth = await authenticateAgentRequest(req)
+
+    const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.TASKS)
+    if (rateCheck.response) return rateCheck.response
 
     const url = new URL(req.url)
     const completedParam = url.searchParams.get('completed')
@@ -36,9 +40,10 @@ export async function GET(req: NextRequest) {
       take: 100,
     })
 
-    return NextResponse.json({
-      tasks: tasks.map(enrichTaskForAgent),
-    })
+    return addRateLimitHeaders(
+      NextResponse.json({ tasks: tasks.map(enrichTaskForAgent) }),
+      rateCheck.headers
+    )
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

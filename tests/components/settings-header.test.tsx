@@ -65,6 +65,10 @@ vi.mock('@/components/ai-api-key-manager', () => ({
   AIAPIKeyManager: () => <div data-testid="ai-api-key-manager">AI API Key Manager Mock</div>
 }))
 
+vi.mock('@/components/openclaw-agent-manager', () => ({
+  OpenClawAgentManager: () => <div data-testid="openclaw-agent-manager">OpenClaw Agent Manager Mock</div>
+}))
+
 vi.mock('@/components/reminder-settings', () => ({
   default: () => <div data-testid="reminder-settings">Reminder Settings Mock</div>,
   ReminderSettingsComponent: () => <div data-testid="reminder-settings">Reminder Settings Mock</div>

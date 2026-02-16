@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authenticateAPI, UnauthorizedError, ForbiddenError } from '@/lib/api-auth-middleware'
 import { prisma } from '@/lib/prisma'
 import { createOAuthClient } from '@/lib/oauth/oauth-client-manager'
+import { checkAgentRateLimit, addRateLimitHeaders, AGENT_RATE_LIMITS } from '@/lib/agent-rate-limiter'
 
 // Reserved names that cannot be used for agent registration
 const RESERVED_NAMES = ['admin', 'system', 'test', 'api', 'support', 'root', 'openclaw']
@@ -23,6 +24,9 @@ const NAME_PATTERN = /^[a-z0-9][a-z0-9._-]{0,30}[a-z0-9]$/
 export async function POST(req: NextRequest) {
   try {
     const auth = await authenticateAPI(req)
+
+    const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.REGISTRATION)
+    if (rateCheck.response) return rateCheck.response
 
     const body = await req.json()
     const { agentName, listIds } = body
@@ -112,24 +116,27 @@ export async function POST(req: NextRequest) {
 
     console.log(`[OpenClaw Register] Created agent ${agentEmail} (registered by ${auth.user.email})`)
 
-    return NextResponse.json({
-      agent: {
-        id: agentUser.id,
-        email: agentUser.email,
-        name: agentUser.name,
-        aiAgentType: 'openclaw_worker',
-      },
-      oauth: {
-        clientId: oauthClient.clientId,
-        clientSecret: oauthClient.clientSecret,
-        scopes: oauthClient.scopes,
-      },
-      config: {
-        sseEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/sse`,
-        apiBase: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1`,
-        tokenEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1/oauth/token`,
-      }
-    }, { status: 201 })
+    return addRateLimitHeaders(
+      NextResponse.json({
+        agent: {
+          id: agentUser.id,
+          email: agentUser.email,
+          name: agentUser.name,
+          aiAgentType: 'openclaw_worker',
+        },
+        oauth: {
+          clientId: oauthClient.clientId,
+          clientSecret: oauthClient.clientSecret,
+          scopes: oauthClient.scopes,
+        },
+        config: {
+          sseEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/sse`,
+          apiBase: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1`,
+          tokenEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1/oauth/token`,
+        }
+      }, { status: 201 }),
+      rateCheck.headers
+    )
 
   } catch (error) {
     if (error instanceof UnauthorizedError || (error as any)?.name === 'UnauthorizedError') {

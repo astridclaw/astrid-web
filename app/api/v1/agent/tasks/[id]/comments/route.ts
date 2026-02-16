@@ -11,6 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { broadcastToUsers } from '@/lib/sse-utils'
 import { getListMemberIds } from '@/lib/list-member-utils'
 import { UnauthorizedError, ForbiddenError } from '@/lib/api-auth-middleware'
+import { checkAgentRateLimit, addRateLimitHeaders, AGENT_RATE_LIMITS } from '@/lib/agent-rate-limiter'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -19,6 +20,10 @@ interface RouteContext {
 export async function GET(req: NextRequest, context: RouteContext) {
   try {
     const auth = await authenticateAgentRequest(req)
+
+    const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.COMMENTS)
+    if (rateCheck.response) return rateCheck.response
+
     const { id } = await context.params
 
     // Verify agent has access to this task
@@ -46,16 +51,19 @@ export async function GET(req: NextRequest, context: RouteContext) {
       orderBy: { createdAt: 'asc' },
     })
 
-    return NextResponse.json({
-      comments: comments.map(c => ({
-        id: c.id,
-        content: c.content,
-        authorName: c.author?.name || c.author?.email || null,
-        authorId: c.author?.id || c.authorId,
-        isAgent: c.author?.isAIAgent ?? false,
-        createdAt: new Date(c.createdAt).toISOString(),
-      })),
-    })
+    return addRateLimitHeaders(
+      NextResponse.json({
+        comments: comments.map(c => ({
+          id: c.id,
+          content: c.content,
+          authorName: c.author?.name || c.author?.email || null,
+          authorId: c.author?.id || c.authorId,
+          isAgent: c.author?.isAIAgent ?? false,
+          createdAt: new Date(c.createdAt).toISOString(),
+        })),
+      }),
+      rateCheck.headers
+    )
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -71,6 +79,10 @@ export async function GET(req: NextRequest, context: RouteContext) {
 export async function POST(req: NextRequest, context: RouteContext) {
   try {
     const auth = await authenticateAgentRequest(req, ['tasks:read', 'comments:write'])
+
+    const rateCheckPost = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.COMMENTS)
+    if (rateCheckPost.response) return rateCheckPost.response
+
     const { id } = await context.params
 
     // Verify agent has access
@@ -158,18 +170,21 @@ export async function POST(req: NextRequest, context: RouteContext) {
       console.error('[Agent API] SSE broadcast error:', err)
     }
 
-    return NextResponse.json(
-      {
-        comment: {
-          id: comment.id,
-          content: comment.content,
-          authorName: comment.author?.name || comment.author?.email || null,
-          authorId: auth.userId,
-          isAgent: true,
-          createdAt: new Date(comment.createdAt).toISOString(),
+    return addRateLimitHeaders(
+      NextResponse.json(
+        {
+          comment: {
+            id: comment.id,
+            content: comment.content,
+            authorName: comment.author?.name || comment.author?.email || null,
+            authorId: auth.userId,
+            isAgent: true,
+            createdAt: new Date(comment.createdAt).toISOString(),
+          },
         },
-      },
-      { status: 201 }
+        { status: 201 }
+      ),
+      rateCheckPost.headers
     )
   } catch (error) {
     if (error instanceof UnauthorizedError) {

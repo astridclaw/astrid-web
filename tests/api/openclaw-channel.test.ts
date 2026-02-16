@@ -19,6 +19,13 @@ vi.mock('@/lib/oauth/oauth-client-manager', () => ({
   createOAuthClient: vi.fn(),
 }))
 
+// Mock agent rate limiter — always allow
+vi.mock('@/lib/agent-rate-limiter', () => ({
+  AGENT_RATE_LIMITS: { REGISTRATION: {} },
+  checkAgentRateLimit: vi.fn().mockResolvedValue({ response: null, headers: {} }),
+  addRateLimitHeaders: vi.fn((_res: any) => _res),
+}))
+
 // Mock auth middleware
 vi.mock('@/lib/api-auth-middleware', () => {
   class UnauthorizedError extends Error {

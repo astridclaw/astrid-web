@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoadingScreen } from "@/components/loading-screen"
 import { AIAPIKeyManager } from "@/components/ai-api-key-manager"
+import { OpenClawAgentManager } from "@/components/openclaw-agent-manager"
 import {
   Brain,
   ArrowLeft,
   Sparkles,
   Cloud,
-  FileText
+  FileText,
+  Bot
 } from "lucide-react"
 import Image from "next/image"
 
@@ -95,6 +97,23 @@ function AgentsSettingsContent() {
                   </p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* OpenClaw Agents */}
+          <Card className="theme-bg-secondary theme-border">
+            <CardHeader>
+              <CardTitle className="theme-text-primary flex flex-wrap items-center gap-2">
+                <Bot className="w-6 h-6 text-orange-500" />
+                <span>OpenClaw Agents</span>
+              </CardTitle>
+              <CardDescription className="theme-text-muted">
+                Connect your own AI agents via the OpenClaw protocol.
+                Agents get OAuth credentials and communicate via REST + SSE.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OpenClawAgentManager />
             </CardContent>
           </Card>
 

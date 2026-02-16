@@ -9,6 +9,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { authenticateAgentRequest, enrichTaskForAgent, agentTaskInclude } from '@/lib/agent-protocol'
 import { prisma } from '@/lib/prisma'
 import { UnauthorizedError, ForbiddenError } from '@/lib/api-auth-middleware'
+import { checkAgentRateLimit, addRateLimitHeaders, AGENT_RATE_LIMITS } from '@/lib/agent-rate-limiter'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -17,6 +18,10 @@ interface RouteContext {
 export async function GET(req: NextRequest, context: RouteContext) {
   try {
     const auth = await authenticateAgentRequest(req)
+
+    const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.TASKS)
+    if (rateCheck.response) return rateCheck.response
+
     const { id } = await context.params
 
     const task = await prisma.task.findFirst({
@@ -28,7 +33,10 @@ export async function GET(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ task: enrichTaskForAgent(task) })
+    return addRateLimitHeaders(
+      NextResponse.json({ task: enrichTaskForAgent(task) }),
+      rateCheck.headers
+    )
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -44,6 +52,10 @@ export async function GET(req: NextRequest, context: RouteContext) {
 export async function PATCH(req: NextRequest, context: RouteContext) {
   try {
     const auth = await authenticateAgentRequest(req, ['tasks:read', 'tasks:write'])
+
+    const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.TASKS)
+    if (rateCheck.response) return rateCheck.response
+
     const { id } = await context.params
 
     // Verify agent owns this task
@@ -69,7 +81,10 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
       include: agentTaskInclude,
     })
 
-    return NextResponse.json({ task: enrichTaskForAgent(task) })
+    return addRateLimitHeaders(
+      NextResponse.json({ task: enrichTaskForAgent(task) }),
+      rateCheck.headers
+    )
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
