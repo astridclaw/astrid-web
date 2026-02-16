@@ -477,6 +477,7 @@ export async function POST(req: NextRequest) {
                 dueDateTime: task.dueDateTime,
                 isAllDay: task.isAllDay,
                 repeating: task.repeating,
+                repeatingData: task.repeatingData,
                 isPrivate: task.isPrivate
               }
             }
