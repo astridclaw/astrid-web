@@ -191,6 +191,7 @@ const SAFE_USER_FIELDS = new Set([
 function sanitizeForSSE(obj: any, depth = 0): any {
   if (depth > 8 || obj === null || obj === undefined) return obj
   if (typeof obj !== 'object') return obj
+  if (obj instanceof Date) return obj
   if (Array.isArray(obj)) return obj.map(item => sanitizeForSSE(item, depth + 1))
 
   const result: Record<string, any> = {}

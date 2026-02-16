@@ -790,7 +790,7 @@ export function CommentSection({
     if (isSystem) {
       return (
         <div className="text-xs theme-text-muted text-center py-1">
-          On {format(comment.createdAt, "MMM d 'at' h:mm a")}, {comment.content}
+          On {format(new Date(comment.createdAt), "MMM d 'at' h:mm a")}, {comment.content}
         </div>
       )
     }
@@ -842,7 +842,7 @@ export function CommentSection({
         <div className={`chat-bubble-meta theme-text-muted ${isCurrentUser ? 'pr-10' : 'pl-10'}`}>
           <span>{isCurrentUser ? 'You' : getAuthorDisplay(comment.author)}</span>
           <span>·</span>
-          <span>{format(comment.createdAt, "MMM d 'at' h:mm a")}</span>
+          <span>{format(new Date(comment.createdAt), "MMM d 'at' h:mm a")}</span>
         </div>
 
         {/* Action bar: Copy, Reply, Delete - shown on tap */}

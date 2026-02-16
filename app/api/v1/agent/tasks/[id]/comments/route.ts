@@ -158,11 +158,20 @@ export async function POST(req: NextRequest, context: RouteContext) {
           timestamp: new Date().toISOString(),
           data: {
             taskId: id,
+            taskTitle: task.title,
             commentId: comment.id,
-            content: comment.content,
-            authorName: comment.author?.name || comment.author?.email,
-            authorId: auth.userId,
-            isAgent: true,
+            commentContent: comment.content.substring(0, 100),
+            commenterName: comment.author?.name || comment.author?.email || 'AI Agent',
+            userId: auth.userId,
+            comment: {
+              id: comment.id,
+              content: comment.content,
+              type: comment.type,
+              author: comment.author,
+              authorId: comment.authorId,
+              createdAt: comment.createdAt,
+              parentCommentId: null,
+            },
           },
         })
       }
