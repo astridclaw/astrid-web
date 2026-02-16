@@ -37,7 +37,7 @@ export class OAuthClient {
       throw new Error(`OAuth token request failed: ${res.status} ${res.statusText}`)
     }
 
-    const data = await res.json()
+    const data: any = await res.json()
     this.accessToken = data.access_token
     this.expiresAt = Date.now() + (data.expires_in * 1000)
     return this.accessToken!

@@ -40,7 +40,7 @@ export class RestClient {
       throw new Error(`Astrid API error: ${res.status} ${res.statusText} on ${path}`)
     }
 
-    return res.json()
+    return res.json() as Promise<T>
   }
 
   async getAssignedTasks(completed = false): Promise<AgentTask[]> {
