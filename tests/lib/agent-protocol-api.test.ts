@@ -12,6 +12,7 @@ vi.mock('@/lib/prisma', () => ({
     comment: {
       findMany: vi.fn(),
       create: vi.fn(),
+      count: vi.fn(),
     },
   },
 }))
