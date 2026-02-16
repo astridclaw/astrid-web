@@ -13,7 +13,8 @@ import {
   Brain,
   ArrowLeft,
   Sparkles,
-  Cloud
+  Cloud,
+  FileText
 } from "lucide-react"
 import Image from "next/image"
 
@@ -112,6 +113,25 @@ function AgentsSettingsContent() {
             <CardContent className="space-y-6">
               {/* API Key Configuration */}
               <AIAPIKeyManager />
+            </CardContent>
+          </Card>
+
+          {/* List Instructions Tip */}
+          <Card className="theme-bg-secondary theme-border border-dashed">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <FileText className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div>
+                  <h4 className="font-medium theme-text-primary text-sm">Tip: Control agent behavior per list</h4>
+                  <p className="text-sm theme-text-muted mt-1">
+                    Each list&apos;s <strong>description</strong> is used as instructions for AI agents working on tasks in that list.
+                    Write markdown in your list description to tell agents how to handle tasks — like a project brief.
+                  </p>
+                  <p className="text-xs theme-text-muted mt-2">
+                    Edit descriptions in List Settings → Admin → Description
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

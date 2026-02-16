@@ -516,6 +516,10 @@ export function ListAdminSettings({
               <div className="text-xs theme-text-muted mt-1">
                 Press Enter to save • Shift+Enter or Cmd/Ctrl+Enter for line breaks
               </div>
+              <div className="text-xs theme-text-muted mt-1 flex items-center space-x-1">
+                <Bot className="w-3 h-3" />
+                <span>This description is used as instructions for AI agents working on tasks in this list.</span>
+              </div>
             </div>
           ) : (
             <div
@@ -534,7 +538,13 @@ export function ListAdminSettings({
                   }}
                 />
               ) : (
-                <span className="theme-text-muted italic">Click to add a description...</span>
+                <div className="space-y-1">
+                  <span className="theme-text-muted italic">Click to add a description...</span>
+                  <div className="flex items-center space-x-1 text-xs theme-text-muted">
+                    <Bot className="w-3 h-3" />
+                    <span>AI agents use this as instructions when working on tasks in this list</span>
+                  </div>
+                </div>
               )}
             </div>
           )}
