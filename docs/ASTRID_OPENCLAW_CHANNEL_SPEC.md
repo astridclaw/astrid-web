@@ -339,7 +339,7 @@ Agent response → Astrid comment:
 
 ## Open Questions
 
-1. **Agent identity:** Should each OpenClaw instance get its own `@astrid.cc` email, or all share `openclaw@astrid.cc`? Per-instance is better for multi-user shared lists.
+1. **Agent identity:** Each OpenClaw instance gets a unique email: `{name}.oc@astrid.cc` (e.g., `astrid.oc@astrid.cc`, `jeff.oc@astrid.cc`). The `.oc` suffix identifies all OpenClaw agents. Pattern match `*.oc@astrid.cc` for routing. ✅ DECIDED
 
 2. **Rate limiting:** How many SSE connections can Astrid handle? Need connection pooling if many users connect.
 
