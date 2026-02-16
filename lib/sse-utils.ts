@@ -172,6 +172,47 @@ export function updateConnectionPing(userId: string) {
   }
 }
 
+// Fields that should NEVER appear in SSE broadcasts
+const SENSITIVE_USER_FIELDS = new Set([
+  'password', 'emailVerificationToken', 'emailTokenExpiresAt',
+  'mcpSettings', 'aiAssistantSettings', 'aiAgentConfig',
+  'pendingEmail', 'myTasksPreferences', 'invitedBy',
+])
+
+// Safe user fields for SSE
+const SAFE_USER_FIELDS = new Set([
+  'id', 'name', 'email', 'image', 'isAIAgent', 'aiAgentType',
+])
+
+/**
+ * Strip sensitive fields from objects before SSE broadcast.
+ * Recursively sanitizes user objects and removes dangerous fields.
+ */
+function sanitizeForSSE(obj: any, depth = 0): any {
+  if (depth > 8 || obj === null || obj === undefined) return obj
+  if (typeof obj !== 'object') return obj
+  if (Array.isArray(obj)) return obj.map(item => sanitizeForSSE(item, depth + 1))
+
+  const result: Record<string, any> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    // Strip known sensitive fields at any depth
+    if (SENSITIVE_USER_FIELDS.has(key)) continue
+
+    // If this looks like a user object (has email + id), restrict to safe fields
+    if (key === 'user' && typeof value === 'object' && value !== null && 'id' in value && 'email' in value) {
+      const safeUser: Record<string, any> = {}
+      for (const field of Array.from(SAFE_USER_FIELDS)) {
+        if (field in value) safeUser[field] = (value as any)[field]
+      }
+      result[key] = safeUser
+      continue
+    }
+
+    result[key] = sanitizeForSSE(value, depth + 1)
+  }
+  return result
+}
+
 // Helper function to broadcast events to specific users
 export function broadcastToUsers(userIds: string[], event: any) {
   const encoder = new TextEncoder()
@@ -180,7 +221,7 @@ export function broadcastToUsers(userIds: string[], event: any) {
   const fullEvent = {
     type: event.type,
     timestamp: event.timestamp || new Date().toISOString(),
-    data: event.data
+    data: sanitizeForSSE(event.data)
   }
   const eventData = JSON.stringify(fullEvent)
   const sseMessage = `data: ${eventData}\n\n`

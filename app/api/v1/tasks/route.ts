@@ -343,9 +343,11 @@ export async function POST(req: NextRequest) {
             name: true,
             color: true,
             ownerId: true,
+            description: true,
             listMembers: {
-              include: {
-                user: true
+              select: {
+                userId: true,
+                role: true,
               }
             }
           },
@@ -425,6 +427,11 @@ export async function POST(req: NextRequest) {
         // Remove the user who created the task (they already see it)
         userIds.delete(auth.userId)
 
+        // Remove the assignee — they already got a task_assigned event above
+        if (task.assigneeId) {
+          userIds.delete(task.assigneeId)
+        }
+
         if (userIds.size > 0) {
           console.log(`[v1 API SSE] Broadcasting task_created to ${userIds.size} users:`, Array.from(userIds))
           broadcastToUsers(Array.from(userIds), {
@@ -448,15 +455,28 @@ export async function POST(req: NextRequest) {
                 creatorId: task.creatorId,
                 createdAt: task.createdAt,
                 updatedAt: task.updatedAt,
-                assignee: task.assignee,
-                creator: task.creator,
-                lists: task.lists,
-                comments: task.comments,
-                attachments: task.attachments,
+                assignee: task.assignee ? {
+                  id: task.assignee.id,
+                  name: task.assignee.name,
+                  email: task.assignee.email,
+                  image: task.assignee.image,
+                  isAIAgent: task.assignee.isAIAgent,
+                } : null,
+                creator: task.creator ? {
+                  id: task.creator.id,
+                  name: task.creator.name,
+                  email: task.creator.email,
+                  image: task.creator.image,
+                  isAIAgent: task.creator.isAIAgent,
+                } : null,
+                lists: task.lists?.map((list: any) => ({
+                  id: list.id,
+                  name: list.name,
+                  color: list.color,
+                })),
                 dueDateTime: task.dueDateTime,
                 isAllDay: task.isAllDay,
                 repeating: task.repeating,
-                repeatingData: task.repeatingData,
                 isPrivate: task.isPrivate
               }
             }
