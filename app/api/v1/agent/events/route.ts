@@ -1,0 +1,127 @@
+/**
+ * Agent SSE Events Endpoint
+ *
+ * GET /api/v1/agent/events
+ *
+ * SSE stream filtered to the authenticated agent's tasks.
+ * Sends: task.assigned, task.commented, task.updated, task.completed, task.deleted
+ * Supports ?since=ISO8601 for replaying missed events.
+ */
+
+import { NextRequest } from 'next/server'
+import { authenticateAgentRequest, enrichTaskForAgent, agentTaskInclude } from '@/lib/agent-protocol'
+import { registerConnection, removeConnection, updateConnectionPing, getMissedEvents, checkAndDeliverNewEvents } from '@/lib/sse-utils'
+
+export const runtime = 'nodejs'
+
+// Agent-relevant event types
+const AGENT_EVENT_TYPES = new Set([
+  'task_assigned',
+  'task_created',
+  'task_updated',
+  'task_completed',
+  'task_deleted',
+  'comment_created',
+  'comment_added',
+])
+
+// Map internal event types to protocol event names
+function mapEventType(type: string): string | null {
+  switch (type) {
+    case 'task_assigned':
+    case 'task_created':
+      return 'task.assigned'
+    case 'task_updated':
+      return 'task.updated'
+    case 'task_completed':
+      return 'task.completed'
+    case 'task_deleted':
+      return 'task.deleted'
+    case 'comment_created':
+    case 'comment_added':
+      return 'task.commented'
+    default:
+      return null
+  }
+}
+
+export async function GET(request: NextRequest) {
+  let auth
+  try {
+    auth = await authenticateAgentRequest(request)
+  } catch {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
+  const userId = auth.userId
+  const sinceParam = request.nextUrl.searchParams.get('since')
+  const sinceTimestamp = sinceParam ? new Date(sinceParam).getTime() : null
+
+  const encoder = new TextEncoder()
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const connectionId = registerConnection(userId, controller)
+
+      // Send connected event
+      controller.enqueue(encoder.encode(`event: connected\ndata: ${JSON.stringify({ timestamp: new Date().toISOString() })}\n\n`))
+
+      // Replay missed events if since provided
+      if (sinceTimestamp && !isNaN(sinceTimestamp)) {
+        getMissedEvents(userId, sinceTimestamp)
+          .then(events => {
+            for (const event of events) {
+              const mappedType = mapEventType(event.type)
+              if (mappedType) {
+                controller.enqueue(
+                  encoder.encode(`event: ${mappedType}\ndata: ${JSON.stringify(event.data || event)}\n\n`)
+                )
+              }
+            }
+          })
+          .catch(err => console.error('[Agent SSE] Replay error:', err))
+      }
+
+      // Keepalive every 30s + check for new events
+      const keepaliveInterval = setInterval(async () => {
+        try {
+          await checkAndDeliverNewEvents(userId, connectionId)
+          controller.enqueue(encoder.encode(':keepalive\n\n'))
+          updateConnectionPing(userId)
+        } catch {
+          removeConnection(userId, connectionId)
+          clearInterval(keepaliveInterval)
+        }
+      }, 30_000)
+
+      // Refresh connection every 5 minutes
+      const refreshTimeout = setTimeout(() => {
+        try {
+          controller.enqueue(
+            encoder.encode(`event: reconnect\ndata: ${JSON.stringify({ reason: 'periodic refresh' })}\n\n`)
+          )
+        } catch {}
+        removeConnection(userId, connectionId)
+        clearInterval(keepaliveInterval)
+        try { controller.close() } catch {}
+      }, 300_000)
+
+      const cleanup = () => {
+        removeConnection(userId, connectionId)
+        clearInterval(keepaliveInterval)
+        clearTimeout(refreshTimeout)
+      }
+
+      request.signal.addEventListener('abort', cleanup)
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no',
+    },
+  })
+}
