@@ -92,3 +92,21 @@ export {
 
 // NOTE: Terminal executors have been removed as part of the architecture simplification.
 // External agent runtimes handle execution directly.
+
+// Channel Plugin (OpenClaw integration)
+export {
+  AstridChannel,
+  SSEClient,
+  OAuthClient as ChannelOAuthClient,
+  RestClient as ChannelRestClient,
+  SessionMapper,
+  taskToMessage,
+  commentToMessage,
+  responseToComment,
+  type AstridChannelConfig,
+  type AgentTask as ChannelAgentTask,
+  type AgentComment as ChannelAgentComment,
+  type AgentSSEEvent,
+  type InboundMessage,
+  type OutboundMessage,
+} from './channel/index.js'

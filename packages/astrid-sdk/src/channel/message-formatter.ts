@@ -1,4 +1,4 @@
-import type { AgentTask, AgentComment, InboundMessage, OutboundMessage } from './types'
+import type { AgentTask, AgentComment, InboundMessage, OutboundMessage } from './types.js'
 
 const PRIORITIES = ['', '⬇️ Low', '➡️ Medium', '⬆️ High']
 

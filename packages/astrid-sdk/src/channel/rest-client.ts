@@ -1,5 +1,5 @@
-import type { OAuthClient } from './oauth-client'
-import type { AgentTask, AgentComment } from './types'
+import type { OAuthClient } from './oauth-client.js'
+import type { AgentTask, AgentComment } from './types.js'
 
 /**
  * REST client for the Astrid Agent Protocol endpoints.

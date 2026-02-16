@@ -1,9 +1,9 @@
-import type { AstridChannelConfig, InboundMessage, OutboundMessage } from './types'
-import { OAuthClient } from './oauth-client'
-import { RestClient } from './rest-client'
-import { SSEClient } from './sse-client'
-import { SessionMapper } from './session-mapper'
-import { taskToMessage, commentToMessage, responseToComment } from './message-formatter'
+import type { AstridChannelConfig, InboundMessage, OutboundMessage } from './types.js'
+import { OAuthClient } from './oauth-client.js'
+import { RestClient } from './rest-client.js'
+import { SSEClient } from './sse-client.js'
+import { SessionMapper } from './session-mapper.js'
+import { taskToMessage, commentToMessage, responseToComment } from './message-formatter.js'
 
 /**
  * Astrid channel plugin for OpenClaw.

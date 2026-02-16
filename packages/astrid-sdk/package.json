@@ -1,7 +1,7 @@
 {
   "name": "@gracefultools/astrid-sdk",
-  "version": "0.7.16",
-  "description": "AI agent SDK for automated coding tasks with Claude, OpenAI, and Gemini",
+  "version": "0.8.0",
+  "description": "Astrid.cc SDK \u2014 AI agent integration and OpenClaw channel plugin",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -17,7 +17,8 @@
   "files": [
     "dist",
     "templates",
-    "README.md"
+    "README.md",
+    "openclaw.plugin.json"
   ],
   "scripts": {
     "build": "tsc",

@@ -1,5 +1,5 @@
-import type { OAuthClient } from './oauth-client'
-import type { AstridChannelConfig, AgentSSEEvent } from './types'
+import type { OAuthClient } from './oauth-client.js'
+import type { AstridChannelConfig, AgentSSEEvent } from './types.js'
 
 type EventHandler = (event: AgentSSEEvent) => void
 

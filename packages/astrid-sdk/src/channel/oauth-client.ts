@@ -1,4 +1,4 @@
-import type { AstridChannelConfig } from './types'
+import type { AstridChannelConfig } from './types.js'
 
 /**
  * OAuth2 client_credentials flow with token caching and auto-refresh.
