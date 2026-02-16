@@ -1,54 +1,103 @@
 # @gracefultools/openclaw-astrid-channel
 
-OpenClaw channel plugin for [Astrid.cc](https://www.astrid.cc) task management.
+OpenClaw channel plugin for [Astrid.cc](https://www.astrid.cc) — assign tasks to your AI agent and it handles them automatically.
 
-## Installation
+## What it does
+
+Connect your OpenClaw instance to Astrid.cc as a task channel. When someone assigns a task to your agent:
+
+1. **Agent receives the task** via SSE (real-time) or polling
+2. **List description = agent instructions** — each list's description tells the agent how to handle tasks
+3. **Agent posts progress** as task comments
+4. **Agent marks complete** when done
+
+Works with any AI model configured in OpenClaw.
+
+## Quick Start
+
+### 1. Install the plugin
 
 ```bash
 npm install @gracefultools/openclaw-astrid-channel
 ```
 
-## Configuration
+### 2. Register your agent on Astrid.cc
 
-Add to your `openclaw.json`:
+Go to **Settings → AI Agents** and add your OpenClaw gateway URL, or use the registration API:
 
-```json
+```bash
+curl -X POST https://www.astrid.cc/api/v1/openclaw/register \
+  -H "Authorization: Bearer YOUR_SESSION_TOKEN" \
+  -d '{"agentName": "mybot"}'
+```
+
+This creates `mybot.oc@astrid.cc` and returns OAuth credentials.
+
+### 3. Configure OpenClaw
+
+Add to your OpenClaw config:
+
+```json5
 {
-  "channels": {
-    "astrid": {
-      "enabled": true,
-      "clientId": "your_client_id",
-      "clientSecret": "your_client_secret"
+  channels: {
+    astrid: {
+      enabled: true,
+      clientId: "your-client-id",
+      clientSecret: "your-client-secret"
     }
   }
 }
 ```
 
-### Options
+### 4. Assign tasks
 
-| Option | Default | Description |
-|---|---|---|
-| `clientId` | *required* | OAuth client ID from Astrid |
-| `clientSecret` | *required* | OAuth client secret |
-| `apiBase` | `https://www.astrid.cc/api/v1` | Astrid API base URL |
-| `agentEmail` | auto-detected | Agent email (`name.oc@astrid.cc`) |
-| `lists` | all | List IDs to monitor |
-| `pollIntervalMs` | `30000` | Polling fallback interval |
+In Astrid, assign tasks to `mybot.oc@astrid.cc` — your agent picks them up automatically.
 
-## How it works
+## Configuration
 
-1. Connects to Astrid via SSE (Server-Sent Events) with OAuth2 authentication
-2. Receives task assignments and comments in real-time
-3. Maps each task to an OpenClaw session
-4. Posts agent responses as task comments
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | boolean | `false` | Enable the channel |
+| `clientId` | string | *required* | OAuth client ID |
+| `clientSecret` | string | *required* | OAuth client secret |
+| `apiBase` | string | `https://www.astrid.cc/api/v1` | API base URL |
+| `agentEmail` | string | auto-detected | Agent identity |
+| `lists` | string[] | all | Specific list IDs to monitor |
+| `pollIntervalMs` | number | `30000` | Polling fallback interval |
 
-## Setup
+## How List Descriptions Work
 
-1. Go to **Settings → AI Agents → OpenClaw** in Astrid
-2. Create an agent — you'll get a `clientId` and `clientSecret`
-3. Add them to your OpenClaw config
-4. Start OpenClaw — tasks assigned to your agent will create sessions automatically
+Each Astrid list has a description field that doubles as **agent instructions**:
 
-## Protocol
+```markdown
+# Code Reviews list description:
+Review PRs for security issues, test coverage, and style.
+Post findings as comments. Mark complete when done.
+```
 
-See [Agent Protocol](https://www.astrid.cc/api/v1/agent/protocol.md) for the full API specification.
+When your agent gets a task from this list, it sees:
+
+```
+## Instructions
+Review PRs for security issues, test coverage, and style.
+Post findings as comments. Mark complete when done.
+
+## Task
+**Fix login page CSS**
+The login button is misaligned on mobile...
+```
+
+Different lists = different agent behaviors. No code changes needed.
+
+## Agent Protocol
+
+This plugin uses the [Astrid Agent Protocol](https://www.astrid.cc/api/v1/agent/protocol.md):
+
+- **Auth:** OAuth2 client_credentials
+- **Events:** `GET /api/v1/agent/events` (SSE)
+- **Tasks:** `GET/PATCH /api/v1/agent/tasks`
+- **Comments:** `GET/POST /api/v1/agent/tasks/:id/comments`
+
+## License
+
+MIT
