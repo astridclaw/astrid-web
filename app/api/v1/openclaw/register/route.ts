@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
     const rateCheck = await checkAgentRateLimit(req, auth, AGENT_RATE_LIMITS.REGISTRATION)
     if (rateCheck.response) return rateCheck.response
 
+    const baseUrl = (process.env.NEXTAUTH_URL || 'https://www.astrid.cc').replace(/\/+$/, '')
+
     const body = await req.json()
     const { agentName, listIds } = body
 
@@ -130,9 +132,9 @@ export async function POST(req: NextRequest) {
           scopes: oauthClient.scopes,
         },
         config: {
-          sseEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/sse`,
-          apiBase: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1`,
-          tokenEndpoint: `${process.env.NEXTAUTH_URL || 'https://www.astrid.cc'}/api/v1/oauth/token`,
+          sseEndpoint: `${baseUrl}/api/v1/agent/events`,
+          apiBase: `${baseUrl}/api/v1`,
+          tokenEndpoint: `${baseUrl}/api/v1/oauth/token`,
         }
       }, { status: 201 }),
       rateCheck.headers

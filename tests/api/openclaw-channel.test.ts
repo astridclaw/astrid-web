@@ -104,7 +104,7 @@ describe('POST /api/v1/openclaw/register', () => {
     expect(json.agent.aiAgentType).toBe('openclaw_worker')
     expect(json.oauth.clientId).toBe('astrid_client_abc')
     expect(json.oauth.clientSecret).toBe('secret123')
-    expect(json.config.sseEndpoint).toContain('/api/sse')
+    expect(json.config.sseEndpoint).toContain('/api/v1/agent/events')
 
     expect(mockPrisma.user.create).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -116,13 +116,16 @@ export default function OpenClawDocsPage() {
                   <code className="text-xs font-mono theme-text-primary">
 {`import { AstridChannel } from '@gracefultools/astrid-sdk'
 
-const channel = new AstridChannel({
+const adapter = AstridChannel.createAdapter({
   clientId: 'your_client_id',
   clientSecret: 'your_client_secret',
   apiBase: 'https://astrid.cc/api/v1',
 })
 
-await channel.connect()`}
+await adapter.init()
+await adapter.connect((msg) => {
+  console.log('New message:', msg)
+})`}
                   </code>
                 </pre>
               </Step>
