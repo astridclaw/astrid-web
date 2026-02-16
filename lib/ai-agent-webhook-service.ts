@@ -11,6 +11,11 @@ import type { PrismaClient } from '@prisma/client'
  * or from agent name (e.g., "Claude" -> claude, "OpenAI" -> openai)
  */
 function getAgentType(email?: string, name?: string): string | null {
+  // Check for OpenClaw agent pattern: {name}.oc@astrid.cc
+  if (email?.match(/^[a-z0-9._-]+\.oc@astrid\.cc$/i)) {
+    return 'openclaw'
+  }
+
   // Try email first (e.g., claude@astrid.cc, openai@astrid.cc, gemini@astrid.cc, openclaw@astrid.cc)
   if (email?.endsWith('@astrid.cc')) {
     const prefix = email.split('@')[0].toLowerCase()

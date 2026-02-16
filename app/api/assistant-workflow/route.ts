@@ -206,6 +206,8 @@ function getServiceFromEmail(email: string): 'claude' | 'openai' | 'gemini' | 'o
   if (email === 'openai@astrid.cc') return 'openai'
   if (email === 'gemini@astrid.cc') return 'gemini'
   if (email === 'openclaw@astrid.cc') return 'openclaw'
+  // Match {name}.oc@astrid.cc pattern for OpenClaw agents
+  if (email.match(/\.oc@astrid\.cc$/i)) return 'openclaw'
   return null
 }
 

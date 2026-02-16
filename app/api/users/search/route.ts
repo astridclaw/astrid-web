@@ -129,6 +129,8 @@ export async function GET(request: NextRequest) {
     // Search for AI agents (like coding agent)
     let aiAgents: any[] = []
     const aiAgentEmails = ['claude@astrid.cc', 'openai@astrid.cc', 'gemini@astrid.cc', 'openclaw@astrid.cc']
+    // Also match {name}.oc@astrid.cc pattern for OpenClaw agents
+    const ocPattern = /^[a-z0-9._-]+\.oc@astrid\.cc$/i
 
     // Option 1: Include AI agents that are members of the relevant lists
     if (relevantListIds.length > 0) {
@@ -153,7 +155,12 @@ export async function GET(request: NextRequest) {
             AND: [
               { isAIAgent: true },
               { isActive: true },
-              { email: { in: aiAgentEmails } },
+              {
+                OR: [
+                  { email: { in: aiAgentEmails } },
+                  { email: { endsWith: '.oc@astrid.cc' } },  // Match {name}.oc@astrid.cc OpenClaw agents
+                ]
+              },
               // Only include AI agents that are members of the relevant lists
               {
                 // Check list memberships table
@@ -208,7 +215,12 @@ export async function GET(request: NextRequest) {
             AND: [
               { isAIAgent: true },
               { isActive: true },
-              { email: { in: availableAgentEmails } },
+              {
+                OR: [
+                  { email: { in: availableAgentEmails } },
+                  { email: { endsWith: '.oc@astrid.cc' } },  // Include OpenClaw agents
+                ]
+              },
               ...searchConditions
             ]
           },

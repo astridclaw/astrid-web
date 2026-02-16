@@ -110,7 +110,15 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
  * Get agent configuration by email
  */
 export function getAgentConfig(email: string): AIAgentConfig | null {
-  return AI_AGENT_CONFIG[email] || null
+  // Exact match first
+  if (AI_AGENT_CONFIG[email]) return AI_AGENT_CONFIG[email]
+
+  // Pattern match for {name}.oc@astrid.cc → use openclaw config
+  if (/^[a-z0-9._-]+\.oc@astrid\.cc$/i.test(email)) {
+    return AI_AGENT_CONFIG['openclaw@astrid.cc'] || null
+  }
+
+  return null
 }
 
 /**
@@ -118,28 +126,28 @@ export function getAgentConfig(email: string): AIAgentConfig | null {
  * Returns 'claude' as default if email not found
  */
 export function getAgentService(email: string): AIService {
-  return AI_AGENT_CONFIG[email]?.service || 'claude'
+  return getAgentConfig(email)?.service || 'claude'
 }
 
 /**
  * Get the model for an agent email
  */
 export function getAgentModel(email: string): string {
-  return AI_AGENT_CONFIG[email]?.model || 'claude-sonnet-4-20250514'
+  return getAgentConfig(email)?.model || 'claude-sonnet-4-20250514'
 }
 
 /**
  * Get the context file for an agent (all cloud agents use ASTRID.md)
  */
 export function getAgentContextFile(email: string): string {
-  return AI_AGENT_CONFIG[email]?.contextFile || 'ASTRID.md'
+  return getAgentConfig(email)?.contextFile || 'ASTRID.md'
 }
 
 /**
  * Check if an email is a registered AI agent
  */
 export function isRegisteredAgent(email: string): boolean {
-  return email in AI_AGENT_CONFIG
+  return getAgentConfig(email) !== null
 }
 
 /**
