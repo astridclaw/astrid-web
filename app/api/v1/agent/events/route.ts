@@ -10,7 +10,7 @@
 
 import { NextRequest } from 'next/server'
 import { authenticateAgentRequest, enrichTaskForAgent, agentTaskInclude } from '@/lib/agent-protocol'
-import { registerConnection, removeConnection, updateConnectionPing, getMissedEvents, checkAndDeliverNewEvents } from '@/lib/sse-utils'
+import { registerConnection, removeConnection, updateConnectionPing, getMissedEvents } from '@/lib/sse-utils'
 
 export const runtime = 'nodejs'
 
@@ -82,10 +82,10 @@ export async function GET(request: NextRequest) {
           .catch(err => console.error('[Agent SSE] Replay error:', err))
       }
 
-      // Keepalive every 30s + check for new events
-      const keepaliveInterval = setInterval(async () => {
+      // Keepalive every 30s — events are pushed via broadcastToUsers,
+      // no need to poll Redis on each tick. Just send keepalive comment.
+      const keepaliveInterval = setInterval(() => {
         try {
-          await checkAndDeliverNewEvents(userId, connectionId)
           controller.enqueue(encoder.encode(':keepalive\n\n'))
           updateConnectionPing(userId)
         } catch {
