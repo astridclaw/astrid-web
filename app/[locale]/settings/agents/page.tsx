@@ -106,7 +106,7 @@ function AgentsSettingsContent() {
                 <span>Agent API Keys</span>
               </CardTitle>
               <CardDescription className="theme-text-muted">
-                Add your API keys to enable AI agents (claude/openai/gemini/openclaw@astrid.cc).
+                Add your API keys to enable AI agents (claude/openai/gemini@astrid.cc).
                 You only need to configure one provider.
               </CardDescription>
             </CardHeader>

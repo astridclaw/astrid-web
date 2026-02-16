@@ -37,7 +37,7 @@ export interface AIAgentConfig {
  * Users can enter any model name (free-text), but these are shown as suggestions
  * Update this list as new models are released
  */
-export const SUGGESTED_MODELS: Record<AIService, string[]> = {
+export const SUGGESTED_MODELS: Partial<Record<AIService, string[]>> = {
   claude: [
     'claude-sonnet-4-20250514',
     'claude-opus-4-20250514',
@@ -59,7 +59,7 @@ export const SUGGESTED_MODELS: Record<AIService, string[]> = {
 /**
  * Default models for each service (first in the suggestions list)
  */
-export const DEFAULT_MODELS: Record<AIService, string> = {
+export const DEFAULT_MODELS: Partial<Record<AIService, string>> = {
   claude: 'claude-sonnet-4-20250514',
   openai: 'gpt-4o', // Reliable default for OpenAI
   gemini: 'gemini-2.0-flash',

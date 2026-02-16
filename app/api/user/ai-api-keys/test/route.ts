@@ -161,8 +161,8 @@ export async function POST(request: NextRequest) {
         testResult = await testGeminiKey(decryptedKey)
         break
       case 'openclaw':
-        // OpenClaw RPC client removed — connections now handled by external agent runtimes
-        testResult = { success: true }
+        // OpenClaw connects via channel plugin — no gateway URL to test
+        testResult = { success: false, error: 'OpenClaw now connects via the channel plugin. No API key or gateway URL needed.' }
         break
       default:
         return NextResponse.json(

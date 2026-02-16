@@ -80,6 +80,7 @@ const AI_SERVICES: AIServiceConfig[] = [
     },
     documentation: 'https://aistudio.google.com/apikey'
   },
+]
 
 interface APIKeyData {
   [serviceId: string]: {

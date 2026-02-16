@@ -344,5 +344,3 @@ async function callAIService(
       throw new Error(`Unknown service: ${service}`)
   }
 }
-  }
-}
