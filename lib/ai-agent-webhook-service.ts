@@ -264,7 +264,7 @@ export class AIAgentWebhookService {
             'add_comment',
             'get_task_comments'
           ],
-          contextInstructions: aiAgentConfig.contextInstructions || `You have been assigned a task in Astrid Task Manager. Use the MCP API to read task details, add progress comments, and mark the task complete when finished.${task.lists[0]?.githubRepositoryId ? `\n\nThis list is configured with GitHub repository: ${task.lists[0].githubRepositoryId}. You can reference this repository in your responses and use it for code-related tasks.` : ''}`
+          contextInstructions: task.lists[0]?.description || aiAgentConfig.contextInstructions || `You have been assigned a task in Astrid. Use the MCP API to read task details, add progress comments, and mark the task complete when finished.${task.lists[0]?.githubRepositoryId ? `\n\nThis list is configured with GitHub repository: ${task.lists[0].githubRepositoryId}.` : ''}`
         },
         creator: {
           id: task.creator?.id || task.creatorId,
@@ -840,7 +840,7 @@ export class AIAgentWebhookService {
             'add_comment',
             'get_task_comments'
           ],
-          contextInstructions: aiAgentConfig.contextInstructions || `Someone has commented on your assigned task. You can read the comment and respond if needed using the MCP API.${task.lists[0]?.githubRepositoryId ? `\n\nThis list is configured with GitHub repository: ${task.lists[0].githubRepositoryId}. You can reference this repository in your responses.` : ''}`
+          contextInstructions: task.lists[0]?.description || aiAgentConfig.contextInstructions || `Someone has commented on your assigned task. Read the comment and respond if needed using the MCP API.${task.lists[0]?.githubRepositoryId ? `\n\nThis list is configured with GitHub repository: ${task.lists[0].githubRepositoryId}.` : ''}`
         },
         creator: {
           id: task.creator?.id || task.creatorId,

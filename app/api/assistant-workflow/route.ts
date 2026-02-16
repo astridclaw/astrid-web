@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       include: {
         assignee: true,
         creator: { select: { id: true, name: true, email: true } },
-        lists: { select: { id: true, name: true, githubRepositoryId: true } },
+        lists: { select: { id: true, name: true, description: true, githubRepositoryId: true } },
         comments: {
           orderBy: { createdAt: 'desc' },
           take: 10,
@@ -212,13 +212,19 @@ function getServiceFromEmail(email: string): 'claude' | 'openai' | 'gemini' | 'o
 }
 
 function buildPrompt(task: any, isCommentResponse?: boolean, userComment?: string): string {
-  const taskContext = `
-Task Title: ${task.title}
-${task.description ? `Description: ${task.description}` : ''}
+  // List description serves as agent instructions (like claude.md for a project)
+  const listDescription = task.lists?.[0]?.description?.trim()
+  const listName = task.lists?.[0]?.name || 'My Tasks'
+
+  const defaultInstructions = `You are an AI assistant working on tasks in Astrid. Read the task details and help complete it. Post progress updates as comments.`
+
+  const instructions = listDescription || defaultInstructions
+
+  const taskContext = `**${task.title}**
+${task.description ? `\n${task.description}` : ''}
 Priority: ${['None', 'Low', 'Medium', 'High'][task.priority] || 'None'}
 ${task.dueDateTime ? `Due: ${new Date(task.dueDateTime).toLocaleDateString()}` : ''}
-${task.lists?.length > 0 ? `List: ${task.lists[0].name}` : 'List: My Tasks (personal)'}
-`.trim()
+List: ${listName}`
 
   // Include recent conversation history
   const conversationHistory = task.comments
@@ -230,49 +236,19 @@ ${task.lists?.length > 0 ? `List: ${task.lists[0].name}` : 'List: My Tasks (pers
     })
     .join('\n\n')
 
-  if (isCommentResponse && userComment) {
-    return `You are a helpful AI assistant integrated into a task management app called Astrid.
+  let prompt = `## Instructions\n${instructions}\n\n## Task\n${taskContext}`
 
-${taskContext}
-
-${conversationHistory ? `Recent conversation:\n${conversationHistory}\n\n` : ''}
-
-The user just commented: "${userComment}"
-
-Please provide a helpful response to their comment. Be concise but thorough. If they're asking for help with the task, provide actionable suggestions. If they're providing feedback, acknowledge it and adjust your approach.
-
-**FILE ATTACHMENTS:** If you need to deliver a document, system prompt, configuration file, or any text-based deliverable, include it as an attachment:
-
-<<<FILE:filename.md>>>
-Your file content here...
-<<<END_FILE>>>
-
-This will upload the file and attach it to your comment.`
+  if (conversationHistory) {
+    prompt += `\n\n## Conversation\n${conversationHistory}`
   }
 
-  return `You are a helpful AI assistant integrated into a task management app called Astrid.
+  if (isCommentResponse && userComment) {
+    prompt += `\n\n## New Comment\nThe user just commented: "${userComment}"\n\nRespond to their comment. Be concise but thorough.`
+  }
 
-You've been assigned the following task:
+  prompt += `\n\n## File Attachments\nTo deliver a file, use: <<<FILE:filename.ext>>>content<<<END_FILE>>>`
 
-${taskContext}
-
-${conversationHistory ? `\nPrevious conversation:\n${conversationHistory}\n` : ''}
-
-Please provide a helpful response. You can:
-- Ask clarifying questions if the task is unclear
-- Provide suggestions or a plan to complete the task
-- Offer to help break down the task into smaller steps
-- Share relevant information or resources
-
-**FILE ATTACHMENTS:** If you need to deliver a document, system prompt, configuration file, or any text-based deliverable, include it as an attachment using this format:
-
-<<<FILE:filename.md>>>
-Your file content here...
-<<<END_FILE>>>
-
-This will upload the file and attach it to your comment. Use .md for markdown, .txt for plain text, or .json for JSON files.
-
-Be conversational and helpful. Keep your response focused and actionable.`
+  return prompt
 }
 
 async function callAIService(
