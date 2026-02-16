@@ -211,7 +211,12 @@ export async function POST(
     // Verify task access and write permission (allow collaborative public list viewers)
     const task = await prisma.task.findUnique({
       where: { id: taskId },
-      include: taskAccessInclude,
+      include: {
+        ...taskAccessInclude,
+        assignee: {
+          select: { id: true, email: true, name: true, isAIAgent: true }
+        },
+      },
     })
 
     if (!task) {
@@ -362,6 +367,30 @@ export async function POST(
     } catch (error) {
       console.error('[API v1] Failed to broadcast comment_created:', error)
       // Don't fail the comment creation if SSE broadcast fails
+    }
+
+    // Broadcast agent_task_comment event if task is assigned to an OpenClaw agent
+    try {
+      if (task.assigneeId && task.assignee?.email &&
+          (task.assignee.email.match(/\.oc@astrid\.cc$/i) || task.assignee.email === 'openclaw@astrid.cc') &&
+          authorId !== task.assigneeId) {
+        broadcastToUsers([task.assigneeId], {
+          type: 'agent_task_comment',
+          timestamp: new Date().toISOString(),
+          data: {
+            taskId: task.id,
+            taskTitle: task.title,
+            commentId: comment.id,
+            content: comment.content,
+            authorName: comment.author?.name || comment.author?.email,
+            authorId: comment.authorId,
+            isAgentComment: false
+          }
+        })
+        console.log(`[API v1] Sent agent_task_comment to OpenClaw agent ${task.assignee.email}`)
+      }
+    } catch (error) {
+      console.error('[API v1] Failed to broadcast agent_task_comment:', error)
     }
 
     // Track analytics

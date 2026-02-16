@@ -594,12 +594,27 @@ export async function POST(request: NextRequest) {
           timestamp: new Date().toISOString(),
           data: {
             taskId: task.id,
-            taskTitle: task.title,
-            taskPriority: task.priority,
-            taskDueDateTime: task.dueDateTime,
+            title: (task as any).title,
+            description: (task as any).description,
+            priority: (task as any).priority,
+            dueDateTime: (task as any).dueDateTime,
+            listId: (task as any).lists?.[0]?.id,
+            listName: (task as any).lists?.[0]?.name,
+            githubRepositoryId: (task as any).lists?.[0]?.githubRepositoryId,
             assignerName: (task as any).creator?.name || (task as any).creator?.email || "Someone",
-            userId: session.user.id, // Add userId for client-side filtering
-            listNames: (task as any).lists?.map((list: any) => list.name) || []
+            assignerId: (task as any).creator?.id,
+            // Legacy fields for backward compatibility
+            taskTitle: (task as any).title,
+            taskPriority: (task as any).priority,
+            taskDueDateTime: (task as any).dueDateTime,
+            userId: session.user.id,
+            listNames: (task as any).lists?.map((list: any) => list.name) || [],
+            comments: (task as any).comments?.map((c: any) => ({
+              id: c.id,
+              content: c.content,
+              authorName: c.author?.name,
+              createdAt: c.createdAt
+            })) || []
           }
         })
       } catch (sseError) {

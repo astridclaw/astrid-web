@@ -382,12 +382,28 @@ export async function POST(req: NextRequest) {
           timestamp: new Date().toISOString(),
           data: {
             taskId: task.id,
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            dueDateTime: task.dueDateTime,
+            listId: task.lists?.[0]?.id,
+            listName: task.lists?.[0]?.name,
+            githubRepositoryId: (task.lists?.[0] as any)?.githubRepositoryId,
+            assignerName: task.creator?.name || task.creator?.email || "Someone",
+            assignerId: task.creator?.id,
+            // Legacy fields for backward compatibility
+            taskId: task.id,
             taskTitle: task.title,
             taskPriority: task.priority,
             taskDueDateTime: task.dueDateTime,
-            assignerName: task.creator?.name || task.creator?.email || "Someone",
             userId: auth.userId,
-            listNames: task.lists?.map((list: any) => list.name) || []
+            listNames: task.lists?.map((list: any) => list.name) || [],
+            comments: task.comments?.map((c: any) => ({
+              id: c.id,
+              content: c.content,
+              authorName: c.author?.name,
+              createdAt: c.createdAt
+            })) || []
           }
         })
       } catch (sseError) {

@@ -243,8 +243,27 @@ export async function POST(request: NextRequest, context: RouteContextParams<{ i
 
     // Broadcast real-time updates to relevant users
     try {
-      const { broadcastCommentCreatedNotification } = await import("@/lib/sse-utils")
+      const { broadcastCommentCreatedNotification, broadcastToUsers } = await import("@/lib/sse-utils")
       await broadcastCommentCreatedNotification(task, comment, session.user.id)
+
+      // Broadcast agent_task_comment if task is assigned to an OpenClaw agent
+      if (task.assigneeId && task.assignee?.email &&
+          (task.assignee.email.match(/\.oc@astrid\.cc$/i) || task.assignee.email === 'openclaw@astrid.cc') &&
+          session.user.id !== task.assigneeId) {
+        broadcastToUsers([task.assigneeId], {
+          type: 'agent_task_comment',
+          timestamp: new Date().toISOString(),
+          data: {
+            taskId: task.id,
+            taskTitle: task.title,
+            commentId: comment.id,
+            content: comment.content,
+            authorName: (comment as any).author?.name || (comment as any).author?.email,
+            authorId: comment.authorId,
+            isAgentComment: false
+          }
+        })
+      }
 
       // Handle @mentions and assignee notifications
       const mentionRegex = /@\[([^\]]+)\]\(([^)]+)\)/g

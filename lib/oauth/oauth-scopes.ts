@@ -39,6 +39,9 @@ export const OAUTH_SCOPES = {
   'public:read': 'Read public lists',
   'public:write': 'Create and manage public lists',
 
+  // SSE scopes
+  'sse:connect': 'Connect to SSE event stream',
+
   // Special scopes
   '*': 'Full access (internal use only - granted to session-based auth)',
 } as const
