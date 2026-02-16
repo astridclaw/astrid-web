@@ -9,7 +9,7 @@ import crypto from "crypto"
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex')
 
 const TestAPIKeySchema = z.object({
-  serviceId: z.enum(['claude', 'openai', 'gemini'])
+  serviceId: z.enum(['claude', 'openai', 'gemini', 'openclaw'])
 })
 
 // Decryption function
@@ -159,6 +159,22 @@ export async function POST(request: NextRequest) {
         break
       case 'gemini':
         testResult = await testGeminiKey(decryptedKey)
+        break
+      case 'openclaw':
+        {
+          // Decrypt auth token if present
+          const authTokenData = keyData.authToken
+          let authToken: string | undefined
+          if (authTokenData && authTokenData.encrypted) {
+            try {
+              authToken = decrypt(authTokenData)
+            } catch {
+              // Auth token optional, ignore decrypt failures
+            }
+          }
+          const { testOpenClawConnection } = await import('@/lib/ai/openclaw-rpc-client')
+          testResult = await testOpenClawConnection(decryptedKey, authToken)
+        }
         break
       default:
         return NextResponse.json(

@@ -339,19 +339,6 @@ export class AIAgentWebhookService {
         // Fall through to standard processing if env webhook failed
       }
 
-      // Handle OpenClaw agents: dispatch to user's registered OpenClaw worker
-      if (agentType === 'openclaw') {
-        console.log(`🦞 OpenClaw agent detected - looking up user's workers`)
-        const dispatched = await this.dispatchToOpenClawWorker(task, payload)
-        if (dispatched) {
-          console.log(`✅ Task dispatched to OpenClaw worker`)
-          await this.sendSSENotification(task, payload)
-          return
-        }
-        console.log(`⚠️  No OpenClaw worker available - falling through to polling worker`)
-        // Fall through to standard internal agent handling (polling worker)
-      }
-
       // Handle internal vs external agents differently
       if (isInternalAgent) {
         // Check if this is a coding task (has GitHub repository) or assistant task
@@ -961,70 +948,6 @@ export class AIAgentWebhookService {
     } catch (error) {
       console.error(`❌ Failed to notify AI agent about comment:`, error)
       throw error
-    }
-  }
-
-  /**
-   * Dispatch a task to the user's OpenClaw worker.
-   * Looks up registered workers and sends the task via the dispatch API.
-   */
-  private async dispatchToOpenClawWorker(
-    task: any,
-    payload: TaskAssignmentWebhookPayload
-  ): Promise<boolean> {
-    try {
-      // Find the task creator's or list owner's active OpenClaw worker
-      const userId = task.creatorId || task.lists?.[0]?.ownerId
-      if (!userId) {
-        console.log(`⚠️  No user ID to look up OpenClaw workers`)
-        return false
-      }
-
-      const worker = await this.prisma.openClawWorker.findFirst({
-        where: {
-          userId,
-          isActive: true,
-          status: { not: 'error' },
-        },
-        orderBy: { lastSeen: 'desc' },
-      })
-
-      if (!worker) {
-        console.log(`⚠️  No active OpenClaw worker found for user ${userId}`)
-        return false
-      }
-
-      console.log(`🦞 Dispatching to OpenClaw worker "${worker.name}" at ${worker.gatewayUrl}`)
-
-      // Dispatch via internal API endpoint
-      const baseUrl = getBaseUrl()
-      const response = await fetch(`${baseUrl}/api/openclaw/workers/${worker.id}/dispatch`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          taskId: payload.task.id,
-          taskTitle: payload.task.title,
-          taskDescription: payload.task.description,
-          listName: payload.list.name,
-          githubRepositoryId: payload.list.githubRepositoryId,
-        }),
-        signal: AbortSignal.timeout(15000),
-      })
-
-      if (response.ok) {
-        // Update worker lastSeen
-        await this.prisma.openClawWorker.update({
-          where: { id: worker.id },
-          data: { lastSeen: new Date(), status: 'busy' },
-        })
-        return true
-      }
-
-      console.error(`❌ OpenClaw dispatch failed: HTTP ${response.status}`)
-      return false
-    } catch (error) {
-      console.error(`❌ Failed to dispatch to OpenClaw worker:`, error)
-      return false
     }
   }
 
