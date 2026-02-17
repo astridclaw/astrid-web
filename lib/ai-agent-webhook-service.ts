@@ -288,6 +288,13 @@ export class AIAgentWebhookService {
       const agentType = getAgentType(agentUser?.email ?? undefined, agentRecord?.name ?? agentName)
       console.log(`🔍 [WEBHOOK-TRACE] Agent type: ${agentType} (from email: ${agentUser?.email}, name: ${agentRecord?.name})`)
 
+      // OpenClaw agents connect via SSE channel plugin — no webhook or workflow trigger needed
+      if (agentType === 'openclaw') {
+        console.log(`🐾 OpenClaw agent detected — routing via SSE channel plugin (no webhook needed)`)
+        await this.sendSSENotification(task, payload)
+        return
+      }
+
       // FIRST: Check if task creator OR list owner has Claude Code Remote configured
       // If so, route to their self-hosted server instead of standard processing
       // Fall back to list owner when creatorId is null (common for tasks created via mobile apps)
@@ -315,7 +322,7 @@ export class AIAgentWebhookService {
       // Works for internal agents OR any agent assigned to astrid.cc
       const envRemoteUrl = process.env.CLAUDE_REMOTE_WEBHOOK_URL
       const envRemoteSecret = process.env.CLAUDE_REMOTE_WEBHOOK_SECRET
-      const isClaudeAgent = isInternalAgent || agentRecord?.name?.toLowerCase().includes('claude')
+      const isClaudeAgent = agentType === 'claude'
       console.log(`🔍 [WEBHOOK-TRACE] ENV check: URL=${!!envRemoteUrl}, SECRET=${!!envRemoteSecret}, isClaudeAgent=${isClaudeAgent}, isInternalAgent=${isInternalAgent}`)
       if (envRemoteUrl && envRemoteSecret && isClaudeAgent) {
         console.log(`📤 Sending to env-configured Claude Code Remote: ${envRemoteUrl}`)
@@ -568,7 +575,9 @@ export class AIAgentWebhookService {
         const envRemoteUrl = process.env.CLAUDE_REMOTE_WEBHOOK_URL
         const envRemoteSecret = process.env.CLAUDE_REMOTE_WEBHOOK_SECRET
 
-        if (envRemoteUrl && envRemoteSecret) {
+        // Only use env fallback for Claude agents (or when agent type is unknown)
+        const isClaudeAgentType = !agentType || agentType === 'claude'
+        if (envRemoteUrl && envRemoteSecret && isClaudeAgentType) {
           console.log(`📤 [WEBHOOK] No UserWebhookConfig, using env-based Claude Remote: ${envRemoteUrl}`)
 
           const body = JSON.stringify(payload)
@@ -867,6 +876,15 @@ export class AIAgentWebhookService {
       console.log(`🔔 Notifying AI agent ${task.assignee.name} about comment from ${commenterName}`)
       console.log(`📝 Including ${task.comments?.length || 0} comments in payload`)
 
+      // Determine agent type for routing
+      const agentType = getAgentType(task.assignee.email ?? undefined, task.assignee.name ?? undefined)
+
+      // OpenClaw agents connect via SSE channel plugin — comment delivered via SSE
+      if (agentType === 'openclaw') {
+        console.log(`🐾 OpenClaw agent — comment notification delivered via SSE channel`)
+        return
+      }
+
       // FIRST: Check if task creator OR list owner has Claude Code Remote configured
       // Fall back to list owner when creatorId is null
       const webhookUserId = task.creatorId || task.lists?.[0]?.ownerId
@@ -875,7 +893,8 @@ export class AIAgentWebhookService {
         const userWebhookResult = await this.sendToUserWebhook(
           webhookUserId,
           'comment.created',
-          payload
+          payload,
+          agentType
         )
 
         if (userWebhookResult.sent) {

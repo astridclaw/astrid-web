@@ -72,11 +72,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create agent user record
+    // Create agent user record with default OpenClaw profile photo
     const agentUser = await prisma.user.create({
       data: {
         email: agentEmail,
         name: `${name} (OpenClaw)`,
+        image: '/images/ai-agents/openclaw.svg',
         isAIAgent: true,
         aiAgentType: 'openclaw_worker',
         aiAgentConfig: JSON.stringify({
