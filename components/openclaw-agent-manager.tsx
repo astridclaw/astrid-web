@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
   Dialog,
   DialogContent,
@@ -21,12 +22,14 @@ import {
   Trash2,
   AlertTriangle,
   Loader2,
+  Camera,
 } from "lucide-react"
 
 interface OpenClawAgent {
   id: string
   email: string
   name: string
+  image: string | null
   agentName: string
   status: "active" | "idle"
   registeredAt: string
@@ -58,6 +61,10 @@ export function OpenClawAgentManager() {
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<OpenClawAgent | null>(null)
   const [deleting, setDeleting] = useState(false)
+
+  // Profile photo upload
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingPhotoFor, setUploadingPhotoFor] = useState<string | null>(null)
 
   const fetchAgents = async () => {
     try {
@@ -146,6 +153,61 @@ export function OpenClawAgentManager() {
     }
   }
 
+  const handlePhotoClick = (agentId: string) => {
+    setUploadingPhotoFor(agentId)
+    fileInputRef.current?.click()
+  }
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !uploadingPhotoFor) return
+
+    // Reset input so same file can be re-selected
+    event.target.value = ""
+
+    const agentId = uploadingPhotoFor
+    setUploadingPhotoFor(null)
+
+    try {
+      // Upload file to get a URL
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!uploadRes.ok) {
+        throw new Error("Failed to upload image")
+      }
+
+      const { url } = await uploadRes.json()
+
+      // Update agent profile photo
+      const patchRes = await fetch(`/api/v1/openclaw/agents/${agentId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: url }),
+      })
+
+      if (!patchRes.ok) {
+        throw new Error("Failed to update profile photo")
+      }
+
+      const { image: newImage } = await patchRes.json()
+
+      // Update local state
+      setAgents(prev =>
+        prev.map(a => a.id === agentId ? { ...a, image: newImage } : a)
+      )
+
+      toast.success("Profile photo updated")
+    } catch {
+      toast.error("Failed to update profile photo")
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -156,6 +218,15 @@ export function OpenClawAgentManager() {
 
   return (
     <div className="space-y-4">
+      {/* Hidden file input for photo uploads */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        className="hidden"
+      />
+
       {/* Agent list */}
       {agents.length > 0 && (
         <div className="space-y-2">
@@ -164,28 +235,49 @@ export function OpenClawAgentManager() {
               key={agent.id}
               className="flex items-center justify-between p-3 theme-bg-tertiary rounded-lg"
             >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <code className="text-sm font-mono theme-text-primary truncate">
-                    {agent.email}
-                  </code>
-                  <Badge
-                    variant={agent.status === "active" ? "default" : "secondary"}
-                    className={
-                      agent.status === "active"
-                        ? "bg-green-600 hover:bg-green-700 text-white text-xs"
-                        : "text-xs"
-                    }
-                  >
-                    {agent.status === "active" ? "Active" : "Idle"}
-                  </Badge>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => handlePhotoClick(agent.id)}
+                  className="relative group shrink-0"
+                  title="Change profile photo"
+                >
+                  <Avatar className="w-9 h-9">
+                    <AvatarImage
+                      src={agent.image || "/images/ai-agents/openclaw.svg"}
+                      alt={agent.name || agent.email}
+                    />
+                    <AvatarFallback>
+                      {agent.agentName?.substring(0, 2).toUpperCase() || "OC"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Camera className="w-4 h-4 text-white" />
+                  </div>
+                </button>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <code className="text-sm font-mono theme-text-primary truncate">
+                      {agent.email}
+                    </code>
+                    <Badge
+                      variant={agent.status === "active" ? "default" : "secondary"}
+                      className={
+                        agent.status === "active"
+                          ? "bg-green-600 hover:bg-green-700 text-white text-xs"
+                          : "text-xs"
+                      }
+                    >
+                      {agent.status === "active" ? "Active" : "Idle"}
+                    </Badge>
+                  </div>
+                  <p className="text-xs theme-text-muted mt-0.5">
+                    Registered {new Date(agent.registeredAt).toLocaleDateString()}
+                    {agent.lastActiveAt && (
+                      <> &middot; Last active {new Date(agent.lastActiveAt).toLocaleDateString()}</>
+                    )}
+                  </p>
                 </div>
-                <p className="text-xs theme-text-muted mt-0.5">
-                  Registered {new Date(agent.registeredAt).toLocaleDateString()}
-                  {agent.lastActiveAt && (
-                    <> &middot; Last active {new Date(agent.lastActiveAt).toLocaleDateString()}</>
-                  )}
-                </p>
               </div>
               <Button
                 variant="ghost"
